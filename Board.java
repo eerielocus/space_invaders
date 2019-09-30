@@ -9,6 +9,8 @@ public class Board {
 	 */
 	public Board() {
 		
+		
+		
 	}
 	/**
     Initializing method to set board dimensions, color, and key listeners.
