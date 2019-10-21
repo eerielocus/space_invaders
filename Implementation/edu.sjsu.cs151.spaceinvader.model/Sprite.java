@@ -1,5 +1,3 @@
-package edu.sjsu.cs151.spaceinvader.model;
-
 /**
  * Sprite class contains the necessary variables and methods to get/set positions
  * of objects, set visibility, and get/set the image itself.
@@ -9,56 +7,82 @@ public class Sprite
 {
 	private int x;
 	private int y;
+	private boolean visible;
+	private boolean destroy;
 	
 	/**
-    Constructor method for Sprite.
+	 * Constructor method for Sprite.
 	 */
 	public Sprite() {
-		this.x = 0;
-		this.y = 0;
+		this.visible = true;
 	}
 	/**
-    This method is to set the image of the object.
+	 * This method is to set the image of the object.
 	 */
 	public void setImage() {
 		
 	}
 	/**
-    This method is to get the image of the object.
+	 * This method is to get the image of the object.
 	 */
 	public void getImage() {
 		
 	}
 	/**
-    This method is to set whether the object is visible or not. (destroyed or not)
+	 * This method is to return whether the object is visible or not. (destroyed or not)
 	 */
-	public void isVisible() {
-		
+	public boolean isVisible() {
+		return visible;
 	}
 	/**
-    This method is to set the X-position of object.
-    @param x position on x-axis
+	 * This method is to set the visibility of object.
+	 */
+	public void setVisible() {
+		this.visible = true;
+	}
+	/**
+	 * This method is to set the object as dead.
+	 */
+	public void dead() {
+		this.visible = false;
+	}
+	/**
+	 * This method is to return whether the object was hit (dying).
+	 * @return boolean flag
+	 */
+	public boolean isHit() {
+		return this.destroy;
+	}
+	/**
+	 * This method is to set whether the object was hit (dying).
+	 */
+	public void setHit() {
+		this.destroy = true;
+	}
+	/**
+	 * This method is to set the X-position of object.
+	 * @param x position on x-axis
 	 */
 	public void setX(int x) {
 		this.x = x;
 	}
 	/**
-    This method is to set the Y-position of object.
-    @param y position on y-axis
+	 * This method is to set the Y-position of object.
+	 * @param y position on y-axis
 	 */
 	public void setY(int y) {
 		this.y = y;
 	}
 	/**
-    This method is to get the X-position of object.
-    @return x the x-position
+	 * This method is to get the X-position of object.
+	 * @return x the x-position
 	 */
 	public int getX() {
 		return x;
 	}
 	/**
-    This method is to get the Y-position of object.
-    @return y the y-position
+	 * This method is to get the Y-position of object.
+	 * @return y the y-position
 	 */
 	public int getY() {
 		return y;
