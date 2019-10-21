@@ -1,3 +1,5 @@
+package edu.sjsu.cs151.spaceinvader.model;
+
 /**
  * Sprite class contains the necessary variables and methods to get/set positions
  * of objects, set visibility, and get/set the image itself.
