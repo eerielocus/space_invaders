@@ -10,15 +10,15 @@ import java.awt.event.KeyEvent;
 public class Player extends Sprite implements GameInterface {
 	private int width;
 	private final int START_Y = 280;
-    private final int START_X = 270;
+	private final int START_X = 270;
 	/**
-    Constructor method for Player.
+	 * Constructor method for Player.
 	 */
 	public Player() {
 		createPlayer();
 	}
 	/**
-    This method sets the correct image and start position for player.
+	 * This method sets the correct image and start position for player.
 	 */
 	public void createPlayer() {
 		width = 5; // Placeholder until implementation of graphics.
@@ -26,7 +26,7 @@ public class Player extends Sprite implements GameInterface {
         setY(START_Y);
 	}
 	/**
-    This method sets the movement of the player.
+	 * This method sets the movement of the player.
 	 */
 	public void act() {
         x += move_x;
@@ -40,8 +40,8 @@ public class Player extends Sprite implements GameInterface {
         }
     }
 	/**
-    This method takes the user key press and translates into an integer
-    to use for movement.
+	 * This method takes the user key press and translates into an integer
+	 * to use for movement.
 	 */
 	public void keyPressed(KeyEvent button) {
 	    
