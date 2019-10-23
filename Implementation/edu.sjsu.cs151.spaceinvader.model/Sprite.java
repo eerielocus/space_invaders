@@ -7,8 +7,9 @@ package edu.sjsu.cs151.spaceinvader.model;
  */
 public class Sprite 
 {
-	private int x;
-	private int y;
+	protected int x;
+	protected int y;
+	protected int move_x;
 	private boolean visible;
 	private boolean destroy;
 	
@@ -80,13 +81,13 @@ public class Sprite
 	 * @return x the x-position
 	 */
 	public int getX() {
-		return x;
+		return this.x;
 	}
 	/**
 	 * This method is to get the Y-position of object.
 	 * @return y the y-position
 	 */
 	public int getY() {
-		return y;
+		return this.y;
 	}
 }
