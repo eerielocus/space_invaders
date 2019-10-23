@@ -5,13 +5,12 @@ package edu.sjsu.cs151.spaceinvader.model;
  * and properties to provide action for the Alien object.
  *
  */
-public class Alien extends Sprite
-{
+public class Alien extends Sprite {
 	/**
 	 * Constructor method for Alien.
 	 */
-	public Alien() {
-		
+	public Alien(int x, int y) {
+		createAlien(x, y);
 	}
 	/**
 	 * Initializing method to set position, set correct image, and create a bomb.
@@ -19,13 +18,14 @@ public class Alien extends Sprite
 	 * @param y position on y-axis
 	 */
 	public void createAlien(int x, int y) {
-		
+		this.x = x;
+		this.y = y;
 	}
 	/**
 	 * This method sets the movement of the Alien.
 	 */
-	public void act() {
-		
+	public void act(int move) {
+		this.x += move;
 	}
 	/**
 	 * This method creates a new bomb for the Alien.
