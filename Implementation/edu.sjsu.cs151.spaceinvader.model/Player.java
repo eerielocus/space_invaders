@@ -9,8 +9,8 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends Sprite implements GameInterface {
 	private int width;
-	private final int START_Y = 280;
-	private final int START_X = 270;
+	private final int START_Y = 300;
+	private final int START_X = 200;
 	/**
 	 * Constructor method for Player.
 	 */
@@ -23,21 +23,21 @@ public class Player extends Sprite implements GameInterface {
 	public void createPlayer() {
 		width = 5; // Placeholder until implementation of graphics.
 		setX(START_X);
-		setY(START_Y);
+        setY(START_Y);
 	}
 	/**
 	 * This method sets the movement of the player.
 	 */
 	public void act() {
-		x += move_x;
+        x += move_x;
         
-		if (x <= 2) {
-			x = 2;
-		}
+        if (x <= 2) {
+            x = 2;
+        }
         
-		if (x >= BOARD_WIDTH - 2 * width) {
-			x = BOARD_WIDTH - 2 * width;
-		}
+        if (x >= BOARD_WIDTH - 2 * width) {
+            x = BOARD_WIDTH - 2 * width;
+        }
     }
 	/**
 	 * This method takes the user key press and translates into an integer
