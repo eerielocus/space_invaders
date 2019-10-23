@@ -37,8 +37,8 @@ public class Player extends Sprite implements GameInterface {
 		
 		if (x >= BOARD_WIDTH - 2 * width) {
 			x = BOARD_WIDTH - 2 * width;
-		}
-    }
+		}	
+	}
 	/**
 	 * This method takes the user key press and translates into an integer
 	 * to use for movement.
