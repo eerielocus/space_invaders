@@ -1,4 +1,4 @@
-package SpaceInvader;
+package edu.sjsu.cs151.spaceinvader.main;
 
 import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
 import edu.sjsu.cs151.spaceinvader.controller.Controller;
