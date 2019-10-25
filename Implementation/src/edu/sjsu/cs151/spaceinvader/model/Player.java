@@ -65,4 +65,14 @@ public class Player extends Sprite implements GameInterface {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void start() throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void exit() {
+		// TODO Auto-generated method stub
+		
+	}
 }
