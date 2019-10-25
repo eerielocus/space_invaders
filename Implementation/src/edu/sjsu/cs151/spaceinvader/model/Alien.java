@@ -1,36 +1,45 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
-import javax.swing.ImageIcon;
-
+/**
+ * Alien class extends the Sprite class and contains the necessary methods
+ * and properties to provide action for the Alien object.
+ *
+ */
 public class Alien extends Sprite {
-
-    private Bomb bomb;
-    private ImageIcon icon;
-    private int x, y;
-    private String face = "";
-
-    public Alien(int x, int y){
-        initAlien(x, y);
-    }
-
-    public void initAlien(int x, int y) {
-    	this.x = x;	
-    	this.y = y;
-    }
-    public void act(int direction) {
-        
-     
-    }
-    public static Bomb getBomb() {
-        
-    	return new Bomb();
-
-    }
+	private String face = "";
+	/**
+	 * Constructor method for Alien.
+	 */
+	public Alien(int x, int y) {
+		createAlien(x, y);
+	}
+	/**
+	 * Initializing method to set position, set correct image, and create a bomb.
+	 * @param x position on x-axis
+	 * @param y position on y-axis
+	 */
+	public void createAlien(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	/**
+	 * This method sets the movement of the Alien.
+	 */
+	public void act(int move) {
+		this.x += move;
+	}
+	/**
+	 * This method creates a new bomb for the Alien.
+	 */
+	public static Bomb getBomb() {
+		return new Bomb();
+	}
+	
     public void setAlienFace(String face) {
     	this.face = face;
     }
+    
 	public String getAlienFace() {
 		return this.face;
 	}
- 
 }
