@@ -17,29 +17,34 @@ public class Board extends Controller{
 	private Player player;
 	private Bomb bomb;
 	
-	private class Tile extends Board{
+	private class Tile extends Board {
 		Alien alien;
 		private int location_x;
 		private int location_y;
 		
-		protected Tile(int x, int y){
+		protected Tile(int x, int y) {
 			this.location_x = x;
 			this.location_y = y;
 			alien = new Alien(location_x, location_y);
 		}
+		
 		public int getX() {
 			return this.location_x;
 		}
+		
 		public int getY() {
 			return this.location_y;
 		}
+		
 		public void setAlienFace(String face) {
 			this.alien.setAlienFace(face);
 		}
+		
 		public String getAlien() {
 			return this.alien.getAlienFace();
 		}
 	}
+	
 	public void createAliens() throws InterruptedException {
 		
 		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
@@ -66,17 +71,15 @@ public class Board extends Controller{
 		int modolus = 9;
 		
 		for (tile_index = 0; tile_index < tiles.size(); tile_index++) {
-			
 			System.out.print(tiles.get(tile_index).getAlien());
 			
-			if(( tile_index % modolus) == 0 && tile_index > 0){
+			if(( tile_index % modolus) == 0 && tile_index > 0) {
 				//System.out.println("tile index "+ tile_index);
-		
-				System.out.println();
-				
+				System.out.println();			
 			}
 		}
 	}
+	
 	public void aliensMove() throws InterruptedException {
 
 		Thread.sleep(1000);
@@ -93,14 +96,17 @@ public class Board extends Controller{
 				temp_tiles.add(tiles.get(temp_index));
 				temp_index++;
 			}
+			
 			move_down += BOARD_WIDTH;
 			tiles.clear();
 			temp_index = 0;
+			
 			while(tile_index < move_down) {
 				if(tile_index <= move_down) {
 					tiles.add(temp_tiles.get(temp_index));
 					temp_index++;
 				}
+				
 				Thread.sleep(1000);
 				displayBoard();
 				tile_index++;
@@ -110,14 +116,10 @@ public class Board extends Controller{
 	
 	}
 	
-	
-	
-	
-	
-	
 	public void createPlayer() {
 		this.player = new Player();
 	}
+	
 	public void playerMove() {
 		
 	}
