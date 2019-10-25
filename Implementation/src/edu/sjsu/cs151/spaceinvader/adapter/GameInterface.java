@@ -2,9 +2,9 @@ package edu.sjsu.cs151.spaceinvader.adapter;
 
 public interface GameInterface {
 	
-	public static final int BOARD_WIDTH = 400;
-    public static final int BOARD_HEIGHT = 400;
-    public static final int GROUND = 300;
+	public static final int BOARD_WIDTH = 10;
+    public static final int BOARD_HEIGHT = 30;
+    public static final int GROUND = 290;
     public static final int BOMB_HEIGHT = 5;
     public static final int ALIEN_HEIGHT = 12;
     public static final int ALIEN_WIDTH = 12;
@@ -19,6 +19,8 @@ public interface GameInterface {
     public static final int ALIEN_INIT_X = 150;
     public static final int ALIEN_INIT_Y = 5;
     
-	public void initGame();
+	public void initGame() throws InterruptedException;
 	public void initScreen();
+	public void start() throws InterruptedException;
+	public void exit();
 }

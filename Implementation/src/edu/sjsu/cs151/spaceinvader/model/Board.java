@@ -1,93 +1,140 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
-import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
+
 import java.util.ArrayList;
 
-public class Board implements GameInterface{
+import edu.sjsu.cs151.spaceinvader.controller.Controller;
+//this class is a singleton
+@SuppressWarnings("unused")
+public class Board extends Controller{
 	
+	
+	private static Board instance = new Board();
+	//private ArrayList<ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+	private ArrayList<Tile> tiles = new ArrayList<Tile>();
+
 	private ArrayList<Alien> aliens;
-	private String gameOverMessage = "Game Over";
-	private Shot shot;
 	private Player player;
-    
-	public Board() {
-		createGame();
-	}
-	/**
-	 * Initializing method to add the Player and Aliens, and begin animations.
-	 */
-	public void createGame() {
-		player = new Player();
-		shot = new Shot();
-		aliens = new ArrayList<>();
+	private Bomb bomb;
+	
+	private class Tile extends Board{
+		Alien alien;
+		private int location_x;
+		private int location_y;
 		
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 6; j++) {
-				Alien alien = new Alien(ALIEN_INIT_X + 15 * j, ALIEN_INIT_Y + 15 *i);
-				aliens.add(alien);
+		protected Tile(int x, int y){
+			this.location_x = x;
+			this.location_y = y;
+			alien = new Alien(location_x, location_y);
+		}
+		public int getX() {
+			return this.location_x;
+		}
+		public int getY() {
+			return this.location_y;
+		}
+		public void setAlienFace(String face) {
+			this.alien.setAlienFace(face);
+		}
+		public String getAlien() {
+			return this.alien.getAlienFace();
+		}
+	}
+	public void createAliens() throws InterruptedException {
+		
+		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
+			 for (int j = 0; j < BOARD_HEIGHT; j++) {
+				 
+				 if(i < 2 && j < 10) {
+					 //System.out.println(" omg  " + i + " " + tile_index + " " + BOARD_WIDTH);
+					 tiles.add(new Tile(i,j));
+					 tiles.get(tile_index).setAlienFace(" * ");
+					 //System.out.println(tiles.get(tile_index).getAlien() + "tile " + tile_index);
+					 tile_index++;
+				 }
+				 else {
+					 tiles.add(new Tile(i,j));
+				 }
+			 } 
+	     }
+	}
+	
+	public void displayBoard() throws InterruptedException {
+		
+		int board_size = BOARD_WIDTH * BOARD_HEIGHT;
+		int tile_index = 0;
+		int modolus = 9;
+		
+		for (tile_index = 0; tile_index < tiles.size(); tile_index++) {
+			
+			System.out.print(tiles.get(tile_index).getAlien());
+			
+			if(( tile_index % modolus) == 0 && tile_index > 0){
+				//System.out.println("tile index "+ tile_index);
+		
+				System.out.println();
+				
 			}
 		}
-		//GUI Implementation below 
 	}
-	public String gameover() {
-		return this.gameOverMessage;
-	}
+	public void aliensMove() throws InterruptedException {
 
-
-	/***********************************************************
-	 * GUI Implementation for the methods below, NOT IMPLEMENTED 
-	 ************************************************************/
-	/**
-	 * Initializing method to set board dimensions, color, and key listeners.
-	 */
-	public void createBoard() {
-		//In this method Graphical Interface will be used, not implemented 
+		Thread.sleep(1000);
+		int board_size = BOARD_WIDTH * BOARD_HEIGHT;
+		int tile_index = 0;
+		ArrayList<Tile> temp_tiles = new ArrayList<Tile>();
+		int move_down_step = 0;
+		int move_down = BOARD_WIDTH + BOARD_WIDTH;
+		int temp_index = 0;
 		
-	}
-	/**
-	 * This method displays the sprite for the Player when alive, and hides sprite when dead.
-	 */
-	public void drawPlayer() {
-	}
-	/**
-	 * This method displays the sprite for the Alien when alive, and hides sprite when destroyed.
-	 */
-	public void drawAlien() {
-	}
-	/**
-	 * This method displays the sprite for the cannon shot.
-	 */
-	public void drawShot() {
-	}
-	/**
-	 * This method controls the movement of the Player based on key presses.
-	 */
-	public void move(){
-	}
-	/**
-	 * This method calls on the draw methods and color properties for the graphics.
-	 */
-	public void paintComponents() {
-	}
-	/**
-	 * This method handles the actions involved in moving both player and alien,
-	 * movements for both and shots/bombs fired, events when shots hit alien or 
-	 * bomb hits player.
-	 */
-	public void animationCycle() {
+		
+		while (move_down_step < 5) {
+			while(temp_index < move_down) {
+				temp_tiles.add(tiles.get(temp_index));
+				temp_index++;
+			}
+			move_down += BOARD_WIDTH;
+			tiles.clear();
+			temp_index = 0;
+			while(tile_index < move_down) {
+				if(tile_index <= move_down) {
+					tiles.add(temp_tiles.get(temp_index));
+					temp_index++;
+				}
+				Thread.sleep(1000);
+				displayBoard();
+				tile_index++;
+			}
+			move_down_step++;
+		}
+	
 	}
 	
 	
-	@Override
-	public void initGame() {
-		// TODO Auto-generated method stub
+	
+	
+	
+	
+	public void createPlayer() {
+		this.player = new Player();
+	}
+	public void playerMove() {
 		
 	}
-	@Override
-	public void initScreen() {
-		// TODO Auto-generated method stub
+	
+	public void createBomb() {
 		
 	}
+	
+	
+	
+	
+	
+	
+	public static Board getInstance() {
+		return instance;
+	}
+	
 }
 
 
