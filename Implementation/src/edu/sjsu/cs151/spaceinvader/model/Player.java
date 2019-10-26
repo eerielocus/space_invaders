@@ -1,13 +1,12 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
-import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
 import java.awt.event.KeyEvent;
 /**
  * Player class extends the Sprite class and contains the properties for
  * the player vehicle and methods to read key presses for movement and firing.
  *
  */
-public class Player extends Sprite implements GameInterface {
+public class Player extends Sprite {
 	private int width;
 	private final int START_Y = 300;
 	private final int START_X = 200;
@@ -29,15 +28,7 @@ public class Player extends Sprite implements GameInterface {
 	 * This method sets the movement of the player.
 	 */
 	public void act() {
-		x += move_x;
-
-		if (x <= 2) {
-			x = 2;	
-		}
-		
-		if (x >= BOARD_WIDTH - 2 * width) {
-			x = BOARD_WIDTH - 2 * width;
-		}	
+		x += move_x;	
 	}
 	/**
 	 * This method takes the user key press and translates into an integer
@@ -53,26 +44,5 @@ public class Player extends Sprite implements GameInterface {
 		if (key == KeyEvent.VK_RIGHT) {
 			move_x = 2;		
 		}    
-	}
-	
-	@Override
-	public void initGame() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void initScreen() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void start() throws InterruptedException {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void exit() {
-		// TODO Auto-generated method stub
-		
 	}
 }
