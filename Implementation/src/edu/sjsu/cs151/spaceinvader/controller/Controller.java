@@ -1,15 +1,8 @@
 package edu.sjsu.cs151.spaceinvader.controller;
-
-import java.util.ArrayList;
-
 import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
 import edu.sjsu.cs151.spaceinvader.model.*;
 
 public class Controller implements GameInterface{
-	
-	private ArrayList<Alien> aliens;
-	private Player player;
-	private Bomb bomb;
 		
 	/**********
 	 * Model
@@ -27,14 +20,12 @@ public class Controller implements GameInterface{
 	}
 	@Override
 	public void exit() {}
+
 	
-	
-	
-	protected void initCreation() throws InterruptedException {
+	protected void initCreation(){
 
 		Board.getInstance().createAliens();
-		
-	//Board.getInstance().createPlayer();		
+		//Board.getInstance().createPlayer();		
 		
 	}
 	protected void initMovements() throws InterruptedException {
@@ -42,11 +33,8 @@ public class Controller implements GameInterface{
 		//Board.getInstance().playerMove();
 	}
 	
-	
-
 	/**********
 	 *  View  *
 	 **********/
-	
 	
 }
