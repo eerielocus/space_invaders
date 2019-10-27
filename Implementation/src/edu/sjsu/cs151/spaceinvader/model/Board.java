@@ -67,7 +67,7 @@ public class Board extends Controller{
 			System.out.print(board.get(tile_index).getAlien());
 		}
 	}
-	/*************************************
+	/**************************************
 	 * Create Placeholder Aliens on Board *
 	 * @param Arraylist<Tile>             *
 	 **************************************/
