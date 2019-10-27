@@ -70,7 +70,7 @@ public class Board extends Controller{
 	/**************************************
 	 * Create Placeholder Aliens on Board *
 	 * @param Arraylist<Tile>             *
-	 **************************************/
+	 *************************************/
 	public void createDummyAliens(ArrayList<Tile> temp_tiles) {
 		
 		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
