@@ -9,7 +9,7 @@ public class Alien extends Sprite {
     /**
 	 * Constructor method for Alien.
 	 */
-    public Alien(int x, int y){
+    protected Alien(int x, int y){
         initAlien(x, y);
     }
     /**
@@ -17,20 +17,20 @@ public class Alien extends Sprite {
 	 * @param x position on x-axis
 	 * @param y position on y-axis
 	 */
-    public void initAlien(int x, int y) {
+    protected void initAlien(int x, int y) {
     	this.x = x;	
     	this.y = y;
     }
     /**
 	 * This method creates a new bomb for the Alien.
 	 */
-    public static Bomb getBomb() {
+    protected Bomb getBomb() {
     	return new Bomb();
     }
-    public void setAlienFace(String face) {
+    protected void setAlienFace(String face) {
     	this.face = face;
     }
-	public String getAlienFace() {
+    protected String getAlienFace() {
 		return this.face;
 	}
  
