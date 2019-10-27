@@ -70,7 +70,7 @@ public class Board extends Controller{
 	/**************************************
 	 * Create Placeholder Aliens on Board *
 	 * @param Arraylist<Tile>             *
-	 *************************************/
+	 **************************************/
 	public void createDummyAliens(ArrayList<Tile> temp_tiles) {
 		
 		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
@@ -86,30 +86,7 @@ public class Board extends Controller{
 	 * @param int           				   *
 	 *******************************************/
 	public int getIndexMove(int firstrow) {
-		int index = 0;
-		switch(firstrow) {
-			case 10: index = 0; break;
-			case 20: index = 10; break;
-			case 30: index = 20; break;
-			case 40: index = 30; break;
-			case 50: index = 40; break;
-			case 60: index = 50; break;
-			case 70: index = 60; break;
-			case 80: index = 70; break;
-			case 90: index = 80; break;
-			case 100: index = 90; break;
-			case 110: index = 100; break;
-			case 120: index = 110; break;
-			case 130: index = 120; break;
-			case 140: index = 130; break;
-			case 150: index = 140; break;
-			case 160: index = 150; break;
-			case 170: index = 160; break;
-			case 180: index = 170; break;
-			case 190: index = 180; break;
-			case 200: index = 190; break;
-		}
-		return index;
+		return firstrow - 10;
 	}
 	/******************************************************
 	 * move the aliens on the board downward on the board *
