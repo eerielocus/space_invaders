@@ -1,9 +1,11 @@
 package edu.sjsu.cs151.spaceinvader.adapter;
 
+import java.io.IOException;
+
 public interface GameInterface {
 	
 	public static final int BOARD_WIDTH = 10;
-    public static final int BOARD_HEIGHT = 30;
+    public static final int BOARD_HEIGHT = 20;
     public static final int GROUND = 290;
     public static final int BOMB_HEIGHT = 5;
     public static final int ALIEN_HEIGHT = 12;
