@@ -4,10 +4,10 @@ import edu.sjsu.cs151.spaceinvader.model.*;
 
 public class Controller implements GameInterface{
 		
-	/**********
+	/**
 	 * Model
-	 * @throws InterruptedException *
-	 **********/
+	 * @throws InterruptedException
+	 */
 	@Override
 	public void initGame() throws InterruptedException{
 		initCreation();
@@ -22,14 +22,14 @@ public class Controller implements GameInterface{
 	public void exit() {}
 
 	
-	protected void initCreation(){
-
+	protected void initCreation() {
 		Board.getInstance().createAliens();
-		//Board.getInstance().createPlayer();		
+		Board.getInstance().createPlayer();		
 		
 	}
 	protected void initMovements() throws InterruptedException {
-		Board.getInstance().aliensMove();
+		Board.getInstance().initDummyMove();
+		//Board.getInstance().aliensMove();
 		//Board.getInstance().playerMove();
 	}
 	
