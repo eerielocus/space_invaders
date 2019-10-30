@@ -1,5 +1,6 @@
 package edu.sjsu.cs151.spaceinvader.model;
 import java.util.ArrayList;
+import java.util.Scanner;
 import edu.sjsu.cs151.spaceinvader.controller.Controller;
 
 //This class is a singleton
@@ -45,8 +46,8 @@ public class Board extends Controller {
 	 * Creates Aliens and Bomb
 	 */
 	public void createAliens() {
-		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
-			 for (int j = 0; j < BOARD_HEIGHT; j++) {
+		for(int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
+			 for(int j = 0; j < BOARD_HEIGHT; j++) {
 				 if(i < 2 && j < 10) {
 					 tiles.add(new Tile(i,j));
 					 tiles.get(tile_index).setAlienFace(" O ");
@@ -73,7 +74,7 @@ public class Board extends Controller {
 	 */
 	private void displayBoard(ArrayList<Tile> board) {
 		int tile_index = 0;
-		for (tile_index = 0; tile_index < board.size(); tile_index++) {
+		for(tile_index = 0; tile_index < board.size(); tile_index++) {
 			if((tile_index % 10) == 0) {
 				System.out.println();
 			}
@@ -85,10 +86,9 @@ public class Board extends Controller {
 	 * Creates placeholder Aliens on Board for testing
 	 * @param temp_tiles is placeholder Board
 	 */
-	private void createDummyAliens(ArrayList<Tile> temp_tiles) {
-		
-		for (int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
-			for (int j = 0; j < BOARD_HEIGHT; j++) {
+	private void createDummyAliens(ArrayList<Tile> temp_tiles) {	
+		for(int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
+			for(int j = 0; j < BOARD_HEIGHT; j++) {
 				temp_tiles.add(new Tile(i,j));
 				temp_tiles.get(tile_index).setAlienFace(" - ");
 				tile_index++;	 
@@ -101,11 +101,21 @@ public class Board extends Controller {
 	 * @param ArrayList<Tile>
 	 */
 	private void createDummyPlayer(ArrayList<Tile> temp_tiles) {
-		for (int i = 0; i < BOARD_WIDTH; i++) {
+		for(int i = 0; i < BOARD_WIDTH; i++) {
 			 temp_tiles.add(new Tile(i,0));
 			 temp_tiles.get(i).setAlienFace(" _ ");
 		} 
 		temp_tiles.get(5).setAlienFace(player.getPlayerFace());
+	}
+	
+	private void createTargetPractice(ArrayList<Tile> temp_tiles) {
+		for(int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
+			for(int j = 0; j < 4; j++) {
+				temp_tiles.add(new Tile(i,j));
+				temp_tiles.get(tile_index).setAlienFace(" - ");
+				tile_index++;	 
+			}
+		}
 	}
 	
 	/**
@@ -114,17 +124,21 @@ public class Board extends Controller {
 	 * @param secondrow is index of bottom wave of Aliens
 	 * @param movers is the dummy Board
 	 */
-	private void createDummyShot(int shotrow, int secondrow, ArrayList<Tile> movers) {
-		movers.get(shotrow + 5).setAlienFace(" | ");
+	private void createDummyShot(int shotrow, int index, ArrayList<Tile> movers) {
+		movers.get(shotrow + index).setAlienFace(" | ");
 	}
 	
 	/**
 	 * Creates a placeholder collision between Shot and Alien
-	 * @param secondrow is index of bottom wave of Aliens
+	 * @param row is index of bottom wave of Aliens
 	 * @param temp_tiles is the dummy Board
 	 */
-	private void createDummyCollision(int secondrow, ArrayList<Tile> temp_tiles) {
-		temp_tiles.get(secondrow + 5).setAlienFace(" X ");
+	private void createDummyCollision(int row, int index, ArrayList<Tile> temp_tiles) {
+		if(temp_tiles.get(row + index).alien.isHit() == false) {
+			temp_tiles.get(row + index).setAlienFace(" - ");
+			temp_tiles.get(row + index).alien.setHit();
+			temp_tiles.get(row + index).alien.dead();
+		}
 	}
 	
 	/**
@@ -145,7 +159,7 @@ public class Board extends Controller {
 	private void movedown(int firstrow, int secondrow, ArrayList<Tile> movers, ArrayList<Tile> temp_tiles) {
 		int temp_tiles_index = getIndexMove(firstrow);
 		int tile_index = 0;
-		while (tile_index < temp_tiles.size()) {
+		while(tile_index < temp_tiles.size()) {
 			if(tile_index >= firstrow && tile_index < secondrow) {
 				movers.set(tile_index, temp_tiles.get(temp_tiles_index));
 				temp_tiles_index++;
@@ -164,44 +178,115 @@ public class Board extends Controller {
 		System.out.println("It will show aliens descending and halfway player will shoot one.");
 		System.out.println("Starting soon.");
 		Thread.sleep(5000);
+		
 		ArrayList<Tile> movers = new ArrayList<Tile>();
 		ArrayList<Tile> players = new ArrayList<Tile>();
+		ArrayList<Tile> targets = new ArrayList<Tile>();
+		ArrayList<Tile> tar_aliens = (ArrayList<Tile>) tiles.clone();
 		ArrayList<Tile> temp_tiles = (ArrayList<Tile>) tiles.clone();
+		
 		createDummyAliens(movers);
 		createDummyPlayer(players);
+		
 		int firstrow = 10;
 		int secondrow = 30;
 		int shotrow = 190;
 		int step_count = 0;
+		int index = 5;
+		int score = 1;
+		
 		while(step_count < BOARD_HEIGHT - 2) {
 			movedown(firstrow, secondrow, movers, temp_tiles);
 			displayBoard(movers);
 			displayBoard(players);
+			
 			temp_tiles = (ArrayList<Tile>) movers.clone();
 			movers.clear();
 			createDummyAliens(movers);
-			if (secondrow >= 100) {
-				if (shotrow <= secondrow && secondrow < 200) {
-					createDummyCollision(secondrow - 10, temp_tiles);
+			
+			if(secondrow >= 100) {
+				if(shotrow <= secondrow && secondrow < 200) {
+					createDummyCollision(secondrow - 10, index, temp_tiles);
 				}
-				else if (shotrow >= secondrow) {
-					createDummyShot(shotrow, secondrow, movers);
+				else if(shotrow >= secondrow) {
+					createDummyShot(shotrow, index, movers);
 					shotrow -= 10;
 				}
 			}
+			
 			firstrow += 10;
 			secondrow += 10;
 			step_count++;
 			Thread.sleep(THREAD_SLEEP_TIME);
 		}
+		
+		System.out.println("\n\n\n\nDemo completed.");
+		System.out.println("Now to test player movement and fire control.");
+		
+		createTargetPractice(targets);
+		movedown(10, 30, targets, tar_aliens);
+		shotrow = 30;
+		
+		while(score < 20) {
+			displayBoard(targets);
+			displayBoard(players);
+			System.out.println("Score: " + score);
+			System.out.println("\n\nPlease enter command:");
+			System.out.println("1. Move Right\n2. Move Left\n3. Fire\n");
+			Scanner in = new Scanner(System.in);
+			int input = in.nextInt();
+			index = playerMove(input, index, shotrow, players, targets);
+			score = scoreKeeper(targets);
+		}
 	}
 
 	/**
-	 * Manages player movement
+	 * Manages player movement (implementation temporary)
 	 * Requires key press action listener not yet implemented
 	 */
-	public void playerMove() {
+	private int playerMove(int direction, int index, int shotrow, ArrayList<Tile> players, ArrayList<Tile> targets) {
+		int temp_row = shotrow;
+		// Move right
+		if(direction == 1 && index + 1 < 10) {
+			players.get(index).setAlienFace(" _ ");
+			players.get(index + 1).setAlienFace(player.getPlayerFace());
+			return index + 1;
+		}
+		// Move left
+		else if(direction == 2 && index - 1 >= 0) {
+			players.get(index).setAlienFace(" _ ");
+			players.get(index - 1).setAlienFace(player.getPlayerFace());
+			return index - 1;
+		}
+		// Fire
+		else if(direction == 3) {
+			createDummyShot(temp_row, index, targets);
+			temp_row -= 10;
+			if(targets.get(temp_row + index).alien.isHit() == false) {
+				createDummyCollision(temp_row, index, targets);
+			}
+			else {
+				createDummyCollision(temp_row - 10, index, targets);
+			}
+		}
+		return index;
+	}
+	
+	/**
+	 * Player shoots Shot (not implemented until GUI)
+	 */
+	private void playerShoot() {
 		
+	}
+	
+	private int scoreKeeper(ArrayList<Tile> targets) {
+		int temp_score = 0;
+		for(Tile target : targets) {
+			if(target.alien.isVisible() == false) {
+				temp_score++;
+			}
+		}
+		return temp_score;
 	}
 	
 	/**

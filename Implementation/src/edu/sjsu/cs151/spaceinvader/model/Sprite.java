@@ -10,14 +10,14 @@ public class Sprite
 	protected int x;
 	protected int y;
 	protected int move_x;
-	private boolean visible;
-	private boolean destroy;
+	private boolean visible = true;
+	private boolean destroy = false;
 	
 	/**
 	 * Constructor method for Sprite.
 	 */
 	public Sprite() {
-		this.visible = true;
+		
 	}
 	/**
 	 * This method is to set the image of the object.
