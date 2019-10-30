@@ -105,7 +105,7 @@ public class Board extends Controller {
 			 temp_tiles.add(new Tile(i,0));
 			 temp_tiles.get(i).setAlienFace(" _ ");
 		} 
-		temp_tiles.get(5).setAlienFace("(+)");
+		temp_tiles.get(5).setAlienFace(player.getPlayerFace());
 	}
 	
 	/**
@@ -153,13 +153,17 @@ public class Board extends Controller {
 			tile_index++;
 		}
 	}
+	
 	/**
 	 * Initiates aliens movements, player placement, and shot
 	 * @throws InterruptedException 
 	 */
 	@SuppressWarnings("unchecked")
 	public void initDummyMove() throws InterruptedException {
-		Thread.sleep(1000);
+		System.out.println("This is a simple console demonstration of Space Invaders Model.");
+		System.out.println("It will show aliens descending and halfway player will shoot one.");
+		System.out.println("Starting soon.");
+		Thread.sleep(5000);
 		ArrayList<Tile> movers = new ArrayList<Tile>();
 		ArrayList<Tile> players = new ArrayList<Tile>();
 		ArrayList<Tile> temp_tiles = (ArrayList<Tile>) tiles.clone();

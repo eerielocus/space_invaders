@@ -14,14 +14,14 @@ public class Shot extends Sprite {
 	}
 	
 	public Shot(int x, int y) {
-		createShot(x, y);
+		initShot(x, y);
 	}
 	/**
 	 * This method sets the correct image and position of the shot.
 	 * @param x position on x-axis
 	 * @param y position on y-axis
 	 */
-	public void createShot(int x, int y) {
+	public void initShot(int x, int y) {
 		setX(x);
 		setY(y);
 	}
