@@ -10,6 +10,11 @@ public class Board extends Controller {
 	private ArrayList<Tile> tiles = new ArrayList<Tile>();
 	private Player player;
 	
+	/**
+	 * Private constructor for singleton Board class
+	 */
+	private Board() { }
+	
 	private class Tile extends Board {
 		Alien alien;
 		private int location_x;
@@ -69,8 +74,8 @@ public class Board extends Controller {
 	}
 	
 	/**
-	 * Displays Board		  
-	 * @param Arraylist<Tile> 
+	 * Displays the playing tiles		  
+	 * @param board is placeholder tiles 
 	 */
 	private void displayBoard(ArrayList<Tile> board) {
 		int tile_index = 0;
@@ -84,7 +89,7 @@ public class Board extends Controller {
 	
 	/**
 	 * Creates placeholder Aliens on Board for testing
-	 * @param temp_tiles is placeholder Board
+	 * @param temp_tiles is placeholder tiles
 	 */
 	private void createDummyAliens(ArrayList<Tile> temp_tiles) {	
 		for(int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
@@ -98,7 +103,7 @@ public class Board extends Controller {
 	
 	/**
 	 * Creates a placeholder Player on Board for testing
-	 * @param ArrayList<Tile>
+	 * @param temp_tiles is placeholder tiles
 	 */
 	private void createDummyPlayer(ArrayList<Tile> temp_tiles) {
 		for(int i = 0; i < BOARD_WIDTH; i++) {
@@ -108,6 +113,10 @@ public class Board extends Controller {
 		temp_tiles.get(5).setAlienFace(player.getPlayerFace());
 	}
 	
+	/**
+	 * Creates a placeholder fleet of Aliens to be Shot at
+	 * @param temp_tiles is placeholder tiles
+	 */
 	private void createTargetPractice(ArrayList<Tile> temp_tiles) {
 		for(int i = 0, tile_index = 0; i < BOARD_WIDTH; i++) {
 			for(int j = 0; j < 4; j++) {
@@ -121,11 +130,11 @@ public class Board extends Controller {
 	/**
 	 * Creates a placeholder Shot on Board from Player for testing
 	 * @param shotrow is index of Shot
-	 * @param secondrow is index of bottom wave of Aliens
-	 * @param movers is the dummy Board
+	 * @param index is index of bottom wave of Aliens
+	 * @param temp_tiles is the dummy Board
 	 */
-	private void createDummyShot(int shotrow, int index, ArrayList<Tile> movers) {
-		movers.get(shotrow + index).setAlienFace(" | ");
+	private void createDummyShot(int shotrow, int index, ArrayList<Tile> temp_tiles) {
+		temp_tiles.get(shotrow + index).setAlienFace(" | ");
 	}
 	
 	/**
@@ -279,6 +288,11 @@ public class Board extends Controller {
 		
 	}
 	
+	/**
+	 * Simple score keeper that uses Alien object flag to determine score
+	 * @param targets is fleet of Aliens
+	 * @return the score
+	 */
 	private int scoreKeeper(ArrayList<Tile> targets) {
 		int temp_score = 0;
 		for(Tile target : targets) {
