@@ -6,15 +6,15 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 public class Controller implements GameInterface{
 		
 	
-	View view = new View();
+	//View view = new View();
 	/**
 	 * Model
 	 * @throws InterruptedException
 	 */
 	@Override
 	public void initGame() throws InterruptedException{
-		view.start();
-		//initCreation();
+		//view.start();
+		initCreation();
 	}
 	@Override
 	public void initScreen() {}
