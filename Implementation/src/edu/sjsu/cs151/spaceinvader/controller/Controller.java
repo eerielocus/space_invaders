@@ -5,6 +5,7 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 
 public class Controller implements GameInterface{
 		
+	
 	View view = new View();
 	/**
 	 * Model

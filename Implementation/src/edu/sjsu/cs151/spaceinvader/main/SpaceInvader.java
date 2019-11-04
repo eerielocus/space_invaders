@@ -10,5 +10,4 @@ public class SpaceInvader {
 		gameInt.initGame();
 		//gameInt.start();
 	}
-
 }
