@@ -72,7 +72,6 @@ public class View implements ActionListener, ImageObserver{
 		}
 	}
 	
-	
 	public Image getImage(String path) {
 		Image tempImage = null;
 		//String pth = "/Users/guillerdalit/Desktop/Workplace/Java/SpaceInvader-CS151/src/edu/sjsu/cs151/spaceinvader/view/plane.jpg";
