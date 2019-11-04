@@ -1,16 +1,19 @@
 package edu.sjsu.cs151.spaceinvader.controller;
 import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
 import edu.sjsu.cs151.spaceinvader.model.*;
+import edu.sjsu.cs151.spaceinvader.view.View;
 
 public class Controller implements GameInterface{
 		
+	View view = new View();
 	/**
 	 * Model
 	 * @throws InterruptedException
 	 */
 	@Override
 	public void initGame() throws InterruptedException{
-		initCreation();
+		view.start();
+		//initCreation();
 	}
 	@Override
 	public void initScreen() {}

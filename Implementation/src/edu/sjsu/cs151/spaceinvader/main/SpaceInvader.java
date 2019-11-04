@@ -8,7 +8,7 @@ public class SpaceInvader {
 	public static void main(String args[]) throws InterruptedException {
 		GameInterface gameInt = new Controller();
 		gameInt.initGame();
-		gameInt.start();
+		//gameInt.start();
 	}
 
 }
