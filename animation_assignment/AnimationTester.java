@@ -11,7 +11,7 @@ public class AnimationTester {
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 
-		final MoveableShape shape = new AlienShape(125, 0, CAR_WIDTH);
+		final MoveableShape shape = new AlienShape(125, 0, ALIEN_WIDTH);
 
 		ShapeIcon icon = new ShapeIcon(shape, ICON_WIDTH, ICON_HEIGHT);
 
@@ -23,7 +23,7 @@ public class AnimationTester {
 		frame.pack();
 		frame.setVisible(true);
 
-		final int DELAY = 100;
+		final int DELAY = 25;
 		// Milliseconds between timer ticks
 		Timer t = new Timer(DELAY, new ActionListener() {
 			int x = 1;
@@ -49,5 +49,5 @@ public class AnimationTester {
 
 	private static final int ICON_WIDTH = 400;
 	private static final int ICON_HEIGHT = 100;
-	private static final int CAR_WIDTH = 100;
+	private static final int ALIEN_WIDTH = 100;
 }
