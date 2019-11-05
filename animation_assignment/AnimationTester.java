@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- * This program implements an animation that moves a car shape.
+ * This program implements an animation that moves an Alien shape.
  */
 public class AnimationTester {
 	public static void main(String[] args) {

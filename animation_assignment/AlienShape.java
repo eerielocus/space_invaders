@@ -2,7 +2,6 @@ package animation_assignment;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 
 /**
  * A car that can be moved around.
@@ -39,9 +38,11 @@ public class AlienShape implements MoveableShape {
 		Rectangle2D.Double head = new Rectangle2D.Double(x + 10, y, width - 20, width / 6);
 		Rectangle2D.Double leftArm = new Rectangle2D.Double(x - width / 6, y, width / 6, width / 6);
 		Rectangle2D.Double rightArm = new Rectangle2D.Double(x + width - 1, y, width / 6, width / 6);
-		Rectangle2D.Double leftLeg = new Rectangle2D.Double(x, y + width / 2, width / 6, width / 4);
+		Rectangle2D.Double leftLeg = new Rectangle2D.Double(x, y + width / 2, width / 6, width / 5);
 		Rectangle2D.Double rightLeg = new Rectangle2D.Double(x + width - 1 - width / 6, y + width / 2, width / 6,
-				width / 4);
+				width / 5);
+		Rectangle2D.Double rightEye = new Rectangle2D.Double(x + 10, y + width / 6, width / 8, width / 8);
+		Rectangle2D.Double leftEye = new Rectangle2D.Double(x + width - 23, y + width / 6, width / 8, width / 8);
 
 		g2.setColor(currColor);
 		g2.draw(body);
@@ -56,6 +57,12 @@ public class AlienShape implements MoveableShape {
 		g2.fill(leftArm);
 		g2.fill(rightLeg);
 		g2.fill(leftLeg);
+		
+		g2.setColor(Color.black);
+		g2.draw(rightEye);
+		g2.draw(leftEye);
+		g2.fill(rightEye);
+		g2.fill(leftEye);	
 	}
 
 	private int x;
