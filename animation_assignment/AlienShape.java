@@ -38,8 +38,8 @@ public class AlienShape implements MoveableShape {
 		Rectangle2D.Double head = new Rectangle2D.Double(x + 10, y, width - 20, width / 6);
 		Rectangle2D.Double leftArm = new Rectangle2D.Double(x - width / 6, y, width / 6, width / 6);
 		Rectangle2D.Double rightArm = new Rectangle2D.Double(x + width - 1, y, width / 6, width / 6);
-		Rectangle2D.Double leftLeg = new Rectangle2D.Double(x, y + width / 2, width / 6, width / 5);
-		Rectangle2D.Double rightLeg = new Rectangle2D.Double(x + width - 1 - width / 6, y + width / 2, width / 6,
+		Rectangle2D.Double leftLeg = new Rectangle2D.Double(x, y - 1 + width / 2, width / 6, width / 5);
+		Rectangle2D.Double rightLeg = new Rectangle2D.Double(x + width - 1 - width / 6, y - 1 + width / 2, width / 6,
 				width / 5);
 		Rectangle2D.Double rightEye = new Rectangle2D.Double(x + 10, y + width / 6, width / 8, width / 8);
 		Rectangle2D.Double leftEye = new Rectangle2D.Double(x + width - 23, y + width / 6, width / 8, width / 8);

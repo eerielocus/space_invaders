@@ -27,18 +27,31 @@ public class AnimationTester {
 		// Milliseconds between timer ticks
 		Timer t = new Timer(DELAY, new ActionListener() {
 			int x = 1;
+			int y = 1;
+			int vert = 1;
+			int dir = 1;
 			boolean direction = false;
 
 			public void actionPerformed(ActionEvent event) {
 				if (x == 1) { direction = false; } 
 				else if (x == 50) { direction = true; }
 
+				if (vert == 1) { 
+					y = 1; 
+					dir = 1;
+				}
+				else if (vert == 20) {
+					y = -1; 
+					dir = -1;
+				}
+				
+				vert += dir;
 				shape.repaint(direction);
 				if (!direction) {
-					shape.translate(1, 0);
+					shape.translate(1, y);
 					x += 1;
 				} else {
-					shape.translate(-1, 0);
+					shape.translate(-1, y);
 					x -= 1;
 				}
 				label.repaint();
