@@ -12,16 +12,18 @@ import javax.swing.border.EmptyBorder;
 public class View implements ActionListener, ImageObserver {
 	private static View view = new View();
 
-	private JFrame startFrame;
-	private JFrame gameFrame;
+	private JFrame startFrame;   // Start screen frame.
+	private JFrame gameFrame;    // Game screen frame.
 	
-	private BoxLayout box;
-	private JPanel startContent;
-	private JPanel gameContent;
-	private JPanel infoContent;
+	private JPanel startContent; // Start screen panel.
+	private JPanel gameContent;  // Game screen panel.
+	private JPanel infoContent;  // Score/lives panel during game.
+	private JPanel scoreContent; // Score screen panel.
 	
-	private JLabel gameName;
-	private JLabel gameLogo;
+	private JLabel gameName;     // Start screen game title.
+	private JLabel gameLogo;     // Start screen alien logo.
+	private JLabel playerScore;
+	private JLabel playerLives;
 	private JLabel player;
 	private JLabel playerShot;
 	private JLabel alienBomb;
@@ -43,8 +45,13 @@ public class View implements ActionListener, ImageObserver {
 
 	public void start() {
 		startWindow();
+		gameWindow();
 	}
 	
+	/**
+	 * Start screen window, what the game initially opens with. Contains
+	 * game name, icon, and start button.
+	 */
 	private void startWindow() {
 		startFrame = new JFrame("Space Invaders");
 		startFrame.setSize(600, 600);
@@ -57,19 +64,25 @@ public class View implements ActionListener, ImageObserver {
 		gameName = new JLabel(logo);
 		gameLogo = new JLabel(iconAlien);
 		startGame = new JButton("Start Game");
-		box = new BoxLayout(startContent, BoxLayout.Y_AXIS);
+		
+		startGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				startFrame.setVisible(false);
+				gameFrame.setVisible(true);
+			}	
+		});
 		
 		gameName.setAlignmentX(Component.CENTER_ALIGNMENT);
 		gameLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		startGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
-		startContent.setLayout(box);
-		startContent.setBorder(new EmptyBorder(new Insets(20, 20, 20, 20)));
+		startContent.setLayout(new BoxLayout(startContent, BoxLayout.Y_AXIS));
 		startContent.add(gameName);
+		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
 		startContent.add(gameLogo);
+		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
 		startContent.add(startGame);
 		startFrame.add(startContent);
-		startFrame.pack();
 		
 		Timer t = new Timer(25, new ActionListener() {
 			int x = 1;
@@ -104,6 +117,34 @@ public class View implements ActionListener, ImageObserver {
 			}
 		});
 		t.start();
+	}
+	
+	private void gameWindow() {
+		gameFrame = new JFrame("Space Invaders");
+		gameFrame.setSize(600, 600);
+		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gameFrame.setBackground(new Color(0, 0, 255));
+		gameFrame.setVisible(false);
+		gameFrame.setResizable(false);
+		gameFrame.setLayout(new BorderLayout());
+		
+		gameContent = new JPanel();
+		infoContent = new JPanel();
+		playerScore = new JLabel("   Score   ");
+		playerLives = new JLabel("   Lives   ");
+		
+		infoContent.setLayout(new BoxLayout(infoContent, BoxLayout.X_AXIS));
+		infoContent.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		playerScore.setBorder(BorderFactory.createTitledBorder("SCORE"));
+		playerLives.setBorder(BorderFactory.createTitledBorder("LIVES"));
+		playerScore.setAlignmentX(Component.LEFT_ALIGNMENT);
+		playerLives.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		
+		infoContent.add(playerScore);
+		infoContent.add(Box.createHorizontalGlue());
+		infoContent.add(playerLives);
+		gameFrame.add(infoContent, BorderLayout.NORTH);
+		gameFrame.add(gameContent, BorderLayout.CENTER);
 	}
 
 	@Override
