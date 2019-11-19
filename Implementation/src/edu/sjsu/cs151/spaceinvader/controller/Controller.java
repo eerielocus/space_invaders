@@ -16,7 +16,7 @@ public class Controller implements GameInterface {
 	@Override
 	public void initGame() throws InterruptedException {
 		view.start();
-		initCreation();
+		//initCreation();
 	}
 
 	@Override

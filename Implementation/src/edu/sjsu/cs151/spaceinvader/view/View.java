@@ -53,13 +53,14 @@ public class View implements ActionListener, ImageObserver {
 	 * game name, icon, and start button.
 	 */
 	private void startWindow() {
+		
 		startFrame = new JFrame("Space Invaders");
 		startFrame.setSize(600, 600);
 		startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		startFrame.setBackground(new Color(0, 0, 255));
-		startFrame.setVisible(true);
-		startFrame.setResizable(false);
 		
+		startFrame.setResizable(false);
+
 		startContent = new JPanel();
 		gameName = new JLabel(logo);
 		gameLogo = new JLabel(iconAlien);
@@ -83,6 +84,8 @@ public class View implements ActionListener, ImageObserver {
 		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
 		startContent.add(startGame);
 		startFrame.add(startContent);
+		
+		startFrame.setVisible(true);
 		
 		Timer t = new Timer(25, new ActionListener() {
 			int x = 1;
@@ -120,6 +123,7 @@ public class View implements ActionListener, ImageObserver {
 	}
 	
 	private void gameWindow() {
+		
 		gameFrame = new JFrame("Space Invaders");
 		gameFrame.setSize(600, 600);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,6 +131,7 @@ public class View implements ActionListener, ImageObserver {
 		gameFrame.setVisible(false);
 		gameFrame.setResizable(false);
 		gameFrame.setLayout(new BorderLayout());
+		
 		
 		gameContent = new JPanel();
 		infoContent = new JPanel();
@@ -143,15 +148,77 @@ public class View implements ActionListener, ImageObserver {
 		infoContent.add(playerScore);
 		infoContent.add(Box.createHorizontalGlue());
 		infoContent.add(playerLives);
+	
 		gameFrame.add(infoContent, BorderLayout.NORTH);
 		gameFrame.add(gameContent, BorderLayout.CENTER);
+	
+		drawPlayer();
+	}
+	
+	
+	
+	private void drawPlayer() {
+
+		 MoveableShape logoPlayer = new PlayerShape( 5 , 2 , 100);
+		 ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 200, 500);
+		 JLabel payer = new JLabel(iconPlayer);
+		 gameContent.add(payer);
+		
+		
+	}
+	private void drawShot() {
+		
+		/*MoveableShape logoShot = new PlayerShape( 5 , 2 , 100);
+		ShapeIcon iconShot = new ShapeIcon(logoShot, 200, 500);
+		JLabel shot = new JLabel(iconShot);
+		gameContent.add(shot);*/
+		
+	}
+	private void playerMoved() {
+		
+		KeyListerner detectArrowPressed = new KeyListerner();
+		
+	
+		
+	}
+	
+	private class KeyListerner extends KeyAdapter{
+		
+		private int x;
+		private int y;
+		
+			
+		public KeyListerner(){
+			
+		}
+		public void playerPos(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		@Override
+	    public void keyReleased(KeyEvent e) {
+
+        }
+
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+	        	
+	    }		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		//gameContent.repaint();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-
+	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-
+	
+	/*
 	public void repaint(Graphics g) {
 
 		Graphics2D g2 = (Graphics2D) g;
@@ -178,6 +245,7 @@ public class View implements ActionListener, ImageObserver {
 			plane1.x -= speed;
 		}
 	}
+	/*
 
 	public Image getImage(String path) {
 		Image tempImage = null;
@@ -215,6 +283,6 @@ public class View implements ActionListener, ImageObserver {
 	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
 		// TODO Auto-generated method stub
 		return false;
-	}
+	}*/
 
 }
