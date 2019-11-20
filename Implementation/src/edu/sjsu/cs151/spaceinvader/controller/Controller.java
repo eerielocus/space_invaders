@@ -6,8 +6,7 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 
 public class Controller implements GameInterface {
 
-	View view = new View();
-
+	View view;
 	/**
 	 * Model
 	 * 
@@ -15,8 +14,7 @@ public class Controller implements GameInterface {
 	 */
 	@Override
 	public void initGame() throws InterruptedException {
-		view.start();
-		//initCreation();
+		initCreation();
 	}
 
 	@Override
@@ -35,7 +33,7 @@ public class Controller implements GameInterface {
 	protected void initCreation() {
 		Board.getInstance().createAliens();
 		Board.getInstance().createPlayer();
-
+		view = new View(Board.getInstance());
 	}
 
 	protected void initMovements() throws InterruptedException {
