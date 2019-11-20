@@ -3,7 +3,10 @@ package edu.sjsu.cs151.spaceinvader.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.*;
 
@@ -14,12 +17,13 @@ public class View implements ActionListener {
 
 	private JFrame startFrame;   // Start screen frame.
 	private JFrame gameFrame;    // Game screen frame.
+	private JFrame scoreFrame;
 	
 	private JPanel startContent; // Start screen panel.
 	private JPanel gameContent = new JPanel();  // Game screen panel.
 	private JPanel infoContent = new JPanel();  // Score/lives panel during game.
-	private JPanel scoreContent; // Score screen panel.
-	private JPanel aliens;       //
+	private JPanel scoreContent = new JPanel(); // Score screen panel.
+	private JPanel aliens;
 	
 	private JLabel gameName;     // Start screen game title.
 	private JLabel gameLogo;     // Start screen alien logo.
@@ -28,8 +32,11 @@ public class View implements ActionListener {
 	private JLabel player;
 	private JLabel playerShot;
 	private JLabel alienBomb;
+	private JLabel scoreListName;
 	
 	private JButton startGame;
+	private JButton exitGame;
+	private JButton retGame;
 
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
@@ -45,6 +52,7 @@ public class View implements ActionListener {
 	public void start() {
 		startWindow();
 		gameWindow();
+		scoreWindow();
 	}
 	
 	/**
@@ -128,13 +136,21 @@ public class View implements ActionListener {
 		gameFrame = new JFrame("Space Invaders");
 		gameFrame.setSize(600, 600);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		gameFrame.setBackground(new Color(0, 0, 255));
+		gameFrame.setBackground(Color.black);
 		gameFrame.setVisible(false);
 		gameFrame.setResizable(false);
 		gameFrame.setLayout(new BorderLayout());
 		
 		playerScore = new JLabel("   00000   ");
 		playerLives = new JLabel("   00000   ");
+		exitGame = new JButton("Exit Game");
+		
+		exitGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gameFrame.setVisible(false);
+				scoreFrame.setVisible(true);
+			}	
+		});
 		
 		gameContent.setBackground(Color.black);
 		gameContent.setLayout(new BorderLayout());
@@ -150,6 +166,8 @@ public class View implements ActionListener {
 		
 		infoContent.add(playerScore);
 		infoContent.add(Box.createHorizontalGlue());
+		infoContent.add(exitGame);
+		infoContent.add(Box.createHorizontalGlue());
 		infoContent.add(playerLives);
 		
 		gameFrame.add(infoContent, BorderLayout.NORTH);
@@ -157,6 +175,39 @@ public class View implements ActionListener {
 
 		drawAliens();
 		drawPlayer();
+	}
+	
+	private void scoreWindow() {
+		scoreFrame = new JFrame("Space Invaders");
+		scoreFrame.setSize(600, 600);
+		scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		scoreFrame.setBackground(Color.black);
+		scoreFrame.setVisible(false);
+		scoreFrame.setResizable(false);
+		scoreFrame.add(scoreContent);
+
+		retGame = new JButton("Return to Start");
+		retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		retGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				scoreFrame.setVisible(false);
+				startFrame.setVisible(true);
+			}	
+		});
+		
+		JLabel scoreTitle = new JLabel("HIGH SCORES");
+		scoreTitle.setForeground(Color.white);
+		scoreTitle.setFont(new Font("Serif", Font.BOLD, 32));
+		scoreTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		scoreContent.setLayout(new BoxLayout(scoreContent, BoxLayout.Y_AXIS));
+		scoreContent.setBackground(Color.black);
+		scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
+		scoreContent.add(scoreTitle);
+		drawScoreboard();
+		scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
+		scoreContent.add(retGame);
+		scoreContent.add(Box.createRigidArea(new Dimension(50, 30)));
 	}
 	/**
 	 * Draw player onto gameContent panel.
@@ -186,6 +237,36 @@ public class View implements ActionListener {
 		}
 		container.add(aliens);
 		gameContent.add(container, BorderLayout.NORTH);
+	}
+	/**
+	 * Score board window that takes data from file provided in Model package and
+	 * displays them on a grid.
+	 */
+	private void drawScoreboard() {
+		File file = new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt");
+		JPanel scoreboard = new JPanel();
+		scoreboard.setLayout(new GridLayout(7, 2, 5, 5));
+		scoreboard.setBackground(Color.black);
+		try {
+			Scanner scanner = new Scanner(file);
+			while (scanner.hasNextLine()) {
+				String name = scanner.nextLine();
+				JLabel scoreName = new JLabel(name);
+				String score = scanner.nextLine();
+				JLabel scoreNum = new JLabel(score);
+				scoreName.setForeground(Color.white);
+				scoreNum.setForeground(Color.white);
+				scoreName.setFont(new Font("Serif", Font.BOLD, 16));
+				scoreNum.setFont(new Font("Serif", Font.BOLD, 16));
+				scoreName.setHorizontalAlignment(SwingConstants.RIGHT);
+				scoreboard.add(scoreName);
+				scoreboard.add(scoreNum);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		scoreboard.setAlignmentX(Component.CENTER_ALIGNMENT);
+		scoreContent.add(scoreboard);
 	}
 
 	@Override
