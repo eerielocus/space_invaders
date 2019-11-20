@@ -19,6 +19,7 @@ public class View implements ActionListener, ImageObserver {
 	private JPanel gameContent;  // Game screen panel.
 	private JPanel infoContent;  // Score/lives panel during game.
 	private JPanel scoreContent; // Score screen panel.
+	private Panel panel = new Panel();
 	
 	private JLabel gameName;     // Start screen game title.
 	private JLabel gameLogo;     // Start screen alien logo.
@@ -28,6 +29,7 @@ public class View implements ActionListener, ImageObserver {
 	private JLabel playerShot;
 	private JLabel alienBomb;
 	private JLabel[][] aliens;
+
 	
 	private JButton startGame;
 
@@ -64,6 +66,7 @@ public class View implements ActionListener, ImageObserver {
 		startContent = new JPanel();
 		gameName = new JLabel(logo);
 		gameLogo = new JLabel(iconAlien);
+		
 		startGame = new JButton("Start Game");
 		
 		startGame.addActionListener(new ActionListener() {
@@ -132,7 +135,6 @@ public class View implements ActionListener, ImageObserver {
 		gameFrame.setResizable(false);
 		gameFrame.setLayout(new BorderLayout());
 		
-		
 		gameContent = new JPanel();
 		infoContent = new JPanel();
 		playerScore = new JLabel("   Score   ");
@@ -151,34 +153,29 @@ public class View implements ActionListener, ImageObserver {
 	
 		gameFrame.add(infoContent, BorderLayout.NORTH);
 		gameFrame.add(gameContent, BorderLayout.CENTER);
-	
+		
+		
+		
+		gameContent.setLayout(new BorderLayout());
+		drawBackground();
 		drawPlayer();
 	}
-	
-	
-	
+	private void drawBackground() {
+		
+		gameContent.setBackground(Color.darkGray); 
+		
+	}
 	private void drawPlayer() {
+		 MoveableShape logoPlayer = new PlayerShape( 60 , 2 , 100);
+		 ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 50, 70);
+		 player = new JLabel(iconPlayer);
+		 gameContent.add(player, BorderLayout.PAGE_END);
+	}
 
-		 MoveableShape logoPlayer = new PlayerShape( 5 , 2 , 100);
-		 ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 200, 500);
-		 JLabel payer = new JLabel(iconPlayer);
-		 gameContent.add(payer);
-		
-		
-	}
-	private void drawShot() {
-		
-		/*MoveableShape logoShot = new PlayerShape( 5 , 2 , 100);
-		ShapeIcon iconShot = new ShapeIcon(logoShot, 200, 500);
-		JLabel shot = new JLabel(iconShot);
-		gameContent.add(shot);*/
-		
-	}
+	//Implementaion with the Model class
 	private void playerMoved() {
 		
 		KeyListerner detectArrowPressed = new KeyListerner();
-		
-	
 		
 	}
 	
@@ -206,11 +203,7 @@ public class View implements ActionListener, ImageObserver {
 	        	
 	    }		
 	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		//gameContent.repaint();
-	}
+	
 
 	@Override
 	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
