@@ -29,7 +29,6 @@ public class View implements ActionListener, ImageObserver {
 	private JLabel playerShot;
 	private JLabel alienBomb;
 	private JLabel[][] aliens;
-
 	
 	private JButton startGame;
 
@@ -166,7 +165,7 @@ public class View implements ActionListener, ImageObserver {
 		
 	}
 	private void drawPlayer() {
-		 MoveableShape logoPlayer = new PlayerShape( 60 , 2 , 100);
+		 MoveableShape logoPlayer = new PlayerShape( 60 , 2 , 40);
 		 ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 50, 70);
 		 player = new JLabel(iconPlayer);
 		 gameContent.add(player, BorderLayout.PAGE_END);
@@ -209,6 +208,12 @@ public class View implements ActionListener, ImageObserver {
 	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/*
