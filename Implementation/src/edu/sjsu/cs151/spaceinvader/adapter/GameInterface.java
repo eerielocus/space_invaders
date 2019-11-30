@@ -1,9 +1,10 @@
 package edu.sjsu.cs151.spaceinvader.adapter;
-public interface GameInterface {
+
+public interface GameInterface extends Runnable{
 	
 	public static final int BOARD_WIDTH = 10;
     public static final int BOARD_HEIGHT = 20;
-    public static final int THREAD_SLEEP_TIME = 850;
+    public static final int THREAD_SLEEP_TIME = 800;
     public static final int GROUND = 290;
     public static final int BOMB_HEIGHT = 5;
     public static final int ALIEN_HEIGHT = 12;
@@ -23,4 +24,5 @@ public interface GameInterface {
 	public void initScreen();
 	public void start() throws InterruptedException;
 	public void exit();
+	
 }

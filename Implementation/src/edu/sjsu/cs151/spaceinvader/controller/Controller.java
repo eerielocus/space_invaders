@@ -29,6 +29,12 @@ public class Controller implements GameInterface {
 	@Override
 	public void exit() {
 	}
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	protected void initCreation() {
 		Board.getInstance().createAliens();
