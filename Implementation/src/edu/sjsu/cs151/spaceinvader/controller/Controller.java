@@ -1,12 +1,24 @@
 package edu.sjsu.cs151.spaceinvader.controller;
 
+import java.util.concurrent.BlockingQueue;
+
 import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
 import edu.sjsu.cs151.spaceinvader.model.*;
+import edu.sjsu.cs151.spaceinvader.view.Message;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
-public class Controller implements GameInterface {
-
-	View view = new View();
+public class Controller implements GameInterface, Valve{
+	
+	private BlockingQueue<Message> messageQueue;
+	private View view;
+	private Board board;
+	
+	public Controller (View view, Board board,BlockingQueue<Message> messageQueue ) {
+		
+		this.view = view;
+		this.messageQueue = messageQueue;
+		this.board = board;
+	}
 	/**
 	 * Model
 	 * 
@@ -15,7 +27,8 @@ public class Controller implements GameInterface {
 	@Override
 	public void initGame() throws InterruptedException {
 		System.out.println("starting UI...");
-		view.start();
+		view.initQueue(messageQueue);
+		view.dispose();
 		//initCreation();
 	}
 

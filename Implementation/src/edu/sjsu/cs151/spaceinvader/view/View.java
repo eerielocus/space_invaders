@@ -1,3 +1,88 @@
+package edu.sjsu.cs151.spaceinvader.view;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
+import edu.sjsu.cs151.spaceinvader.view.messages.Gameplay;
+import edu.sjsu.cs151.spaceinvader.view.messages.MessageAdapter;
+import edu.sjsu.cs151.spaceinvader.view.messages.NewGame;
+import edu.sjsu.cs151.spaceinvader.view.messages.ScoreBoard;
+import edu.sjsu.cs151.spaceinvader.view.messages.StartWindow;
+
+
+public class View implements Message{
+	
+	private static View view = new View();
+	protected Frame gameFrame = new Frame();
+	private BlockingQueue<Message> queue;
+    ArrayList<MessageAdapter> message = new ArrayList<MessageAdapter>();
+	
+	//testing will use the variable in GameInterface
+	
+	public void initQueue(BlockingQueue<Message> queue) {
+		this.queue = queue;
+	}
+	
+	public void dispose() throws InterruptedException {
+		System.out.println("test");
+		startWindow("Start Window");
+		gamePlay("Start Gameplay");
+		scoreBoard("Socre Board");
+	}		
+	
+	public static View getInstance() {
+		return view;
+	}
+	public BlockingQueue<Message> getQueue() {
+		return this.queue;
+	}
+	@Override
+	public void message(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void newGame(String message) {
+		Message newGame = new NewGame();
+		queue.add(newGame);
+	}
+
+	@Override
+	public void startWindow(String message) throws InterruptedException {
+		SwingUtilities.invokeLater(
+			new Runnable(){
+			   public void run(){
+			       queue.add(new StartWindow());
+			    }
+			});
+	}
+	@Override
+	public void gamePlay(String message) {
+		try {
+			queue.add(new Gameplay());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public void scoreBoard(String message) {
+		try {
+			queue.add(new ScoreBoard());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+/*
  package edu.sjsu.cs151.spaceinvader.view;
 import java.awt.*;
 import java.awt.event.*;
@@ -284,6 +369,7 @@ public class View implements ActionListener, ImageObserver{
 	//testing to move tank
 	private int destination = 10;
 	private boolean dir = true;
+	
 	public void repaint(Graphics g) {
 		
 		if (plane == null) {
@@ -371,6 +457,7 @@ public class View implements ActionListener, ImageObserver{
 	
 
 }
+
 
 
 
@@ -592,7 +679,7 @@ public class View implements ActionListener {
 	/**
 	 * Draw player onto gameContent panel.
 	 */
-	private void drawPlayer() {
+	/*private void drawPlayer() {
 		MoveableShape logoPlayer = new PlayerShape(60, 2, 40);
 		ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 50, 70);
 		player = new JLabel(iconPlayer, JLabel.CENTER);
@@ -600,7 +687,7 @@ public class View implements ActionListener {
 	}
 	/**
 	 * Draw aliens onto gameContent panel.
-	 */
+	 *
 	private void drawAliens() {
 		// Temporary until game implementation.
 		JPanel container = new JPanel();
