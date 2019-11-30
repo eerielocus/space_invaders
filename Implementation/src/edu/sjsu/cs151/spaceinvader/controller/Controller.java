@@ -28,6 +28,7 @@ public class Controller implements GameInterface, Valve{
 	public void initGame() throws InterruptedException {
 		System.out.println("starting UI...");
 		view.initQueue(messageQueue);
+		
 		view.dispose();
 		//initCreation();
 	}

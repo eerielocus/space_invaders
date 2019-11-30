@@ -20,7 +20,7 @@ public class SpaceInvader {
 		GameInterface gameInt = new Controller(view, board, queue);
 		
 		gameInt.initGame();
-		view.dispose();
+		//view.dispose();
 		queue.clear();
 		//gameInt.start();
 	}
