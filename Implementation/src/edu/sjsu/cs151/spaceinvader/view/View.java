@@ -284,9 +284,6 @@ public class View implements ActionListener, ImageObserver{
 	//testing to move tank
 	private int destination = 10;
 	private boolean dir = true;
-	
-	//here the moving happens, gotta use the Sprite 
-	
 	public void repaint(Graphics g) {
 		
 		if (plane == null) {
