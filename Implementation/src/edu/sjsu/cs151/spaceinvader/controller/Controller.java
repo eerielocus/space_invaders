@@ -1,70 +1,49 @@
 package edu.sjsu.cs151.spaceinvader.controller;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
-import edu.sjsu.cs151.spaceinvader.adapter.GameInterface;
+import edu.sjsu.cs151.spaceinvader.controller.Valve.ValveResponse;
+import edu.sjsu.cs151.spaceinvader.message.Message;
 import edu.sjsu.cs151.spaceinvader.model.*;
-import edu.sjsu.cs151.spaceinvader.view.Message;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
-public class Controller implements GameInterface, Valve{
-	
-	private BlockingQueue<Message> messageQueue;
+public class Controller {
+
 	private View view;
 	private Board board;
+	private BlockingQueue<Message> queue;
+	private ArrayList<Valve> valves = new ArrayList<>();
 	
-	public Controller (View view, Board board,BlockingQueue<Message> messageQueue ) {
-		
+	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
-		this.messageQueue = messageQueue;
 		this.board = board;
-	}
-	/**
-	 * Model
-	 * 
-	 * @throws InterruptedException
-	 */
-	@Override
-	public void initGame() throws InterruptedException {
-		System.out.println("starting UI...");
-		view.initQueue(messageQueue);
-		
-		view.dispose();
-		//initCreation();
-	}
-
-	@Override
-	public void initScreen() {
+		this.queue = queue;
+		startUp();
 	}
 	
-	@Override
-	public void start() throws InterruptedException {
-		initMovements();
+	private void startUp() {
+		view.start(queue);
+		valves.add(new KeyPressedValve(view, board));
+		valves.add(new KeyReleasedValve(view, board));
+		valves.add(new NewGameValve(view, board));
+		valves.add(new ViewUpdateValve(view, board));
+		System.out.println("Controller started.");
 	}
-	@Override
-	public void exit() {
+	
+	public void mainLoop() throws Exception {
+		ValveResponse response = ValveResponse.EXECUTED;
+		Message message = null;
+		while (response != ValveResponse.FINISH) {
+			try {
+				message = (Message) queue.take();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			for (Valve valve : valves) {
+				response = valve.execute(message);
+				if (response != ValveResponse.MISS) { break; }
+			}
+		}
 	}
-
-	protected void initCreation() {
-		Board.getInstance().createAliens();
-		Board.getInstance().createPlayer();
-		//view = new View(Board.getInstance());
-	}
-
-	protected void initMovements() throws InterruptedException {
-		Board.getInstance().initDummyMove();
-		// Board.getInstance().aliensMove();
-		// Board.getInstance().playerMove();
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**********
-	 * View *
-	 **********/
-
 }

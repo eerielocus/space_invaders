@@ -9,9 +9,7 @@ public class Shot extends Sprite {
 	/**
 	 * Constructor method for Shot.
 	 */
-	public Shot() {
-		
-	}
+	public Shot() { }
 	
 	public Shot(int x, int y) {
 		initShot(x, y);

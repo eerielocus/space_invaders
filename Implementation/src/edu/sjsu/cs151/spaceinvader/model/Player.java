@@ -7,23 +7,22 @@ import java.awt.event.KeyEvent;
  *
  */
 public class Player extends Sprite {
-	private int width;
-	private final int START_Y = 300;
-	private final int START_X = 200;
+	private final int START_Y = 520;
+	private final int START_X = 520;
 	/**
 	 * Constructor method for Player.
 	 */
-	public Player() {
-		createPlayer();
+	protected Player() {
+		initPlayer();
 	}
 	/**
 	 * This method sets the correct image and start position for player.
 	 */
-	public void createPlayer() {
-		width = 5; // Placeholder until implementation of graphics.
+	protected void initPlayer() {
 		setX(START_X);
 		setY(START_Y);
 	}
+	
 	/**
 	 * This method sets the movement of the player.
 	 */

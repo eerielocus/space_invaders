@@ -10,27 +10,13 @@ public class Sprite
 	protected int x;
 	protected int y;
 	protected int move_x;
-	private boolean visible = true;
+	private boolean visible = false;
 	private boolean destroy = false;
 	
 	/**
 	 * Constructor method for Sprite.
 	 */
-	public Sprite() {
-		
-	}
-	/**
-	 * This method is to set the image of the object.
-	 */
-	public void setImage() {
-		
-	}
-	/**
-	 * This method is to get the image of the object.
-	 */
-	public void getImage() {
-		
-	}
+	public Sprite() { }
 	/**
 	 * This method is to return whether the object is visible or not. (destroyed or not)
 	 */
@@ -40,8 +26,8 @@ public class Sprite
 	/**
 	 * This method is to set the visibility of object.
 	 */
-	public void setVisible() {
-		this.visible = true;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 	/**
 	 * This method is to set the object as dead.

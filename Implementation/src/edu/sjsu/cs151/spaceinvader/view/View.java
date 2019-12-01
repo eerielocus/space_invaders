@@ -1,546 +1,105 @@
 package edu.sjsu.cs151.spaceinvader.view;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import edu.sjsu.cs151.spaceinvader.view.messages.Gameplay;
-import edu.sjsu.cs151.spaceinvader.view.messages.MessageAdapter;
-import edu.sjsu.cs151.spaceinvader.view.messages.NewGame;
-import edu.sjsu.cs151.spaceinvader.view.messages.ScoreBoard;
-import edu.sjsu.cs151.spaceinvader.view.messages.StartWindow;
+import edu.sjsu.cs151.spaceinvader.message.KeyPressedMessage;
+import edu.sjsu.cs151.spaceinvader.message.KeyReleasedMessage;
+import edu.sjsu.cs151.spaceinvader.message.Message;
+import edu.sjsu.cs151.spaceinvader.message.NewGameMessage;
+import edu.sjsu.cs151.spaceinvader.message.ViewUpdateMessage;
 
 
-public class View implements Message{
-	
-	private static View view = new View();
-	protected Frame gameFrame = new Frame();
+public class View extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
 	private BlockingQueue<Message> queue;
-    ArrayList<MessageAdapter> message = new ArrayList<MessageAdapter>();
 	
-	//testing will use the variable in GameInterface
-	
-	public void initQueue(BlockingQueue<Message> queue) {
-		this.queue = queue;
-	}
-	
-	public void dispose() throws InterruptedException {
-		System.out.println("test");
-		startWindow("Start Window");
-		gamePlay("Start Gameplay");
-		scoreBoard("Socre Board");
-	}		
-	
-	public static View getInstance() {
-		return view;
-	}
-	public BlockingQueue<Message> getQueue() {
-		return this.queue;
-	}
-	@Override
-	public void message(String message) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void newGame(String message) {
-		Message newGame = new NewGame();
-		queue.add(newGame);
-	}
-
-	@Override
-	public void startWindow(String message) throws InterruptedException {
-		SwingUtilities.invokeLater(
-			new Runnable(){
-			   public void run(){
-			       queue.add(new StartWindow());
-			    }
-			});
-	}
-	@Override
-	public void gamePlay(String message) {
-		try {
-			queue.add(new Gameplay());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	@Override
-	public void scoreBoard(String message) {
-		try {
-			queue.add(new ScoreBoard());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-}
-/*
- package edu.sjsu.cs151.spaceinvader.view;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-
-public class View implements ActionListener, ImageObserver{
-	
-	private static View view = new View();
-	
-	private final String path = "tank.gif";
-	
-	
-	private MaindFrame startFrame = new MaindFrame();    // Start screen frame.
-	private MaindFrame gameFrame =  new MaindFrame();    // Game screen frame.
-	private MaindFrame scoreFrame =  new MaindFrame();
-	
-	private JPanel startContent =  new Panel(); // Start screen panel.
-	private JPanel gameContent = new Panel();  // Game screen panel.
-	private JPanel infoContent = new Panel();  // Score/lives panel during game.
-	private JPanel scoreContent = new Panel(); // Score screen panel.
-	private JPanel aliens = new Panel();
-	
-	
-	private JLabel gameName;     // Start screen game title.
-	private JLabel gameLogo;     // Start screen alien logo.
-	private JLabel playerScore;
-	private JLabel playerLives;
-	
-	private JLabel player;
-	private JLabel playerShot;
-	private JLabel alienBomb;
-	private JLabel scoreListName;
-	
-	private JButton startGame;
-	private JButton exitGame;
-	private JButton retGame;
-	
-	
-	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
-	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
-	private ImageIcon logo = new ImageIcon("title.gif");
-	
-	private RectangleImage plane = null;
-	private RectangleImage fire = null;
-	private RectangleImage exhaust = null;
-	
-	//testing will use the variable in GameInterface
-	private final int HEIGHT = 500;
-	private final int WIDTH = 500;
-	private final int speed = 5;	
-	
-	
-	private Timer timer = new Timer(20, this);
-	
-	public void start() {
-		startFrame.startWindow();
-		gameFrame.gameWindow();
-		scoreFrame.scoreWindow();
-	}
-
-	@SuppressWarnings("unused")
-	private class Panel extends JPanel {
-
-		private static final long serialVersionUID = 1L;
-		@Override
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			view.repaint(g);
-		}
-	}
-	
-	@SuppressWarnings("unused")
-	private class MaindFrame extends JFrame{
-		
-		private static final long serialVersionUID = 1L;
-		
-		public MaindFrame() {}
-		
-		private void startWindow() {
-
-			startFrame.setSize(600, 600);
-			startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
-			startFrame.setResizable(false);
-			startFrame.setTitle("Space Invader");
-			
-			startContent = new JPanel();
-			startContent.setBackground(Color.black);
-			
-			gameName = new JLabel(logo);
-			gameLogo = new JLabel(iconAlien);
-			startGame = new JButton("Start Game");
-			
-			startGame.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					startFrame.setVisible(false);
-					gameFrame.setVisible(true);
-				}	
-			});
-			
-			gameName.setAlignmentX(Component.CENTER_ALIGNMENT);
-			gameLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
-			startGame.setAlignmentX(Component.CENTER_ALIGNMENT);
-			
-			startContent.setLayout(new BoxLayout(startContent, BoxLayout.Y_AXIS));
-			startContent.add(Box.createRigidArea(new Dimension(50, 50)));
-			startContent.add(gameName);
-			startContent.add(Box.createRigidArea(new Dimension(50, 50)));
-			startContent.add(gameLogo);
-			startContent.add(Box.createRigidArea(new Dimension(50, 50)));
-			startContent.add(startGame);
-			startFrame.add(startContent);
-			startFrame.setVisible(true);
-			
-			// Animation of start screen alien logo.
-			Timer t = new Timer(15, new ActionListener() {
-				
-				int x = 1;
-				int y = 1;
-				int vert = 1;
-				int dir = 1;
-				boolean direction = false;
-
-				public void actionPerformed(ActionEvent event) {
-					if (x == 1) { direction = false; } 
-					else if (x == 250) { direction = true; }
-
-					if (vert == 1) { 
-						y = 1; 
-						dir = 1;
-					} else if (vert == 20) {
-						y = -1; 
-						dir = -1;
-					}
-					
-					vert += dir;
-					logoAlien.repaint(direction);
-					
-					if (!direction) {
-						logoAlien.translate(1, y);
-						x += 1;
-					} else {
-						logoAlien.translate(-1, y);
-						x -= 1;
-					}
-					
-					gameLogo.repaint();
-				}
-			});
-			t.start();	
-		}
-		
-		
-		public  void gameWindow() {
-			
-			gameFrame.setSize(600, 600);
-			gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			gameFrame.setBackground(Color.black);
-			gameFrame.setVisible(false);
-			gameFrame.setResizable(false);
-			gameFrame.setLayout(new BorderLayout());
-			
-			playerScore = new JLabel("   00000   ");
-			playerLives = new JLabel("   00000   ");
-			exitGame = new JButton("Exit Game");
-			
-			exitGame.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					gameFrame.setVisible(false);
-					scoreFrame.setVisible(true);
-				}	
-			});
-			
-			gameContent.setBackground(Color.cyan);
-			gameContent.setLayout(new BorderLayout());
-			
-			infoContent.setBackground(Color.white);
-			infoContent.setLayout(new BoxLayout(infoContent, BoxLayout.X_AXIS));
-			infoContent.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			
-			playerScore.setBorder(BorderFactory.createTitledBorder("SCORE"));
-			playerLives.setBorder(BorderFactory.createTitledBorder("LIVES"));
-			playerScore.setAlignmentX(Component.LEFT_ALIGNMENT);
-			playerLives.setAlignmentX(Component.RIGHT_ALIGNMENT);
-			
-			infoContent.add(playerScore);
-			infoContent.add(Box.createHorizontalGlue());
-			infoContent.add(exitGame);
-			infoContent.add(Box.createHorizontalGlue());
-			infoContent.add(playerLives);
-			
-			gameFrame.add(infoContent, BorderLayout.NORTH);
-			gameFrame.add(gameContent, BorderLayout.CENTER);
-			gameFrame.setBackground(Color.cyan);
-			timer.start();
-			drawAliens();
-			
-		}
-		public void reset() {
-			
-		}
-		
-		public void scoreWindow() {
-			
-			//scoreFrame = new JFrame("Space Invaders");
-			
-			scoreFrame.setSize(600, 600);
-			scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			scoreFrame.setBackground(Color.black);
-			scoreFrame.setVisible(false);
-			scoreFrame.setResizable(false);
-			scoreFrame.add(scoreContent);
-
-			retGame = new JButton("Return to Start");
-			retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
-			retGame.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					scoreFrame.setVisible(false);
-					startFrame.setVisible(true);
-					
-				}	
-			});
-			
-			JLabel scoreTitle = new JLabel("HIGH SCORES");
-			scoreTitle.setForeground(Color.white);
-			scoreTitle.setFont(new Font("Serif", Font.BOLD, 32));
-			scoreTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-			
-			scoreContent.setLayout(new BoxLayout(scoreContent, BoxLayout.Y_AXIS));
-			scoreContent.setBackground(Color.black);
-			scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
-			scoreContent.add(scoreTitle);
-			drawScoreboard();
-			scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
-			scoreContent.add(retGame);
-			scoreContent.add(Box.createRigidArea(new Dimension(50, 30)));
-		}
-		
-		private void drawScoreboard() {
-			
-			File file = new File("scoreboard.txt");
-			JPanel scoreboard = new JPanel();
-			scoreboard.setLayout(new GridLayout(7, 2, 5, 5));
-			scoreboard.setBackground(Color.black);
-			try {
-				Scanner scanner = new Scanner(file);
-				while (scanner.hasNextLine()) {
-					String name = scanner.nextLine();
-					JLabel scoreName = new JLabel(name);
-					String score = scanner.nextLine();
-					JLabel scoreNum = new JLabel(score);
-					scoreName.setForeground(Color.white);
-					scoreNum.setForeground(Color.white);
-					scoreName.setFont(new Font("Serif", Font.BOLD, 16));
-					scoreNum.setFont(new Font("Serif", Font.BOLD, 16));
-					scoreName.setHorizontalAlignment(SwingConstants.RIGHT);
-					scoreboard.add(scoreName);
-					scoreboard.add(scoreNum);
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			scoreboard.setAlignmentX(Component.CENTER_ALIGNMENT);
-			scoreContent.add(scoreboard);
-		}
-	}
-	
-	
-	
-	@Override
-	public void actionPerformed(ActionEvent e){
-		//panel.repaint();
-		gameContent.repaint();
-	}
-	
-	
-	//testing to move tank
-	private int destination = 10;
-	private boolean dir = true;
-	
-	public void repaint(Graphics g) {
-		
-		if (plane == null) {
-			plane = new RectangleImage(600, 500, getImage(path));
-			exhaust = new RectangleImage(600, 520, getImage("exhaust.gif"));
-			System.out.println("Tank created...");
-		}
-		
-		g.setColor(Color.black);
-		g.fillRect(0, 40, 600, 600);
-		
-		
-		g.setColor(Color.green.darker().darker().darker());
-		g.fillRect(0, 500, 600, 50);
-		
-		
-		Graphics2D g2 = (Graphics2D)g;
-		plane.draw(g2, this); 
-		Graphics2D g1 = (Graphics2D)g;
-		exhaust.draw(g1, this);
-	
-		if(plane.getX() != destination ) {
-			if (dir) {
-				plane.setX(plane.getX() - speed);
-				exhaust.setX(plane.getX() - speed);
-			}
-			else {
-				plane.setX(plane.getX() + speed);
-				exhaust.setX(plane.getX() + speed);
-			}
-		}
-		else {
-			if (dir) {
-				destination = 550;
-				dir = false;
-			}
-			else {
-				destination = 10;
-				dir = true;
-			}	
-		}
-	}
-	private void drawAliens() {
-		// Temporary until game implementation.
-		JPanel container = new JPanel();
-		container.setOpaque(false);
-		
-		aliens = new JPanel();
-		aliens.setOpaque(false);
-		aliens.setLayout(new GridLayout(4, 7, 2, 2));
-		for (int i = 0; i < 28; i++) {
-			MoveableShape enemy = new AlienShape(0, 0, 40);
-			ShapeIcon enemyIcon = new ShapeIcon(enemy, 60, 40);
-			JLabel enemyLabel = new JLabel(enemyIcon);
-			aliens.add(enemyLabel);
-		}
-		container.add(aliens);
-		gameContent.add(container, BorderLayout.NORTH);
-	}
-	public Image getImage(String path) {
-		Image tempImage = null;
-		try {
-			File tempFile = new File(path);
-			if (tempFile.exists()) {
-				System.out.println("File Exist " + path);
-				tempImage = ImageIO.read(tempFile);
-			}
-			else {
-				System.out.println("File doesnt Exist");
-			}
-			
-		}catch (Exception e){
-			System.out.println("Cannot upload Image " + e.getMessage());
-		}
-		return tempImage;
-	}
-	public View getInstance() {
-		return view;
-	}
-	@Override
-	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-
-}
-
-
-
-
-
-/*
- * 
- * package edu.sjsu.cs151.spaceinvader.view;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
-
-import javax.swing.*;
-
-import edu.sjsu.cs151.spaceinvader.model.*;
-
-public class View implements ActionListener {
-	private Board board;
-
 	private JFrame startFrame;   // Start screen frame.
 	private JFrame gameFrame;    // Game screen frame.
 	private JFrame scoreFrame;
 	
 	private JPanel startContent; // Start screen panel.
-	private JPanel gameContent = new JPanel();  // Game screen panel.
-	private JPanel infoContent = new JPanel();  // Score/lives panel during game.
-	private JPanel scoreContent = new JPanel(); // Score screen panel.
-	private JPanel aliens;
+	private JPanel gameContent;  // Game screen panel.
+	private JPanel scoreContent; // Score screen panel.
 	
 	private JLabel gameName;     // Start screen game title.
 	private JLabel gameLogo;     // Start screen alien logo.
-	private JLabel playerScore;
-	private JLabel playerLives;
-	private JLabel player;
-	private JLabel playerShot;
-	private JLabel alienBomb;
-	private JLabel scoreListName;
 	
 	private JButton startGame;
 	private JButton exitGame;
 	private JButton retGame;
-
+	
+	// Alien sprite.
+	private ImageIcon enemy = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/alien.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+	private Image alien_img = enemy.getImage();
+	private MoveableImage aliens[][] = new MoveableImage[4][7];
+	
+	// Player sprite.
+	private ImageIcon tank = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/tank.gif").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
+	private Image player_img = tank.getImage();
+	private MoveableImage player = new MoveableImage(520, 520, player_img);
+	
+	// Player cannon shot sprite.
+	private ImageIcon fire = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/shot.png");
+	private Image shot_img = fire.getImage();
+	private MoveableImage shot;
+	
+	// For start screen animated alien.
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
 	private ImageIcon logo = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/title.gif");
 	
-	private GridBagConstraints con = new GridBagConstraints();
+	private boolean shotFired = false;
+	private boolean aliensCreated = false;
+	private Timer timer = new Timer(20, this);
 	
-	public View(Board board) {
-		this.board = board;
-		start();
+	public View() {
+		startFrame = new JFrame();
+		gameFrame =  new JFrame();
+		scoreFrame =  new JFrame();
+		
+		startContent =  new JPanel();
+		gameContent = new JPanel();
+		scoreContent = new JPanel();
 	}
-
-	public void start() {
+	
+	public void start(BlockingQueue<Message> queue) {
+		this.queue = queue;
 		startWindow();
 		gameWindow();
 		scoreWindow();
+		addListeners();
+
+		timer.start();
 	}
 	
-	/**
-	 * Start screen window, what the game initially opens with. Contains
-	 * game name, icon, and start button.
-	 *
 	private void startWindow() {
-		
-		startFrame = new JFrame("Space Invaders");
 		startFrame.setSize(600, 600);
 		startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		startFrame.setVisible(true);
+		
 		startFrame.setResizable(false);
+		startFrame.setTitle("Space Invader");
 		
 		startContent = new JPanel();
 		startContent.setBackground(Color.black);
+		
 		gameName = new JLabel(logo);
 		gameLogo = new JLabel(iconAlien);
 		startGame = new JButton("Start Game");
 		
 		startGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					queue.put(new NewGameMessage());
+				} catch (InterruptedException exception) {
+					exception.printStackTrace();
+				}
+				System.out.println("Sent.");
 				startFrame.setVisible(false);
 				gameFrame.setVisible(true);
 			}	
@@ -558,6 +117,7 @@ public class View implements ActionListener {
 		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
 		startContent.add(startGame);
 		startFrame.add(startContent);
+		startFrame.setVisible(true);
 		
 		// Animation of start screen alien logo.
 		Timer t = new Timer(15, new ActionListener() {
@@ -593,23 +153,16 @@ public class View implements ActionListener {
 				gameLogo.repaint();
 			}
 		});
-		t.start();
+		t.start();	
 	}
 	
-	/**
-	 * Game screen window, contains score and player lives and the game itself.
-	 *
-	private void gameWindow() {
-		gameFrame = new JFrame("Space Invaders");
+	public void gameWindow() {
 		gameFrame.setSize(600, 600);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameFrame.setBackground(Color.black);
 		gameFrame.setVisible(false);
 		gameFrame.setResizable(false);
-		gameFrame.setLayout(new BorderLayout());
 		
-		playerScore = new JLabel("   00000   ");
-		playerLives = new JLabel("   00000   ");
 		exitGame = new JButton("Exit Game");
 		
 		exitGame.addActionListener(new ActionListener() {
@@ -620,32 +173,12 @@ public class View implements ActionListener {
 		});
 		
 		gameContent.setBackground(Color.black);
-		gameContent.setLayout(new BorderLayout());
+		this.setBackground(Color.black);
 		
-		infoContent.setBackground(Color.white);
-		infoContent.setLayout(new BoxLayout(infoContent, BoxLayout.X_AXIS));
-		infoContent.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
-		playerScore.setBorder(BorderFactory.createTitledBorder("SCORE"));
-		playerLives.setBorder(BorderFactory.createTitledBorder("LIVES"));
-		playerScore.setAlignmentX(Component.LEFT_ALIGNMENT);
-		playerLives.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		
-		infoContent.add(playerScore);
-		infoContent.add(Box.createHorizontalGlue());
-		infoContent.add(exitGame);
-		infoContent.add(Box.createHorizontalGlue());
-		infoContent.add(playerLives);
-		
-		gameFrame.add(infoContent, BorderLayout.NORTH);
-		gameFrame.add(gameContent, BorderLayout.CENTER);
-
-		drawAliens();
-		drawPlayer();
+		gameFrame.add(this);
 	}
 	
-	private void scoreWindow() {
-		scoreFrame = new JFrame("Space Invaders");
+	public void scoreWindow() {
 		scoreFrame.setSize(600, 600);
 		scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		scoreFrame.setBackground(Color.black);
@@ -676,39 +209,7 @@ public class View implements ActionListener {
 		scoreContent.add(retGame);
 		scoreContent.add(Box.createRigidArea(new Dimension(50, 30)));
 	}
-	/**
-	 * Draw player onto gameContent panel.
-	 */
-	/*private void drawPlayer() {
-		MoveableShape logoPlayer = new PlayerShape(60, 2, 40);
-		ShapeIcon iconPlayer = new ShapeIcon(logoPlayer, 50, 70);
-		player = new JLabel(iconPlayer, JLabel.CENTER);
-		gameContent.add(player, BorderLayout.SOUTH);
-	}
-	/**
-	 * Draw aliens onto gameContent panel.
-	 *
-	private void drawAliens() {
-		// Temporary until game implementation.
-		JPanel container = new JPanel();
-		container.setOpaque(false);
-		
-		aliens = new JPanel();
-		aliens.setOpaque(false);
-		aliens.setLayout(new GridLayout(4, 7, 2, 2));
-		for (int i = 0; i < 28; i++) {
-			MoveableShape enemy = new AlienShape(0, 0, 40);
-			ShapeIcon enemyIcon = new ShapeIcon(enemy, 60, 40);
-			JLabel enemyLabel = new JLabel(enemyIcon);
-			aliens.add(enemyLabel);
-		}
-		container.add(aliens);
-		gameContent.add(container, BorderLayout.NORTH);
-	}
-	/**
-	 * Score board window that takes data from file provided in Model package and
-	 * displays them on a grid.
-	 *
+	
 	private void drawScoreboard() {
 		File file = new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt");
 		JPanel scoreboard = new JPanel();
@@ -735,14 +236,187 @@ public class View implements ActionListener {
 		scoreboard.setAlignmentX(Component.CENTER_ALIGNMENT);
 		scoreContent.add(scoreboard);
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		repaint();
+	}
+	
 
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		repaint(g);
+	}
+	
+	
+	//testing to move tank
+	private int player_x = 520;
+	private int alien_dest_x = 20;
+	private boolean alien_dir = true;
+	
+	
+	public void repaint(Graphics g) {
+		drawGameScore(g);
+		drawGameLives(g);
+		drawPlayer(g);
+		
+		if (this.aliensCreated) {
+			drawAliens(g);
+		}
+		if (this.shotFired) {
+			drawShot(g);
+		}
+		
+		try {
+			queue.put(new ViewUpdateMessage());
+		} catch (InterruptedException exception) {
+			exception.printStackTrace();
+		}
+	}
+	
+	private void drawPlayer(Graphics g) {
+		player.draw(g, this); 
+		player.setX(player_x);
+	}
+	
+	public void setPlayerPosition(int x) {
+		player_x = x;
+	}
+	
+	public void createShot() {
+		shot = new MoveableImage(50, 600, shot_img);
+	}
+	
+	private void drawShot(Graphics g) {
+		if (shot.getY() == player.getY()) { 
+			shot.setX(player.getX());
+			shot.setY(player.getY()); 
+			}
+		if (shot.getY() > 25) {
+			shot.draw(g, this);
+			shot.setY(shot.getY() - 10);
+		} else {
+			shot.setY(player.getY());
+			shot.setX(player.getX());
+			shotFired = false;
+			System.out.println("Shot done: " + shotFired);
+		}
+	}
+	
+	public void createAliens(int i, int j, int x, int y) {
+		aliens[i][j] = new MoveableImage(x, y, alien_img);;
+	}
+	
+	private void drawAliens(Graphics g) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 7; j++) {
+				aliens[i][j].draw(g, this);
+			}
+		}
+		
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 7; j++) {
+				if(aliens[i][j].getX() != alien_dest_x) {
+					if (alien_dir) {
+						aliens[i][j].setX(aliens[i][j].getX() - 1);
+					}
+					else {
+						aliens[i][j].setX(aliens[i][j].getX() + 1);
+					}
+				}
+				else {
+					if (alien_dir) {
+						for (int k = 0; k < 4; k++) {
+							for (int m = 0; m < 7; m++) {
+								aliens[k][m].setY(aliens[k][m].getY() + 20);
+							}
+						}
+						alien_dest_x = 530;
+						alien_dir = false;
+					}
+					else {
+						for (int k = 0; k < 4; k++) {
+							for (int m = 0; m < 7; m++) {
+								aliens[k][m].setY(aliens[k][m].getY() + 20);
+							}
+						}
+						alien_dest_x = 20;
+						alien_dir = true;
+					}	
+				}
+			}
+		}
+	}
+	
+	private void drawGameScore(Graphics g) {
+		g.setFont(new Font("Serif", Font.BOLD, 20));
+		g.setColor(Color.white);
+		g.drawString("SCORE: 0000", 10, 30);
+	}
+	
+	private void drawGameLives(Graphics g) {
+		g.setFont(new Font("Serif", Font.BOLD, 20));
+		g.setColor(Color.white);
+		g.drawString("LIVES: 0000", 460, 30);
+	}
+	
+	public void setShotFired(boolean flag) {
+		System.out.println("Shot set: " + flag);
+		this.shotFired = flag;
+	}
+	
+	public boolean getShotFired() {
+		return this.shotFired;
+	}
+	
+	public int getShot_x() {
+		System.out.println("X: " + shot.getX());
+		return shot.getX();
+	}
+	
+	public void setAliensCreated(boolean flag) {
+		this.aliensCreated = flag;
+	}
+	
+	public void updateBoard(int[][] alien_x, int[][] alien_y, int[] shot_y) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 7; j++) {
+				alien_x[i][j] = aliens[i][j].getX();
+				alien_y[i][j] = aliens[i][j].getY();
+			}
+		}
+		shot_y[0] = shot.getY();
+	}
+	
+	private void addListeners() {
+		gameFrame.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					queue.put(new KeyPressedMessage(Integer.toString(e.getKeyCode())));
+				} catch (InterruptedException exception) {
+					exception.printStackTrace();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					queue.put(new KeyReleasedMessage(Integer.toString(e.getKeyCode())));
+				} catch (InterruptedException exception) {
+					exception.printStackTrace();
+				}
+			}
+		});
 	}
 }
-
- * */
 
 
 
