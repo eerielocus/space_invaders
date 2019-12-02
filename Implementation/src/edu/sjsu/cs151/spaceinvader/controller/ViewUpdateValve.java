@@ -11,6 +11,7 @@ public class ViewUpdateValve implements Valve {
 	private Alien alien = null;
 	private Alien[][] aliens;
 	private int shot_y = 0;
+	private int[] edges = new int[3];
 	private int[][] alien_x = new int[4][7], alien_y = new int[4][7];
 	
 	public ViewUpdateValve (View view, Board board) {
@@ -39,7 +40,10 @@ public class ViewUpdateValve implements Valve {
 			if (view.getShotFired()) {
 				view.setShotFired(false);
 			}
+			view.setSpeed(board.getScore());
 		}
+		edges = board.getEdgeAliens();
+		view.setAlienEdge(edges);
 		return ValveResponse.EXECUTED;
 	}
 }

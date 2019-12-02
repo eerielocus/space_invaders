@@ -241,8 +241,12 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	// Initial player starting point.
+	// Movement settings.
 	private int player_x = 520;
-	private int alien_dest_x = 20;
+	private int alien_speed = 1;
+	private int alien_bound_left = 20;
+	private int alien_bound_right = 530;
+	private int[] alien_edge = {0, 6, 3};
 	private boolean alien_dir = true;
 	
 	public void repaint(Graphics g) {
@@ -315,22 +319,21 @@ public class View extends JPanel implements ActionListener {
 			
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
-					if(aliens[i][j].getX() != alien_dest_x) {
+					if(aliens[i][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
+					   aliens[i][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
 						if (alien_dir) {
-							aliens[i][j].setX(aliens[i][j].getX() - 1);
+							aliens[i][j].setX(aliens[i][j].getX() - alien_speed);
 						}
 						else {
-							aliens[i][j].setX(aliens[i][j].getX() + 1);
+							aliens[i][j].setX(aliens[i][j].getX() + alien_speed);
 						}
-					}
-					else {
+					} else {
 						if (alien_dir) {
 							for (int k = 0; k < 4; k++) {
 								for (int m = 0; m < 7; m++) {
 									aliens[k][m].setY(aliens[k][m].getY() + 20);
 								}
 							}
-							alien_dest_x = 530;
 							alien_dir = false;
 						}
 						else {
@@ -339,7 +342,6 @@ public class View extends JPanel implements ActionListener {
 									aliens[k][m].setY(aliens[k][m].getY() + 20);
 								}
 							}
-							alien_dest_x = 20;
 							alien_dir = true;
 						}	
 					}
@@ -384,9 +386,19 @@ public class View extends JPanel implements ActionListener {
 		this.aliens[i][j].explode();
 	}
 	
+	public void setAlienEdge(int[] transfer) {
+		this.alien_edge = transfer;
+	}
+	
 	public void gameOver() {
 		gameFrame.setVisible(false);
 		scoreFrame.setVisible(true);
+	}
+	
+	public void setSpeed(int score) {
+		if (score == 15) { alien_speed = 2; }
+		else if (score == 25) { alien_speed = 5; }
+		else if (score == 0) { alien_speed = 1; }
 	}
 	
 	public int updateBoard(int[][] alien_x, int[][] alien_y) {

@@ -4,17 +4,16 @@ import java.awt.event.KeyEvent;
 
 //This class is a singleton
 public class Board {
-    public static final int THREAD_SLEEP_TIME = 800;
-    public static final int BOMB_HEIGHT = 5;
-    public static final int ALIEN_HEIGHT = 40;
-    public static final int ALIEN_WIDTH = 40;
-    public static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
-    public static final int CHANCE = 5;
-    public static final int DELAY = 17;
-    public static final int PLAYER_WIDTH = 15;
-    public static final int PLAYER_HEIGHT = 10;
-    public static final int ALIEN_INIT_X = 210;
-    public static final int ALIEN_INIT_Y = 75;
+    private static final int BOMB_HEIGHT = 5;
+    private static final int ALIEN_HEIGHT = 40;
+    private static final int ALIEN_WIDTH = 40;
+    private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
+    private static final int CHANCE = 5;
+    private static final int DELAY = 17;
+    private static final int PLAYER_WIDTH = 15;
+    private static final int PLAYER_HEIGHT = 10;
+    private static final int ALIEN_INIT_X = 210;
+    private static final int ALIEN_INIT_Y = 75;
     
 	private boolean keyDownMap[];
 	private boolean gameOver = false;
@@ -56,6 +55,52 @@ public class Board {
 	
 	public Alien[][] getAliens() {
 		return this.aliens;
+	}
+	
+	public int[] getEdgeAliens() {
+		boolean edge = true;
+		int[] edges = new int[3];
+		int j = 0;
+		if (score != NUMBER_OF_ALIENS_TO_DESTROY) {
+			// Left edge of fleet.
+			while (edge) {
+				for (int i = 0; i < 4; i++) {
+					if (aliens[i][j].isVisible()) {
+						edges[0] = j;
+						edge = false;
+						break;
+					}
+				}
+				j++;
+			}
+			edge = true;
+			j = 6;
+			// Right edge of fleet.
+			while (edge) {
+				for (int i = 0; i < 4; i++) {
+					if (aliens[i][j].isVisible()) {
+						edges[1] = j;
+						edge = false;
+						break;
+					}
+				}
+				j--;
+			}
+			edge = true;
+			j = 0;
+			// Bottom edge of fleet.
+			while (edge) {
+				for (int i = 0; i < 7; i++) {
+					if (aliens[j][i].isVisible()) {
+						edges[2] = j;
+						edge = false;
+						break;
+					}
+				}
+				j++;
+			}
+		}
+		return edges;
 	}
 
 	/**
@@ -126,6 +171,10 @@ public class Board {
 	
 	public boolean getGameOver() {
 		return gameOver;
+	}
+	
+	public int getScore() {
+		return score;
 	}
 	
 	public Shot getShot() {
