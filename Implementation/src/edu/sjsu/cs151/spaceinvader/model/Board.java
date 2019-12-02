@@ -2,7 +2,6 @@ package edu.sjsu.cs151.spaceinvader.model;
 
 import java.awt.event.KeyEvent;
 
-//This class is a singleton
 public class Board {
     private static final int BOMB_HEIGHT = 5;
     private static final int ALIEN_HEIGHT = 40;
@@ -17,6 +16,7 @@ public class Board {
     
 	private boolean keyDownMap[];
 	private boolean gameOver = false;
+	private boolean gameWon = false;
 	private int score;
 	private Alien aliens[][];
 	private Player player;
@@ -30,13 +30,16 @@ public class Board {
 	}
 	
 	public void newGame() {
+		createAliens();
+		createPlayer();
 		this.score = 0;
 		this.gameOver = false;
+		this.gameWon = false;
 	}
 	
-	public boolean update() {
+	public void update() {
 		movePlayer();
-		return gameOver();
+		gameOver();
 	}
 	
 	/**
@@ -120,19 +123,9 @@ public class Board {
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
 		
 		if (leftKey && !rightKey) {
-			if (spaceKey && !shot.isVisible()) {
-				player.act(-5);
-				shot.setVisible(true);
-			} else {
-				player.act(-5);
-			}
+			player.act(-5);
 		} else if (!leftKey && rightKey) {
-			if (spaceKey && !shot.isVisible()) {
-				player.act(5);
-				shot.setVisible(true);
-			} else {
-				player.act(5);
-			}
+			player.act(5);
 		}
 		
 		if (spaceKey && !shot.isVisible()) {
@@ -161,12 +154,14 @@ public class Board {
 		return null;
 	}
 	
-	private boolean gameOver() {
+	private void gameOver() {
 		if (score == NUMBER_OF_ALIENS_TO_DESTROY) {
-			gameOver = true;
-			return gameOver;
+			gameWon = true;
 		}
-		return gameOver;
+	}
+	
+	public boolean getGameWon() {
+		return gameWon;
 	}
 	
 	public boolean getGameOver() {
@@ -175,6 +170,10 @@ public class Board {
 	
 	public int getScore() {
 		return score;
+	}
+	
+	public int getPoints() {
+		return score * 10;
 	}
 	
 	public Shot getShot() {

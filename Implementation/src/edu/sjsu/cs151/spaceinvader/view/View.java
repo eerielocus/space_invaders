@@ -44,9 +44,9 @@ public class View extends JPanel implements ActionListener {
 	private MoveableImage player = new MoveableImage(520, 520, player_img);
 	
 	// Player cannon shot sprite.
-	private ImageIcon fire = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/shot.png");
+	private ImageIcon fire = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/shot.png").getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
 	private Image shot_img = fire.getImage();
-	private MoveableImage shot;
+	private MoveableImage shot = new MoveableImage(300, 700, shot_img);
 	
 	// For start screen animated alien.
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
@@ -55,6 +55,9 @@ public class View extends JPanel implements ActionListener {
 	
 	private boolean shotFired = false;
 	private boolean aliensCreated = false;
+	private boolean gameWon = false;
+	private boolean gameOver = false;
+	private String points = "";
 	private Timer timer = new Timer(20, this);
 	
 	public View() {
@@ -272,26 +275,22 @@ public class View extends JPanel implements ActionListener {
 		player_x = x;
 	}
 	
-	public void createShot() {
-		shot = new MoveableImage(50, 600, shot_img);
-	}
-	
 	private void drawShot(Graphics g) {
 		if (shotFired) {
 			if (shot.getY() == player.getY()) { 
-				shot.setX(player.getX());
-				shot.setY(player.getY()); 
+				shot.setX(player.getX() + 14);
 				}
+			
 			if (shot.getY() > 25) {
 				shot.draw(g, this);
 				shot.setY(shot.getY() - 10);
 			} else {
 				shot.setY(player.getY());
-				shot.setX(player.getX());
+				shot.setX(player.getX() + 14);
 				shotFired = false;
 			}
 		} else {
-			shot.setX(player.getX());
+			shot.setX(player.getX() + 14);
 			shot.setY(player.getY()); 
 		}
 	}
@@ -353,7 +352,11 @@ public class View extends JPanel implements ActionListener {
 	private void drawGameScore(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 20));
 		g.setColor(Color.white);
-		g.drawString("SCORE: 0000", 10, 30);
+		g.drawString("SCORE: " + points, 10, 30);
+	}
+	
+	public void setPoints(int points) {
+		this.points = String.format("%4d", points);
 	}
 	
 	private void drawGameLives(Graphics g) {
@@ -391,6 +394,23 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	public void gameOver() {
+		gameOver = true;
+		try {
+		    Thread.sleep(1000);
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
+		gameFrame.setVisible(false);
+		scoreFrame.setVisible(true);
+	}
+	
+	public void gameWon() {
+		gameWon = true;
+		try {
+		    Thread.sleep(1000);
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
 		gameFrame.setVisible(false);
 		scoreFrame.setVisible(true);
 	}

@@ -20,20 +20,15 @@ public class NewGameValve implements Valve {
 		if (message.getClass() != NewGameMessage.class) {
 			return ValveResponse.MISS;
 		}
-		System.out.println("Creating aliens.");
-		board.createAliens();
-		board.createPlayer();
+		board.newGame();
 		aliens = board.getAliens();
-		System.out.println("Created aliens.");
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				view.createAliens(i, j, aliens[i][j].getX(), aliens[i][j].getY());
 			}
 		}
-		view.createShot();
 		view.setAliensCreated(true);
 		view.setSpeed(0);
-		board.newGame();
 		return ValveResponse.EXECUTED;
 	}
 

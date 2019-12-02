@@ -15,6 +15,8 @@ public class Controller {
 	private BlockingQueue<Message> queue;
 	private ArrayList<Valve> valves = new ArrayList<>();
 	private boolean gameOver = false;
+	private boolean gameWon = false;
+	private int points = 0;
 	
 	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
@@ -32,27 +34,39 @@ public class Controller {
 		System.out.println("Controller started.");
 	}
 	
+	private void gameInfo() {
+		if (view.getAliensCreated() && !gameOver) {
+			board.update();
+			gameOver = board.getGameOver();
+			gameWon = board.getGameWon();
+			points = board.getPoints();
+			view.setPoints(points);
+			if (gameOver) {
+				view.gameOver();
+			}
+			if (gameWon) {
+				view.gameWon();
+			}
+			view.setPlayerPosition(board.getPlayer().getX());
+		}
+		
+		if (gameOver || gameWon) {
+			gameOver = board.getGameOver();
+			gameWon = board.getGameWon();
+		}
+	}
+	
 	public void mainLoop() throws Exception {
 		ValveResponse response = ValveResponse.EXECUTED;
 		Message message = null;
 		while (response != ValveResponse.FINISH) {
-			if (view.getAliensCreated() && !gameOver) {
-				gameOver = board.update();
-				if (gameOver) {
-					view.gameOver();
-				}
-				view.setPlayerPosition(board.getPlayer().getX());
-			}
-			
-			if (gameOver) {
-				gameOver = board.getGameOver();
-			}
-			
+			gameInfo();
 			try {
 				message = (Message) queue.take();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 			for (Valve valve : valves) {
 				response = valve.execute(message);
 				if (response != ValveResponse.MISS) { break; }
