@@ -31,7 +31,6 @@ public class View extends JPanel implements ActionListener {
 	private JLabel gameLogo;     // Start screen alien logo.
 	
 	private JButton startGame;
-	private JButton exitGame;
 	private JButton retGame;
 	
 	// Alien sprite.
@@ -163,15 +162,6 @@ public class View extends JPanel implements ActionListener {
 		gameFrame.setVisible(false);
 		gameFrame.setResizable(false);
 		
-		exitGame = new JButton("Exit Game");
-		
-		exitGame.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				gameFrame.setVisible(false);
-				scoreFrame.setVisible(true);
-			}	
-		});
-		
 		gameContent.setBackground(Color.black);
 		this.setBackground(Color.black);
 		
@@ -230,6 +220,7 @@ public class View extends JPanel implements ActionListener {
 				scoreboard.add(scoreName);
 				scoreboard.add(scoreNum);
 			}
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -249,12 +240,10 @@ public class View extends JPanel implements ActionListener {
 		repaint(g);
 	}
 	
-	
-	//testing to move tank
+	// Initial player starting point.
 	private int player_x = 520;
 	private int alien_dest_x = 20;
 	private boolean alien_dir = true;
-	
 	
 	public void repaint(Graphics g) {
 		drawGameScore(g);
@@ -262,7 +251,7 @@ public class View extends JPanel implements ActionListener {
 		drawPlayer(g);
 		drawAliens(g);		
 		drawShot(g);
-		
+
 		try {
 			queue.put(new ViewUpdateMessage());
 		} catch (InterruptedException exception) {
@@ -314,6 +303,12 @@ public class View extends JPanel implements ActionListener {
 				for (int j = 0; j < 7; j++) {
 					if (aliens[i][j].getVisible()) {
 						aliens[i][j].draw(g, this);
+					}
+					
+					if (aliens[i][j].getExploding()) {
+						aliens[i][j].draw(g, this);
+						aliens[i][j].setVisible(false);
+						aliens[i][j].setExploding(false);
 					}
 				}
 			}
@@ -381,18 +376,27 @@ public class View extends JPanel implements ActionListener {
 		this.aliensCreated = flag;
 	}
 	
-	public void setAlienVisible(int i, int j, boolean flag) {
-		this.aliens[i][j].setVisible(flag);
+	public boolean getAliensCreated() {
+		return this.aliensCreated;
 	}
 	
-	public void updateBoard(int[][] alien_x, int[][] alien_y, int[] shot_y) {
+	public void setAlienExplode(int i, int j) {
+		this.aliens[i][j].explode();
+	}
+	
+	public void gameOver() {
+		gameFrame.setVisible(false);
+		scoreFrame.setVisible(true);
+	}
+	
+	public int updateBoard(int[][] alien_x, int[][] alien_y) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				alien_x[i][j] = aliens[i][j].getX();
 				alien_y[i][j] = aliens[i][j].getY();
 			}
 		}
-		shot_y[0] = shot.getY();
+		return shot.getY();
 	}
 	
 	private void addListeners() {

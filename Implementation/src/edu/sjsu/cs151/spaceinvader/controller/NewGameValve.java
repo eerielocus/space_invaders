@@ -32,6 +32,7 @@ public class NewGameValve implements Valve {
 		}
 		view.createShot();
 		view.setAliensCreated(true);
+		board.newGame();
 		return ValveResponse.EXECUTED;
 	}
 

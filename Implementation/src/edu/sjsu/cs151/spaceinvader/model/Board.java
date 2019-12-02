@@ -6,9 +6,9 @@ import java.awt.event.KeyEvent;
 public class Board {
     public static final int THREAD_SLEEP_TIME = 800;
     public static final int BOMB_HEIGHT = 5;
-    public static final int ALIEN_HEIGHT = 50;
-    public static final int ALIEN_WIDTH = 50;
-    public static final int NUMBER_OF_ALIENS_TO_DESTROY = 24;
+    public static final int ALIEN_HEIGHT = 40;
+    public static final int ALIEN_WIDTH = 40;
+    public static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     public static final int CHANCE = 5;
     public static final int DELAY = 17;
     public static final int PLAYER_WIDTH = 15;
@@ -17,16 +17,27 @@ public class Board {
     public static final int ALIEN_INIT_Y = 75;
     
 	private boolean keyDownMap[];
-	private Alien aliens[][] = new Alien[4][7];
+	private boolean gameOver = false;
+	private int score;
+	private Alien aliens[][];
 	private Player player;
-	private Shot shot = new Shot();
+	private Shot shot;
 
 	public Board() {
 		this.keyDownMap = new boolean[256];
+		this.score = 0;
+		this.shot = new Shot();
+		this.aliens = new Alien[4][7];
 	}
 	
-	public void update() {
+	public void newGame() {
+		this.score = 0;
+		this.gameOver = false;
+	}
+	
+	public boolean update() {
 		movePlayer();
+		return gameOver();
 	}
 	
 	/**
@@ -86,7 +97,6 @@ public class Board {
 	
 	public Alien collision() {
 		if (shot.isVisible()) {
-			//System.out.println("In.");
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					if (aliens[i][j].isVisible() && shot.isVisible()) {
@@ -96,7 +106,7 @@ public class Board {
 							shot.getY() <= aliens[i][j].getY() + ALIEN_HEIGHT) {
 								aliens[i][j].dead();
 								shot.dead();
-								System.out.println("Hit.");
+								score++;
 								return aliens[i][j];
 						}
 					}
@@ -104,6 +114,18 @@ public class Board {
 			}
 		}
 		return null;
+	}
+	
+	private boolean gameOver() {
+		if (score == NUMBER_OF_ALIENS_TO_DESTROY) {
+			gameOver = true;
+			return gameOver;
+		}
+		return gameOver;
+	}
+	
+	public boolean getGameOver() {
+		return gameOver;
 	}
 	
 	public Shot getShot() {
@@ -118,7 +140,6 @@ public class Board {
 	public void setKeyUp(int key) {
 		if(key > 255) { return; }
 		this.keyDownMap[key] = false;
-		System.out.println("Up." + key);
 	}
 	
 	public boolean isKeyPressed(int key) {

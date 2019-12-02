@@ -1,14 +1,19 @@
 package edu.sjsu.cs151.spaceinvader.view;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 
+import javax.swing.ImageIcon;
+
 public class MoveableImage {
 	
 	private Image image = null;
+	private ImageIcon explode = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/explosion.png");
+	//private ImageIcon explode = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/explosion.png").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+	private Image explosion = explode.getImage();
 	private boolean visible = false;
+	private boolean exploding = false;
 	private int x = 0;
 	private int y = 0;
 	
@@ -50,8 +55,16 @@ public class MoveableImage {
 		g.drawImage(this.image, x, y, o);
 	}
 	
-	public void clear(Graphics g) {
-		g.setColor(Color.black);
-		g.clearRect(x, y, 5, 5);
+	public void explode() {
+		this.image = explosion;
+		this.exploding = true;
+	}
+	
+	public void setExploding(boolean flag) {
+		this.exploding = flag;
+	}
+	
+	public boolean getExploding() {
+		return this.exploding;
 	}
 }

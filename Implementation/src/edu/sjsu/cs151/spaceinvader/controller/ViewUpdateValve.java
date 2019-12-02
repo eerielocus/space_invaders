@@ -10,7 +10,7 @@ public class ViewUpdateValve implements Valve {
 	private Board board;
 	private Alien alien = null;
 	private Alien[][] aliens;
-	private int[] shot_y = new int[1];
+	private int shot_y = 0;
 	private int[][] alien_x = new int[4][7], alien_y = new int[4][7];
 	
 	public ViewUpdateValve (View view, Board board) {
@@ -23,8 +23,8 @@ public class ViewUpdateValve implements Valve {
 		if (message.getClass() != ViewUpdateMessage.class) {
 			return ValveResponse.MISS;
 		}
-		view.updateBoard(alien_x, alien_y, shot_y);
-		board.getShot().setY(shot_y[0]);
+		shot_y = view.updateBoard(alien_x, alien_y);
+		board.getShot().setY(shot_y);
 		if (!view.getShotFired()) board.getShot().setVisible(false);
 		aliens = board.getAliens();
 		for (int i = 0; i < 4; i++) {
@@ -35,7 +35,7 @@ public class ViewUpdateValve implements Valve {
 		}
 		alien = board.collision();
 		if (alien != null) {
-			view.setAlienVisible(alien.getPositionI(), alien.getPositionJ(), alien.isVisible());
+			view.setAlienExplode(alien.getPositionI(), alien.getPositionJ());
 			if (view.getShotFired()) {
 				view.setShotFired(false);
 			}

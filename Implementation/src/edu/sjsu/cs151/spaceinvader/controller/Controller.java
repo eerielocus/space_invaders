@@ -14,6 +14,7 @@ public class Controller {
 	private Board board;
 	private BlockingQueue<Message> queue;
 	private ArrayList<Valve> valves = new ArrayList<>();
+	private boolean gameOver = false;
 	
 	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
@@ -35,6 +36,18 @@ public class Controller {
 		ValveResponse response = ValveResponse.EXECUTED;
 		Message message = null;
 		while (response != ValveResponse.FINISH) {
+			if (view.getAliensCreated() && !gameOver) {
+				gameOver = board.update();
+				if (gameOver) {
+					view.gameOver();
+				}
+				view.setPlayerPosition(board.getPlayer().getX());
+			}
+			
+			if (gameOver) {
+				gameOver = board.getGameOver();
+			}
+			
 			try {
 				message = (Message) queue.take();
 			} catch (InterruptedException e) {
