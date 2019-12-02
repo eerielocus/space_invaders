@@ -9,6 +9,8 @@ public class Sprite
 {
 	protected int x;
 	protected int y;
+	protected int i;
+	protected int j;
 	protected int move_x;
 	private boolean visible = false;
 	private boolean destroy = false;
@@ -29,6 +31,19 @@ public class Sprite
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
+    
+    public void setPositionIJ(int i, int j) {
+    	this.i = i;
+    	this.j = j;
+    }
+	
+    public int getPositionI() {
+    	return this.i;
+    }
+    
+    public int getPositionJ() {
+    	return this.j;
+    }
 	/**
 	 * This method is to set the object as dead.
 	 */

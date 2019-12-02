@@ -2,8 +2,6 @@ package edu.sjsu.cs151.spaceinvader.model;
 
 
 public class Alien extends Sprite {
-
-    private String face = " - ";
     /**
 	 * Constructor method for Alien.
 	 */
@@ -19,6 +17,7 @@ public class Alien extends Sprite {
     	setX(x);	
     	setY(y);
     }
+
     /**
 	 * This method creates a new bomb for the Alien.
 	 */

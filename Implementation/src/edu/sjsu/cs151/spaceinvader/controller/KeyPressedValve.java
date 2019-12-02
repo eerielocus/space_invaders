@@ -23,9 +23,9 @@ public class KeyPressedValve implements Valve {
 		board.setKeyDown(key);
 		board.update();
 		if (key == 32) {
-			System.out.println("Inside. X = " + view.getShot_x());
 			board.getShot().setX(view.getShot_x());
 			view.setShotFired(board.getShot().isVisible());
+			view.setPlayerPosition(board.getPlayer().getX());
 		} else if (key == 37 || key == 39) {
 			view.setPlayerPosition(board.getPlayer().getX());
 		}

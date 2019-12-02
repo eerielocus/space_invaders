@@ -8,13 +8,22 @@ import java.awt.image.ImageObserver;
 public class MoveableImage {
 	
 	private Image image = null;
-	int x = 0;
-	int y = 0;
+	private boolean visible = false;
+	private int x = 0;
+	private int y = 0;
 	
 	MoveableImage(int x, int y, Image image){
 		this.image = image;
 		this.x = x;
 		this.y = y;
+	}
+	
+	public void setVisible(boolean flag) {
+		this.visible = flag;
+	}
+	
+	public boolean getVisible() {
+		return this.visible;
 	}
 	
 	public void setX (int x) {

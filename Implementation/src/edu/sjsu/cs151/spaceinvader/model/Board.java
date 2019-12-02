@@ -36,6 +36,8 @@ public class Board {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				aliens[i][j] = new Alien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + 50 * i);
+				aliens[i][j].setVisible(true);
+				aliens[i][j].setPositionIJ(i, j);
 			}
 		}
 		System.out.println("Aliens created.\n");
@@ -60,38 +62,48 @@ public class Board {
 		boolean leftKey = this.isKeyPressed(KeyEvent.VK_LEFT);
 		boolean rightKey = this.isKeyPressed(KeyEvent.VK_RIGHT);
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
+		
 		if (leftKey && !rightKey) {
-			player.setX(player.getX() - 5);
+			if (spaceKey && !shot.isVisible()) {
+				player.act(-5);
+				shot.setVisible(true);
+			} else {
+				player.act(-5);
+			}
 		} else if (!leftKey && rightKey) {
-			player.setX(player.getX() + 5);
+			if (spaceKey && !shot.isVisible()) {
+				player.act(5);
+				shot.setVisible(true);
+			} else {
+				player.act(5);
+			}
 		}
 		
 		if (spaceKey && !shot.isVisible()) {
 			shot.setVisible(true);
-			System.out.println("Shot fired in Board:");
 		}
 	}
 	
-	public void collision() {
+	public Alien collision() {
 		if (shot.isVisible()) {
 			//System.out.println("In.");
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
-					//System.out.println("Shot x: " + shot.getX() + " Shot y: " + shot.getY());
-					//System.out.println("Alienx: " + aliens[i][j].getX() + " Alieny: " + aliens[i][j].getY());
 					if (aliens[i][j].isVisible() && shot.isVisible()) {
 						if (shot.getX() >= aliens[i][j].getX() &&
-							shot.getY() <= aliens[i][j].getX() + ALIEN_WIDTH &&
+							shot.getX() <= aliens[i][j].getX() + ALIEN_WIDTH &&
 							shot.getY() >= aliens[i][j].getY() &&
 							shot.getY() <= aliens[i][j].getY() + ALIEN_HEIGHT) {
 								aliens[i][j].dead();
 								shot.dead();
 								System.out.println("Hit.");
+								return aliens[i][j];
 						}
 					}
 				}
 			}
 		}
+		return null;
 	}
 	
 	public Shot getShot() {
@@ -106,6 +118,7 @@ public class Board {
 	public void setKeyUp(int key) {
 		if(key > 255) { return; }
 		this.keyDownMap[key] = false;
+		System.out.println("Up." + key);
 	}
 	
 	public boolean isKeyPressed(int key) {

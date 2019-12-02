@@ -26,22 +26,9 @@ public class Player extends Sprite {
 	/**
 	 * This method sets the movement of the player.
 	 */
-	public void act() {
-		x += move_x;	
-	}
-	/**
-	 * This method takes the user key press and translates into an integer
-	 * to use for movement.
-	 */
-	public void keyPressed(KeyEvent button) {
-		int key = button.getKeyCode();
-		
-		if (key == KeyEvent.VK_LEFT) {
-			move_x = -2;	
+	public void act(int x) {
+		if (this.x + x > 5 && this.x + x <= 525) {
+			this.x += x;	
 		}
-		
-		if (key == KeyEvent.VK_RIGHT) {
-			move_x = 2;		
-		}    
 	}
 }

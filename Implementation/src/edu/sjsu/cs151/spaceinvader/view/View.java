@@ -260,13 +260,8 @@ public class View extends JPanel implements ActionListener {
 		drawGameScore(g);
 		drawGameLives(g);
 		drawPlayer(g);
-		
-		if (this.aliensCreated) {
-			drawAliens(g);
-		}
-		if (this.shotFired) {
-			drawShot(g);
-		}
+		drawAliens(g);		
+		drawShot(g);
 		
 		try {
 			queue.put(new ViewUpdateMessage());
@@ -289,61 +284,70 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	private void drawShot(Graphics g) {
-		if (shot.getY() == player.getY()) { 
+		if (shotFired) {
+			if (shot.getY() == player.getY()) { 
+				shot.setX(player.getX());
+				shot.setY(player.getY()); 
+				}
+			if (shot.getY() > 25) {
+				shot.draw(g, this);
+				shot.setY(shot.getY() - 10);
+			} else {
+				shot.setY(player.getY());
+				shot.setX(player.getX());
+				shotFired = false;
+			}
+		} else {
 			shot.setX(player.getX());
 			shot.setY(player.getY()); 
-			}
-		if (shot.getY() > 25) {
-			shot.draw(g, this);
-			shot.setY(shot.getY() - 10);
-		} else {
-			shot.setY(player.getY());
-			shot.setX(player.getX());
-			shotFired = false;
-			System.out.println("Shot done: " + shotFired);
 		}
 	}
 	
 	public void createAliens(int i, int j, int x, int y) {
-		aliens[i][j] = new MoveableImage(x, y, alien_img);;
+		aliens[i][j] = new MoveableImage(x, y, alien_img);
+		aliens[i][j].setVisible(true);
 	}
 	
 	private void drawAliens(Graphics g) {
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 7; j++) {
-				aliens[i][j].draw(g, this);
-			}
-		}
-		
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 7; j++) {
-				if(aliens[i][j].getX() != alien_dest_x) {
-					if (alien_dir) {
-						aliens[i][j].setX(aliens[i][j].getX() - 1);
-					}
-					else {
-						aliens[i][j].setX(aliens[i][j].getX() + 1);
+		if (this.aliensCreated) {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 7; j++) {
+					if (aliens[i][j].getVisible()) {
+						aliens[i][j].draw(g, this);
 					}
 				}
-				else {
-					if (alien_dir) {
-						for (int k = 0; k < 4; k++) {
-							for (int m = 0; m < 7; m++) {
-								aliens[k][m].setY(aliens[k][m].getY() + 20);
-							}
+			}
+			
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 7; j++) {
+					if(aliens[i][j].getX() != alien_dest_x) {
+						if (alien_dir) {
+							aliens[i][j].setX(aliens[i][j].getX() - 1);
 						}
-						alien_dest_x = 530;
-						alien_dir = false;
+						else {
+							aliens[i][j].setX(aliens[i][j].getX() + 1);
+						}
 					}
 					else {
-						for (int k = 0; k < 4; k++) {
-							for (int m = 0; m < 7; m++) {
-								aliens[k][m].setY(aliens[k][m].getY() + 20);
+						if (alien_dir) {
+							for (int k = 0; k < 4; k++) {
+								for (int m = 0; m < 7; m++) {
+									aliens[k][m].setY(aliens[k][m].getY() + 20);
+								}
 							}
+							alien_dest_x = 530;
+							alien_dir = false;
 						}
-						alien_dest_x = 20;
-						alien_dir = true;
-					}	
+						else {
+							for (int k = 0; k < 4; k++) {
+								for (int m = 0; m < 7; m++) {
+									aliens[k][m].setY(aliens[k][m].getY() + 20);
+								}
+							}
+							alien_dest_x = 20;
+							alien_dir = true;
+						}	
+					}
 				}
 			}
 		}
@@ -362,7 +366,6 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	public void setShotFired(boolean flag) {
-		System.out.println("Shot set: " + flag);
 		this.shotFired = flag;
 	}
 	
@@ -371,12 +374,15 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	public int getShot_x() {
-		System.out.println("X: " + shot.getX());
 		return shot.getX();
 	}
 	
 	public void setAliensCreated(boolean flag) {
 		this.aliensCreated = flag;
+	}
+	
+	public void setAlienVisible(int i, int j, boolean flag) {
+		this.aliens[i][j].setVisible(flag);
 	}
 	
 	public void updateBoard(int[][] alien_x, int[][] alien_y, int[] shot_y) {

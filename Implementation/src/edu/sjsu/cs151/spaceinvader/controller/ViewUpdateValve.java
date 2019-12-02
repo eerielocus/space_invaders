@@ -8,6 +8,7 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 public class ViewUpdateValve implements Valve {
 	private View view;
 	private Board board;
+	private Alien alien = null;
 	private Alien[][] aliens;
 	private int[] shot_y = new int[1];
 	private int[][] alien_x = new int[4][7], alien_y = new int[4][7];
@@ -32,7 +33,13 @@ public class ViewUpdateValve implements Valve {
 				aliens[i][j].setY(alien_y[i][j]);
 			}
 		}
-		board.collision();
+		alien = board.collision();
+		if (alien != null) {
+			view.setAlienVisible(alien.getPositionI(), alien.getPositionJ(), alien.isVisible());
+			if (view.getShotFired()) {
+				view.setShotFired(false);
+			}
+		}
 		return ValveResponse.EXECUTED;
 	}
 }
