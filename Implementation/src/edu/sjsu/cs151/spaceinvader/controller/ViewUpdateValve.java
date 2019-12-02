@@ -37,9 +37,7 @@ public class ViewUpdateValve implements Valve {
 		alien = board.collision();
 		if (alien != null) {
 			view.setAlienExplode(alien.getPositionI(), alien.getPositionJ());
-			if (view.getShotFired()) {
-				view.setShotFired(false);
-			}
+			view.setShotFired(false);
 			view.setSpeed(board.getScore());
 		}
 		edges = board.getEdgeAliens();

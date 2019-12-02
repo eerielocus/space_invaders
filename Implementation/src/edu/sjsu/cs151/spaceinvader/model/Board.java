@@ -14,7 +14,7 @@ public class Board {
     private static final int ALIEN_INIT_X = 210;
     private static final int ALIEN_INIT_Y = 75;
     
-	private boolean keyDownMap[];
+	private boolean keyMap[];
 	private boolean gameOver = false;
 	private boolean gameWon = false;
 	private int score;
@@ -23,29 +23,36 @@ public class Board {
 	private Shot shot;
 
 	public Board() {
-		this.keyDownMap = new boolean[256];
+		this.keyMap = new boolean[256];
 		this.score = 0;
 		this.shot = new Shot();
 		this.aliens = new Alien[4][7];
 	}
 	
+	/**
+	 * New game method that creates new alien/player and resets score/flags.
+	 */
 	public void newGame() {
 		createAliens();
 		createPlayer();
 		this.score = 0;
 		this.gameOver = false;
 		this.gameWon = false;
+		this.keyMap = new boolean[256];
 	}
 	
+	/**
+	 * Board update method to send information to View.
+	 */
 	public void update() {
 		movePlayer();
 		gameOver();
 	}
 	
 	/**
-	 * Creates Aliens and Bomb
+	 * Creates aliens and sets properties for each.
 	 */
-	public void createAliens() {
+	private void createAliens() {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				aliens[i][j] = new Alien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + 50 * i);
@@ -56,13 +63,23 @@ public class Board {
 		System.out.println("Aliens created.\n");
 	}
 	
+	/**
+	 * Get the fleet of aliens.
+	 * @return 2D array of aliens
+	 */
 	public Alien[][] getAliens() {
 		return this.aliens;
 	}
 	
+	/**
+	 * Get the left/right/bottom edges of the alien fleet to determine where the left,
+	 * right, and bottom most alien resides.
+	 * 
+	 * @return int[] contains edge row/column information
+	 */
 	public int[] getEdgeAliens() {
 		boolean edge = true;
-		int[] edges = new int[3];
+		int[] edges = new int[3]; // int[0] = left, int[1] = right, int[2] = bottom
 		int j = 0;
 		if (score != NUMBER_OF_ALIENS_TO_DESTROY) {
 			// Left edge of fleet.
@@ -107,17 +124,26 @@ public class Board {
 	}
 
 	/**
-	 * Creates Player (not fully implemented until GUI)
+	 * Creates player object.
 	 */
-	public void createPlayer() {
+	private void createPlayer() {
 		this.player = new Player();
 	}
 	
+	/**
+	 * Gets the player object.
+	 * @return player
+	 */
 	public Player getPlayer() {
 		return player;
 	}
 	
+	/**
+	 * Moves the player based on the key pressed down. Checks using isKeyPressed
+	 * method to find whether a key is still 'down'.
+	 */
 	private void movePlayer() {
+		// Check for each appropriate key to see if pressed.
 		boolean leftKey = this.isKeyPressed(KeyEvent.VK_LEFT);
 		boolean rightKey = this.isKeyPressed(KeyEvent.VK_RIGHT);
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
@@ -133,6 +159,10 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Checks whether the player shot hits an alien.
+	 * @return alien object that is hit
+	 */
 	public Alien collision() {
 		if (shot.isVisible()) {
 			for (int i = 0; i < 4; i++) {
@@ -154,44 +184,80 @@ public class Board {
 		return null;
 	}
 	
+	/**
+	 * Sets the gameWon/Over flag based on the score or alien position.
+	 */
 	private void gameOver() {
 		if (score == NUMBER_OF_ALIENS_TO_DESTROY) {
 			gameWon = true;
 		}
 	}
 	
+	/**
+	 * Get the flag for gameWon.
+	 * @return boolean gameWon
+	 */
 	public boolean getGameWon() {
 		return gameWon;
 	}
 	
+	/**
+	 * Get the flag for gameOver.
+	 * @return boolean gameOver
+	 */
 	public boolean getGameOver() {
 		return gameOver;
 	}
 	
+	/**
+	 * Get the game's score.
+	 * @return int score
+	 */
 	public int getScore() {
 		return score;
 	}
 	
+	/**
+	 * Get the game's total points. Per alien kill = 10 points.
+	 * @return int score
+	 */
 	public int getPoints() {
 		return score * 10;
 	}
 	
+	/**
+	 * Get the shot object to access properties.
+	 * @return shot object
+	 */
 	public Shot getShot() {
 		return this.shot;
 	}
 	
+	/**
+	 * Sets the key pressed, if within the standard keyboard, to true.
+	 * @param keyEvent key
+	 */
 	public void setKeyDown(int key) {
 		if(key > 255) { return; }
-		this.keyDownMap[key] = true;
+		this.keyMap[key] = true;
 	}
 
+	/**
+	 * Set the key released, meaning set the location in keyMap to false.
+	 * @param keyEvent key
+	 */
 	public void setKeyUp(int key) {
 		if(key > 255) { return; }
-		this.keyDownMap[key] = false;
+		this.keyMap[key] = false;
 	}
 	
+	/**
+	 * Check the keyMap to see if the key is still pressed down or not.
+	 * @param keyEvent key
+	 * @return boolean true/false
+	 */
 	public boolean isKeyPressed(int key) {
 		if (key > 255) { return false; }
-		return this.keyDownMap[key];
+		return this.keyMap[key];
 	}
 }

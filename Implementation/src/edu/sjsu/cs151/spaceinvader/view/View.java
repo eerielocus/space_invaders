@@ -11,6 +11,7 @@ import edu.sjsu.cs151.spaceinvader.message.KeyPressedMessage;
 import edu.sjsu.cs151.spaceinvader.message.KeyReleasedMessage;
 import edu.sjsu.cs151.spaceinvader.message.Message;
 import edu.sjsu.cs151.spaceinvader.message.NewGameMessage;
+import edu.sjsu.cs151.spaceinvader.message.ReturnToStartMessage;
 import edu.sjsu.cs151.spaceinvader.message.ViewUpdateMessage;
 
 
@@ -183,6 +184,12 @@ public class View extends JPanel implements ActionListener {
 		retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		retGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					System.out.println("Return.");
+					queue.put(new ReturnToStartMessage());
+				} catch (InterruptedException exception) {
+					exception.printStackTrace();
+				}
 				scoreFrame.setVisible(false);
 				startFrame.setVisible(true);
 			}	
@@ -245,12 +252,12 @@ public class View extends JPanel implements ActionListener {
 	
 	// Initial player starting point.
 	// Movement settings.
-	private int player_x = 520;
-	private int alien_speed = 1;
-	private int alien_bound_left = 20;
-	private int alien_bound_right = 530;
-	private int[] alien_edge = {0, 6, 3};
-	private boolean alien_dir = true;
+	private int player_x = 520;				// Initial player position.
+	private int alien_speed = 1;			// Initial alien movement speed.
+	private int alien_bound_left = 20;		// Screen left border.
+	private int alien_bound_right = 530;	// Screen right border.
+	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
+	private boolean alien_dir = true;		// Alien fleet's direction of movement.
 	
 	public void repaint(Graphics g) {
 		drawGameScore(g);
@@ -266,21 +273,37 @@ public class View extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Draw player image onto game screen.
+	 * @param g graphics
+	 */
 	private void drawPlayer(Graphics g) {
 		player.draw(g, this); 
 		player.setX(player_x);
 	}
 	
+	/**
+	 * Set the player position with parameter.
+	 * @param x position
+	 */
 	public void setPlayerPosition(int x) {
 		player_x = x;
 	}
 	
+	/**
+	 * Draw the player's shot.
+	 * @param g graphics
+	 */
 	private void drawShot(Graphics g) {
+		// Check if shot is still in flight.
+		// If not, reset position.
 		if (shotFired) {
+			// If shot is with the player, synchronize its position with player.
 			if (shot.getY() == player.getY()) { 
 				shot.setX(player.getX() + 14);
 				}
-			
+			// If shot is below the screen border, continue drawing until it isn't
+			// Else reset position and set shotFired to false.
 			if (shot.getY() > 25) {
 				shot.draw(g, this);
 				shot.setY(shot.getY() - 10);
@@ -295,19 +318,32 @@ public class View extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Create alien images based on received Board's alien positions and setVisible to true.
+	 * @param i column
+	 * @param j row
+	 * @param x position
+	 * @param y position
+	 */
 	public void createAliens(int i, int j, int x, int y) {
 		aliens[i][j] = new MoveableImage(x, y, alien_img);
 		aliens[i][j].setVisible(true);
 	}
 	
+	/**
+	 * Draw the aliens using the aliens fleet object.
+	 * @param g graphics
+	 */
 	private void drawAliens(Graphics g) {
+		// Check if aliens are created to avoid null pointer exception.
 		if (this.aliensCreated) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
+					// If alien is set to visible, draw the alien.
 					if (aliens[i][j].getVisible()) {
 						aliens[i][j].draw(g, this);
 					}
-					
+					// If alien is set to explode (hit), draw exploding image.
 					if (aliens[i][j].getExploding()) {
 						aliens[i][j].draw(g, this);
 						aliens[i][j].setVisible(false);
@@ -315,9 +351,10 @@ public class View extends JPanel implements ActionListener {
 					}
 				}
 			}
-			
+			// Adjust the movement each frame. 
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
+					// Use the edge variable to make sure the aliens never move off screen.
 					if(aliens[i][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
 					   aliens[i][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
 						if (alien_dir) {
@@ -349,50 +386,95 @@ public class View extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Draw the score on the top left.
+	 * @param g graphics
+	 */
 	private void drawGameScore(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 20));
 		g.setColor(Color.white);
 		g.drawString("SCORE: " + points, 10, 30);
 	}
 	
+	/**
+	 * Set format for the string used to display points.
+	 * @param points
+	 */
 	public void setPoints(int points) {
 		this.points = String.format("%4d", points);
 	}
 	
+	/**
+	 * Draw the player lives to top right.
+	 * @param g
+	 */
 	private void drawGameLives(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 20));
 		g.setColor(Color.white);
 		g.drawString("LIVES: 0000", 460, 30);
 	}
 	
+	/**
+	 * Set the shotFired flag.
+	 * @param boolean flag
+	 */
 	public void setShotFired(boolean flag) {
 		this.shotFired = flag;
 	}
 	
+	/**
+	 * Get the shotFired flag.
+	 * @return boolean flag
+	 */
 	public boolean getShotFired() {
 		return this.shotFired;
 	}
 	
+	/**
+	 * Get the x position of the shot.
+	 * @return x position
+	 */
 	public int getShot_x() {
 		return shot.getX();
 	}
 	
+	/**
+	 * Set the flag for aliens being created
+	 * @param boolean flag
+	 */
 	public void setAliensCreated(boolean flag) {
 		this.aliensCreated = flag;
 	}
 	
+	/**
+	 * Get the flag for aliens being created
+	 * @return boolean flag
+	 */
 	public boolean getAliensCreated() {
 		return this.aliensCreated;
 	}
 	
+	/**
+	 * Set the flag for alien's being hit, ie. exploding.
+	 * @param i column
+	 * @param j row
+	 */
 	public void setAlienExplode(int i, int j) {
 		this.aliens[i][j].explode();
 	}
 	
+	/**
+	 * Set the edges for the alien fleet.
+	 * @param int[] transfer
+	 */
 	public void setAlienEdge(int[] transfer) {
 		this.alien_edge = transfer;
 	}
 	
+	/**
+	 * Game over method that will pause the screen for a moment before going to
+	 * the high score screen.
+	 */
 	public void gameOver() {
 		gameOver = true;
 		try {
@@ -404,6 +486,10 @@ public class View extends JPanel implements ActionListener {
 		scoreFrame.setVisible(true);
 	}
 	
+	/**
+	 * Game won method that will pause the screen for a moment before starting a
+	 * new game.
+	 */
 	public void gameWon() {
 		gameWon = true;
 		try {
@@ -415,12 +501,22 @@ public class View extends JPanel implements ActionListener {
 		scoreFrame.setVisible(true);
 	}
 	
+	/**
+	 * Set the speed of the alien movement based on the current score.
+	 * @param score
+	 */
 	public void setSpeed(int score) {
 		if (score == 15) { alien_speed = 2; }
 		else if (score == 25) { alien_speed = 5; }
 		else if (score == 0) { alien_speed = 1; }
 	}
 	
+	/**
+	 * Update method to be sent to the Board that shares alien and shot positions.
+	 * @param alien_x
+	 * @param alien_y
+	 * @return shot position
+	 */
 	public int updateBoard(int[][] alien_x, int[][] alien_y) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
@@ -431,6 +527,9 @@ public class View extends JPanel implements ActionListener {
 		return shot.getY();
 	}
 	
+	/**
+	 * Add listeners to detect key presses/releases.
+	 */
 	private void addListeners() {
 		gameFrame.addKeyListener(new KeyListener() {
 

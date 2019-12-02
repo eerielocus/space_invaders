@@ -30,12 +30,13 @@ public class Controller {
 		valves.add(new KeyPressedValve(view, board));
 		valves.add(new KeyReleasedValve(view, board));
 		valves.add(new NewGameValve(view, board));
+		valves.add(new ReturnToStartValve(view, board));
 		valves.add(new ViewUpdateValve(view, board));
 		System.out.println("Controller started.");
 	}
 	
 	private void gameInfo() {
-		if (view.getAliensCreated() && !gameOver) {
+		if (view.getAliensCreated() && (!gameOver || !gameWon)) {
 			board.update();
 			gameOver = board.getGameOver();
 			gameWon = board.getGameWon();
@@ -45,14 +46,15 @@ public class Controller {
 				view.gameOver();
 			}
 			if (gameWon) {
+				System.out.println("IN.");
 				view.gameWon();
 			}
 			view.setPlayerPosition(board.getPlayer().getX());
 		}
 		
 		if (gameOver || gameWon) {
-			gameOver = board.getGameOver();
-			gameWon = board.getGameWon();
+			gameOver = false;
+			gameWon = false;
 		}
 	}
 	
