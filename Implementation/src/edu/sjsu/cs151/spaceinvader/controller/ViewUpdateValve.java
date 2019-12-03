@@ -10,7 +10,7 @@ public class ViewUpdateValve implements Valve {
 	private Board board;
 	private Alien alien = null;
 	private Alien[][] aliens;
-	private int shot_y = 0;
+	private int[] shotbomb = new int[2];
 	private int[] edges = new int[3];
 	private int[][] alien_x = new int[4][7], alien_y = new int[4][7];
 	
@@ -25,10 +25,13 @@ public class ViewUpdateValve implements Valve {
 			return ValveResponse.MISS;
 		}
 		// Get view shot's y position and set in board shot.
-		shot_y = view.updateBoard(alien_x, alien_y);
-		board.getShot().setY(shot_y);
+		view.updateBoard(alien_x, alien_y, shotbomb);
+		board.getShot().setY(shotbomb[0]);	
+		board.getBomb().setY(shotbomb[1]);
 		// If view no longer has shot drawn, set board shot visible to false.
-		if (!view.getShotFired()) board.getShot().setVisible(false);
+		if (!view.getShotFired()) { board.getShot().setVisible(false); }
+		// If view no longer has bomb drawn, set board bomb visible to false.
+		if (!view.getBombDropped()) { board.getBomb().setVisible(false); }
 		// Update x and y position of board aliens with view alien positions.
 		aliens = board.getAliens();
 		for (int i = 0; i < 4; i++) {
@@ -37,6 +40,7 @@ public class ViewUpdateValve implements Valve {
 				aliens[i][j].setY(alien_y[i][j]);
 			}
 		}
+		
 		// Check if there is collision with shot and alien.
 		alien = board.collision();
 		if (alien != null) {

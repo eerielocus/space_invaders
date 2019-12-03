@@ -1,38 +1,47 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Board {
-    private static final int BOMB_HEIGHT = 5;
+    private static final int BOMB_HEIGHT = 40;
     private static final int ALIEN_HEIGHT = 40;
     private static final int ALIEN_WIDTH = 45;
     private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     private static final int CHANCE = 5;
-    private static final int DELAY = 17;
-    private static final int PLAYER_WIDTH = 15;
-    private static final int PLAYER_HEIGHT = 10;
+    private static final int PLAYER_WIDTH = 45;
+    private static final int PLAYER_HEIGHT = 45;
     private static final int ALIEN_INIT_X = 210;
     private static final int ALIEN_INIT_Y = 75;
     
-	private boolean keyMap[];
+	private boolean keyMap[];			// Boolean map of keys pressed down.
 	private boolean gameOver = false;
-	private boolean gameWon = false;
-	private int level;
-	private int score;
-	private int total_score;
-	private int[] edges; 				// int[0] = left, int[1] = right, int[2] = bottom
-	private Alien aliens[][];
-	private Player player;
-	private Shot shot;
+	private boolean gameWon = false;	
+	private boolean chanceRoll = false;
+	private int lives;
+	private int level;					// Current level modifier.
+	private int score;					// Current game score.
+	private int total_score;			// Total score.
+	private int[] edges; 				// Contains edges of alien fleet: int[0] = left, int[1] = right, int[2] = bottom
+	private int[] lowest;
+	private Alien aliens[][];			// Alien fleet.
+	private Player player;				// Player.
+	private Shot shot;					// Player shot.
+	private Bomb bomb;
+	private Random random = new Random();
 
 	public Board() {
 		this.keyMap = new boolean[256];
 		this.score = 0;
 		this.level = 0;
+		this.lives = 3;
 		this.total_score = 0;
 		this.shot = new Shot();
+		this.bomb = new Bomb();
 		this.aliens = new Alien[4][7];
 		this.edges = new int[3];
+		this.lowest = new int[7];
 	}
 	
 	/**
@@ -41,6 +50,7 @@ public class Board {
 	public void newGame() {
 		this.level = 0;
 		this.score = 0;
+		this.lives = 3;
 		this.total_score = 0;
 		this.gameOver = false;
 		this.gameWon = false;
@@ -64,6 +74,8 @@ public class Board {
 	 */
 	public void update() {
 		movePlayer();
+		getLowestAliens();
+		dropBomb();
 		gameStatus();
 	}
 	
@@ -86,6 +98,23 @@ public class Board {
 	 */
 	public Alien[][] getAliens() {
 		return this.aliens;
+	}
+	
+	/**
+	 * Find the lowest position alien per column.
+	 * @return int[] lowest
+	 */
+	private void getLowestAliens() {
+		Arrays.fill(this.lowest, -1);
+		int row = 3;
+		while (row != -1) {
+			for (int i = 0; i < 7; i++) {
+				if (aliens[row][i].isVisible() && lowest[i] == -1) {
+					lowest[i] = row;
+				}
+			}
+			row--;
+		}
 	}
 	
 	/**
@@ -144,6 +173,7 @@ public class Board {
 	 */
 	private void createPlayer() {
 		this.player = new Player();
+		this.player.setVisible(true);
 	}
 	
 	/**
@@ -176,10 +206,34 @@ public class Board {
 	}
 	
 	/**
+	 * Randomized alien bomb generator. Chooses alien selected from lowest position
+	 * and rolls a chance to drop.
+	 */
+	private void dropBomb() {
+		int drop = random.nextInt(30);
+		int ship = random.nextInt(6);
+		if (drop == CHANCE && !bomb.isVisible() && lowest[ship] != -1) {
+			bomb.setX(aliens[lowest[ship]][ship].getX());
+			bomb.setY(aliens[lowest[ship]][ship].getY() + BOMB_HEIGHT);
+			bomb.setVisible(true);
+			chanceRoll = true;
+		}
+	}
+	
+	/**
+	 * Collision package to be sent to view.
+	 * @return Alien object containing information for view display.
+	 */
+	public Alien collision() {
+		playerCollision();
+		return alienCollision();
+	}
+	
+	/**
 	 * Checks whether the player shot hits an alien.
 	 * @return alien object that is hit
 	 */
-	public Alien collision() {
+	private Alien alienCollision() {
 		if (shot.isVisible()) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
@@ -199,6 +253,26 @@ public class Board {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Player collision with alien bomb.
+	 */
+	private void playerCollision() {
+		if (bomb.isVisible()) {
+			if (bomb.getX() >= player.getX() - 15 &&
+				bomb.getX() <= player.getX() + 10 &&
+				bomb.getY() >= player.getY() &&
+				bomb.getY() <= player.getY() + 20) {
+				if (lives > 0) {
+					System.out.println("Hit. " + bomb.getX() + " " + player.getX());
+					bomb.dead();
+					lives--;
+				} else {
+					player.dead();
+				}
+			}
+		}
 	}
 	
 	/**
@@ -242,6 +316,14 @@ public class Board {
 	}
 	
 	/**
+	 * Get the game's total lives.
+	 * @return
+	 */
+	public int getLives() {
+		return lives;
+	}
+	
+	/**
 	 * Get the shot object to access properties.
 	 * @return shot object
 	 */
@@ -249,6 +331,29 @@ public class Board {
 		return this.shot;
 	}
 	
+	/**
+	 * Get the bomb object.
+	 * @return bomb object
+	 */
+	public Bomb getBomb() {
+		return this.bomb;
+	}
+	
+	/**
+	 * Set the chance flag for rolling on random alien bombing.
+	 * @param flag
+	 */
+	public void setChance(boolean flag) {
+		this.chanceRoll = flag;
+	}
+	
+	/**
+	 * Get the chance flag for random alien bombing.
+	 * @return boolean chanceRoll
+	 */
+	public boolean getChance() {
+		return this.chanceRoll;
+	}
 	/**
 	 * Sets the key pressed, if within the standard keyboard, to true.
 	 * @param keyEvent key

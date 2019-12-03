@@ -18,6 +18,7 @@ public class Controller {
 	private boolean gameOver = false;
 	private boolean gameWon = false;
 	private int points = 0;
+	private int lives = 0;
 	
 	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
@@ -46,11 +47,24 @@ public class Controller {
 			gameOver = board.getGameOver();
 			gameWon = board.getGameWon();
 			points = board.getPoints();
+			lives = board.getLives();
+			// Launch alien bombs.
+			if (board.getBomb().isVisible() && !view.getBombDropped() && board.getChance()) {
+				view.setBombPosition(board.getBomb().getX(), board.getBomb().getY());
+				view.setBombDropped(true);
+				board.setChance(false);
+			}
+			// Update player position and points.
 			view.setPlayerPosition(board.getPlayer().getX());
+			view.setLives(lives);
 			view.setPoints(points);
-			if (gameOver) {
+			// Check if player is visible, if not, set view's player to false.
+			if (!board.getPlayer().isVisible()) { view.setPlayerVisible(false);	}
+			// Check game over status.
+			if (gameOver || !board.getPlayer().isVisible()) {
 				view.gameOver();
 			}
+			// Check game won status, if yes: make new level.
 			if (gameWon) {
 				view.gameWon();
 				board.nextGame();

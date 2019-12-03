@@ -49,16 +49,29 @@ public class View extends JPanel implements ActionListener {
 	private Image shot_img = fire.getImage();
 	private MoveableImage shot = new MoveableImage(300, 700, shot_img);
 	
+	// Alien bomb sprite.
+	private ImageIcon firebomb = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/bomb.png").getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
+	private Image bomb_img = firebomb.getImage();
+	private MoveableImage bomb = new MoveableImage(300, 700, bomb_img);
+	
 	// For start screen animated alien.
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
 	private ImageIcon logo = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/title.gif");
 	
+	private boolean bombDropped = false;	// Flag to check if bomb is on screen.
 	private boolean shotFired = false;		// Flag to check if shot is on screen.
 	private boolean aliensCreated = false;	// Flag to check if aliens are created (avoid null exception)
+	private boolean alien_dir = true;		// Alien fleet's direction of movement.
 	private boolean gameWon = false;
 	private boolean gameOver = false;
-	private String points = "";
+	private int player_x = 520;				// Initial player position.
+	private int alien_speed = 1;			// Initial alien movement speed.
+	private int alien_bound_left = 10;		// Screen left border.
+	private int alien_bound_right = 530;	// Screen right border.
+	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
+	private String lives = "";				// Number of player lives.
+	private String points = "";				// Number of points.
 	private Timer timer = new Timer(20, this);
 	
 	public View() {
@@ -249,21 +262,13 @@ public class View extends JPanel implements ActionListener {
 		repaint(g);
 	}
 	
-	// Initial player starting point.
-	// Movement settings.
-	private int player_x = 520;				// Initial player position.
-	private int alien_speed = 1;			// Initial alien movement speed.
-	private int alien_bound_left = 10;		// Screen left border.
-	private int alien_bound_right = 530;	// Screen right border.
-	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
-	private boolean alien_dir = true;		// Alien fleet's direction of movement.
-	
 	public void repaint(Graphics g) {
 		drawGameScore(g);
 		drawGameLives(g);
 		drawPlayer(g);
 		drawAliens(g);		
 		drawShot(g);
+		drawBomb(g);
 		if (gameWon) { drawGameWon(g); }
 		if (gameOver) { drawGameOver(g); }
 
@@ -279,8 +284,10 @@ public class View extends JPanel implements ActionListener {
 	 * @param g graphics
 	 */
 	private void drawPlayer(Graphics g) {
-		player.draw(g, this); 
-		player.setX(player_x);
+		if (player.getVisible()) {
+			player.draw(g, this); 
+			player.setX(player_x);
+		}
 	}
 	
 	/**
@@ -316,6 +323,17 @@ public class View extends JPanel implements ActionListener {
 		} else {
 			shot.setX(player.getX() + 14);
 			shot.setY(player.getY()); 
+		}
+	}
+	
+	private void drawBomb(Graphics g) {
+		if (bombDropped) {
+			if (bomb.getY() < 530) {
+				bomb.draw(g, this);
+				bomb.setY(bomb.getY() + 5);
+			} else {
+				bombDropped = false;
+			}
 		}
 	}
 	
@@ -413,7 +431,11 @@ public class View extends JPanel implements ActionListener {
 	private void drawGameLives(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 20));
 		g.setColor(Color.white);
-		g.drawString("LIVES: 0000", 460, 30);
+		g.drawString("LIVES: " + lives, 460, 30);
+	}
+	
+	public void setLives(int lives) {
+		this.lives = String.format("%4d", lives);
 	}
 	
 	private void drawGameWon(Graphics g) {
@@ -429,15 +451,37 @@ public class View extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Set the bomb dropped flag.
+	 * @param flag
+	 */
+	public void setBombDropped(boolean flag) {
+		this.bombDropped = flag;
+	}
+	
+	/**
+	 * Get the bomb dropped flag.
+	 * @return
+	 */
+	public boolean getBombDropped() {
+		return this.bombDropped;
+	}
+	
+	/**
+	 * Set the bomb's position.
+	 * @param x
+	 * @param y
+	 */
+	public void setBombPosition(int x, int y) {
+		this.bomb.setX(x + 20);
+		this.bomb.setY(y);
+	}
+	
+	/**
 	 * Set the shotFired flag.
 	 * @param boolean flag
 	 */
 	public void setShotFired(boolean flag) {
 		this.shotFired = flag;
-	}
-	
-	public void resetShotPosition() {
-		this.shot.setY(this.player.getY());
 	}
 	
 	/**
@@ -447,6 +491,13 @@ public class View extends JPanel implements ActionListener {
 	public boolean getShotFired() {
 		return this.shotFired;
 	}
+
+	/**
+	 * Reset the y position of the shot to the player's y position.
+	 */
+	public void resetShotPosition() {
+		this.shot.setY(this.player.getY());
+	}
 	
 	/**
 	 * Get the x position of the shot.
@@ -454,6 +505,10 @@ public class View extends JPanel implements ActionListener {
 	 */
 	public int getShot_x() {
 		return shot.getX();
+	}
+	
+	public void setPlayerVisible(boolean flag) {
+		this.player.setVisible(flag);
 	}
 	
 	/**
@@ -533,16 +588,18 @@ public class View extends JPanel implements ActionListener {
 	 * Update method to be sent to the Board that shares alien and shot positions.
 	 * @param alien_x
 	 * @param alien_y
+	 * @param shotbomb
 	 * @return shot position
 	 */
-	public int updateBoard(int[][] alien_x, int[][] alien_y) {
+	public void updateBoard(int[][] alien_x, int[][] alien_y, int[] shotbomb) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				alien_x[i][j] = aliens[i][j].getX();
 				alien_y[i][j] = aliens[i][j].getY();
 			}
 		}
-		return shot.getY();
+		shotbomb[0] = shot.getY();
+		shotbomb[1] = bomb.getY();
 	}
 	
 	/**

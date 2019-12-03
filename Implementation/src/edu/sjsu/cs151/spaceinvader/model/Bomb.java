@@ -1,22 +1,28 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
-public class Bomb {
-	private int x;
-	private int y;
-	public Bomb() {
-		
+/**
+ * Shot class extends the Sprite class and contains the methods and
+ * properties to set, move and destroy the Alien object.
+ *
+ */
+public class Bomb extends Sprite {
+	/**
+	 * Constructor method for Shot.
+	 */
+	public Bomb() { }
+	
+	public Bomb(int x, int y) {
+		initShot(x, y);
 	}
 	
-	public void createBomb(int x,int y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
+	/**
+	 * This method sets the correct image and position of the shot.
+	 * @param x position on x-axis
+	 * @param y position on y-axis
+	 */
+	public void initShot(int x, int y) {
+		setX(x);
+		setY(y);
 	}
 }
+
