@@ -19,14 +19,14 @@ public class KeyPressedValve implements Valve {
 		if (message.getClass() != KeyPressedMessage.class) {
 			return ValveResponse.MISS;
 		}
+		// Grab the key pressed and set it in board.
 		int key = Integer.parseInt(message.getMessage());
 		board.setKeyDown(key);
-		board.update();
+		// Check if its spacebar, if it is, fire the cannon!
 		if (key == 32) {
 			board.getShot().setX(view.getShot_x());
-			view.setShotFired(board.getShot().isVisible());
-		} else if (key == 37 || key == 39) {
-			view.setPlayerPosition(board.getPlayer().getX());
+			board.getShot().setVisible(true);
+			view.setShotFired(true);
 		}
 		return ValveResponse.EXECUTED;
 	}

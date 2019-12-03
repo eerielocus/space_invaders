@@ -24,9 +24,12 @@ public class ViewUpdateValve implements Valve {
 		if (message.getClass() != ViewUpdateMessage.class) {
 			return ValveResponse.MISS;
 		}
+		// Get view shot's y position and set in board shot.
 		shot_y = view.updateBoard(alien_x, alien_y);
 		board.getShot().setY(shot_y);
+		// If view no longer has shot drawn, set board shot visible to false.
 		if (!view.getShotFired()) board.getShot().setVisible(false);
+		// Update x and y position of board aliens with view alien positions.
 		aliens = board.getAliens();
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
@@ -34,12 +37,15 @@ public class ViewUpdateValve implements Valve {
 				aliens[i][j].setY(alien_y[i][j]);
 			}
 		}
+		// Check if there is collision with shot and alien.
 		alien = board.collision();
 		if (alien != null) {
 			view.setAlienExplode(alien.getPositionI(), alien.getPositionJ());
 			view.setShotFired(false);
+			view.resetShotPosition();
 			view.setSpeed(board.getScore());
 		}
+		// Update edges of alien fleet for movement bounds in view.
 		edges = board.getEdgeAliens();
 		view.setAlienEdge(edges);
 		return ValveResponse.EXECUTED;

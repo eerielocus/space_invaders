@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 public class Board {
     private static final int BOMB_HEIGHT = 5;
     private static final int ALIEN_HEIGHT = 40;
-    private static final int ALIEN_WIDTH = 40;
+    private static final int ALIEN_WIDTH = 45;
     private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     private static final int CHANCE = 5;
     private static final int DELAY = 17;
@@ -17,7 +17,10 @@ public class Board {
 	private boolean keyMap[];
 	private boolean gameOver = false;
 	private boolean gameWon = false;
+	private int level;
 	private int score;
+	private int total_score;
+	private int[] edges; 				// int[0] = left, int[1] = right, int[2] = bottom
 	private Alien aliens[][];
 	private Player player;
 	private Shot shot;
@@ -25,20 +28,35 @@ public class Board {
 	public Board() {
 		this.keyMap = new boolean[256];
 		this.score = 0;
+		this.level = 0;
+		this.total_score = 0;
 		this.shot = new Shot();
 		this.aliens = new Alien[4][7];
+		this.edges = new int[3];
 	}
 	
 	/**
 	 * New game method that creates new alien/player and resets score/flags.
 	 */
 	public void newGame() {
-		createAliens();
-		createPlayer();
+		this.level = 0;
 		this.score = 0;
+		this.total_score = 0;
 		this.gameOver = false;
 		this.gameWon = false;
 		this.keyMap = new boolean[256];
+		createAliens();
+		createPlayer();
+	}
+	/**
+	 * Next level if game was previously won.
+	 */
+	public void nextGame() {
+		if (this.level <= 100) { this.level += 50; }
+		this.score = 0;
+		this.gameWon = false;
+		this.keyMap = new boolean[256];
+		createAliens();
 	}
 	
 	/**
@@ -46,7 +64,7 @@ public class Board {
 	 */
 	public void update() {
 		movePlayer();
-		gameOver();
+		gameStatus();
 	}
 	
 	/**
@@ -55,14 +73,13 @@ public class Board {
 	private void createAliens() {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
-				aliens[i][j] = new Alien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + 50 * i);
+				aliens[i][j] = new Alien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + level + 50 * i);
 				aliens[i][j].setVisible(true);
 				aliens[i][j].setPositionIJ(i, j);
 			}
 		}
-		System.out.println("Aliens created.\n");
 	}
-	
+
 	/**
 	 * Get the fleet of aliens.
 	 * @return 2D array of aliens
@@ -79,7 +96,6 @@ public class Board {
 	 */
 	public int[] getEdgeAliens() {
 		boolean edge = true;
-		int[] edges = new int[3]; // int[0] = left, int[1] = right, int[2] = bottom
 		int j = 0;
 		if (score != NUMBER_OF_ALIENS_TO_DESTROY) {
 			// Left edge of fleet.
@@ -107,7 +123,7 @@ public class Board {
 				j--;
 			}
 			edge = true;
-			j = 0;
+			j = 3;
 			// Bottom edge of fleet.
 			while (edge) {
 				for (int i = 0; i < 7; i++) {
@@ -117,7 +133,7 @@ public class Board {
 						break;
 					}
 				}
-				j++;
+				j--;
 			}
 		}
 		return edges;
@@ -149,9 +165,9 @@ public class Board {
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
 		
 		if (leftKey && !rightKey) {
-			player.act(-5);
+			player.act(-1);
 		} else if (!leftKey && rightKey) {
-			player.act(5);
+			player.act(1);
 		}
 		
 		if (spaceKey && !shot.isVisible()) {
@@ -175,6 +191,7 @@ public class Board {
 								aliens[i][j].dead();
 								shot.dead();
 								score++;
+								total_score++;
 								return aliens[i][j];
 						}
 					}
@@ -187,10 +204,9 @@ public class Board {
 	/**
 	 * Sets the gameWon/Over flag based on the score or alien position.
 	 */
-	private void gameOver() {
-		if (score == NUMBER_OF_ALIENS_TO_DESTROY) {
-			gameWon = true;
-		}
+	private void gameStatus() {
+		if (score == NUMBER_OF_ALIENS_TO_DESTROY) { gameWon = true; }
+		if (aliens[edges[2]][0].getY() >= 450) { gameOver = true; }
 	}
 	
 	/**
@@ -222,7 +238,7 @@ public class Board {
 	 * @return int score
 	 */
 	public int getPoints() {
-		return score * 10;
+		return total_score * 10;
 	}
 	
 	/**

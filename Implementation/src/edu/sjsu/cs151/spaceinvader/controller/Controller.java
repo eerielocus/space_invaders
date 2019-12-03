@@ -14,6 +14,7 @@ public class Controller {
 	private Board board;
 	private BlockingQueue<Message> queue;
 	private ArrayList<Valve> valves = new ArrayList<>();
+	private Alien[][] aliens;
 	private boolean gameOver = false;
 	private boolean gameWon = false;
 	private int points = 0;
@@ -35,26 +36,38 @@ public class Controller {
 		System.out.println("Controller started.");
 	}
 	
+	/**
+	 * Check game status for player position and game stats.
+	 */
 	private void gameInfo() {
-		if (view.getAliensCreated() && (!gameOver || !gameWon)) {
+		// If aliens are on the screen and its not game over or game won.
+		if (view.getAliensCreated() && !gameOver && !gameWon) {
 			board.update();
 			gameOver = board.getGameOver();
 			gameWon = board.getGameWon();
 			points = board.getPoints();
+			view.setPlayerPosition(board.getPlayer().getX());
 			view.setPoints(points);
 			if (gameOver) {
 				view.gameOver();
 			}
 			if (gameWon) {
-				System.out.println("IN.");
 				view.gameWon();
+				board.nextGame();
+				aliens = board.getAliens();
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 7; j++) {
+						view.createAliens(i, j, aliens[i][j].getX(), aliens[i][j].getY());
+					}
+				}
+				view.setSpeed(board.getScore());
+				view.setAliensCreated(true);
 			}
-			view.setPlayerPosition(board.getPlayer().getX());
 		}
-		
+		// If its either game over or won, check to see if game is reset.
 		if (gameOver || gameWon) {
-			gameOver = false;
-			gameWon = false;
+			gameOver = board.getGameOver();
+			gameWon = board.getGameWon();
 		}
 	}
 	
@@ -62,7 +75,6 @@ public class Controller {
 		ValveResponse response = ValveResponse.EXECUTED;
 		Message message = null;
 		while (response != ValveResponse.FINISH) {
-			gameInfo();
 			try {
 				message = (Message) queue.take();
 			} catch (InterruptedException e) {
@@ -70,6 +82,7 @@ public class Controller {
 			}
 			
 			for (Valve valve : valves) {
+				gameInfo();
 				response = valve.execute(message);
 				if (response != ValveResponse.MISS) { break; }
 			}

@@ -1,9 +1,7 @@
 package edu.sjsu.cs151.spaceinvader.message;
 
 public class NewGameMessage implements Message {
-	public NewGameMessage() {
-		System.out.println("Received.");
-	}
+	public NewGameMessage() { }
 	
 	@Override
 	public String getMessage() {

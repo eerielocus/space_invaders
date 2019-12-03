@@ -54,8 +54,8 @@ public class View extends JPanel implements ActionListener {
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
 	private ImageIcon logo = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/title.gif");
 	
-	private boolean shotFired = false;
-	private boolean aliensCreated = false;
+	private boolean shotFired = false;		// Flag to check if shot is on screen.
+	private boolean aliensCreated = false;	// Flag to check if aliens are created (avoid null exception)
 	private boolean gameWon = false;
 	private boolean gameOver = false;
 	private String points = "";
@@ -102,7 +102,6 @@ public class View extends JPanel implements ActionListener {
 				} catch (InterruptedException exception) {
 					exception.printStackTrace();
 				}
-				System.out.println("Sent.");
 				startFrame.setVisible(false);
 				gameFrame.setVisible(true);
 			}	
@@ -254,7 +253,7 @@ public class View extends JPanel implements ActionListener {
 	// Movement settings.
 	private int player_x = 520;				// Initial player position.
 	private int alien_speed = 1;			// Initial alien movement speed.
-	private int alien_bound_left = 20;		// Screen left border.
+	private int alien_bound_left = 10;		// Screen left border.
 	private int alien_bound_right = 530;	// Screen right border.
 	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
 	private boolean alien_dir = true;		// Alien fleet's direction of movement.
@@ -265,6 +264,8 @@ public class View extends JPanel implements ActionListener {
 		drawPlayer(g);
 		drawAliens(g);		
 		drawShot(g);
+		if (gameWon) { drawGameWon(g); }
+		if (gameOver) { drawGameOver(g); }
 
 		try {
 			queue.put(new ViewUpdateMessage());
@@ -336,7 +337,8 @@ public class View extends JPanel implements ActionListener {
 	 */
 	private void drawAliens(Graphics g) {
 		// Check if aliens are created to avoid null pointer exception.
-		if (this.aliensCreated) {
+		// Check if game is won or over.
+		if (this.aliensCreated && !this.gameWon && !this.gameOver) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					// If alien is set to visible, draw the alien.
@@ -355,8 +357,8 @@ public class View extends JPanel implements ActionListener {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					// Use the edge variable to make sure the aliens never move off screen.
-					if(aliens[i][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
-					   aliens[i][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
+					if(aliens[0][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
+					   aliens[0][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
 						if (alien_dir) {
 							aliens[i][j].setX(aliens[i][j].getX() - alien_speed);
 						}
@@ -414,12 +416,28 @@ public class View extends JPanel implements ActionListener {
 		g.drawString("LIVES: 0000", 460, 30);
 	}
 	
+	private void drawGameWon(Graphics g) {
+		g.setFont(new Font("Serif", Font.BOLD, 50));
+		g.setColor(Color.white);
+		g.drawString("YOU WIN!", 170, 200);
+	}
+	
+	private void drawGameOver(Graphics g) {
+		g.setFont(new Font("Serif", Font.BOLD, 50));
+		g.setColor(Color.white);
+		g.drawString("YOU LOSE!", 160, 200);
+	}
+	
 	/**
 	 * Set the shotFired flag.
 	 * @param boolean flag
 	 */
 	public void setShotFired(boolean flag) {
 		this.shotFired = flag;
+	}
+	
+	public void resetShotPosition() {
+		this.shot.setY(this.player.getY());
 	}
 	
 	/**
@@ -478,12 +496,13 @@ public class View extends JPanel implements ActionListener {
 	public void gameOver() {
 		gameOver = true;
 		try {
-		    Thread.sleep(1000);
+		    Thread.sleep(3000);
 		} catch(InterruptedException ex) {
 		    Thread.currentThread().interrupt();
 		}
 		gameFrame.setVisible(false);
 		scoreFrame.setVisible(true);
+		gameOver = false;
 	}
 	
 	/**
@@ -493,12 +512,11 @@ public class View extends JPanel implements ActionListener {
 	public void gameWon() {
 		gameWon = true;
 		try {
-		    Thread.sleep(1000);
+		    Thread.sleep(5000);
 		} catch(InterruptedException ex) {
 		    Thread.currentThread().interrupt();
 		}
-		gameFrame.setVisible(false);
-		scoreFrame.setVisible(true);
+		gameWon = false;
 	}
 	
 	/**
