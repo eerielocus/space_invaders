@@ -35,29 +35,29 @@ public class View extends JPanel implements ActionListener {
 	private JButton retGame;
 	
 	// Alien sprite.
-	private ImageIcon enemy = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/alien.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+	private ImageIcon enemy = new ImageIcon(new ImageIcon(this.getClass().getResource("alien.gif")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
 	private Image alien_img = enemy.getImage();
 	private MoveableImage aliens[][] = new MoveableImage[4][7];
 	
 	// Player sprite.
-	private ImageIcon tank = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/tank.gif").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
+	private ImageIcon tank = new ImageIcon(new ImageIcon(this.getClass().getResource("tank.gif")).getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
 	private Image player_img = tank.getImage();
 	private MoveableImage player = new MoveableImage(520, 520, player_img);
 	
 	// Player cannon shot sprite.
-	private ImageIcon fire = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/shot.png").getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
+	private ImageIcon fire = new ImageIcon(new ImageIcon(this.getClass().getResource("shot.png")).getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
 	private Image shot_img = fire.getImage();
 	private MoveableImage shot = new MoveableImage(300, 700, shot_img);
 	
 	// Alien bomb sprite.
-	private ImageIcon firebomb = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/bomb.png").getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
+	private ImageIcon firebomb = new ImageIcon(new ImageIcon(this.getClass().getResource("bomb.png")).getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
 	private Image bomb_img = firebomb.getImage();
 	private MoveableImage bomb = new MoveableImage(300, 700, bomb_img);
 	
 	// For start screen animated alien.
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
-	private ImageIcon logo = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/title.gif");
+	private ImageIcon logo = new ImageIcon(this.getClass().getResource("title.gif"));
 	
 	private boolean bombDropped = false;	// Flag to check if bomb is on screen.
 	private boolean shotFired = false;		// Flag to check if shot is on screen.

@@ -9,8 +9,7 @@ import javax.swing.ImageIcon;
 public class MoveableImage {
 	
 	private Image image = null;
-	//private ImageIcon explode = new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/explosion.png");
-	private ImageIcon explode = new ImageIcon(new ImageIcon("src/edu/sjsu/cs151/spaceinvader/view/explosion.png").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+	private ImageIcon explode = new ImageIcon(new ImageIcon(this.getClass().getResource("explosion.png")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
 	private Image explosion = explode.getImage();
 	private boolean visible = false;
 	private boolean exploding = false;
