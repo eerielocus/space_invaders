@@ -435,16 +435,28 @@ public class View extends JPanel implements ActionListener {
 		g.drawString("LIVES: " + lives, 460, 30);
 	}
 	
+	/**
+	 * Set the number of lives to be displayed.
+	 * @param lives
+	 */
 	public void setLives(int lives) {
 		this.lives = String.format("%4d", lives);
 	}
 	
+	/**
+	 * Display if the game was won.
+	 * @param g graphics
+	 */
 	private void drawGameWon(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 50));
 		g.setColor(Color.white);
 		g.drawString("YOU WIN!", 170, 200);
 	}
 	
+	/**
+	 * Display if the game is over.
+	 * @param g graphics
+	 */
 	private void drawGameOver(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 50));
 		g.setColor(Color.white);
@@ -516,19 +528,32 @@ public class View extends JPanel implements ActionListener {
 		this.player_x = x;
 	}
 	
+	/**
+	 * Set the player object visible flag.
+	 * @param flag
+	 */
 	public void setPlayerVisible(boolean flag) {
 		this.player.setVisible(flag);
 	}
 	
+	/**
+	 * Get the player object visible flag.
+	 * @return flag
+	 */
 	public boolean getPlayerVisible() {
 		return this.player.getVisible();
 	}
 	
+	/**
+	 * Set the player to explode, then pause the game, and reset.
+	 * @param flag
+	 */
 	public void setPlayerExplode(boolean flag) {
 		this.player.setExploding(flag);
 		if (player.getExploding()) { 
 			player.explode();
 			player.setVisible(false);
+			shotFired = false;
 			try {
 			    Thread.sleep(2000);
 			} catch(InterruptedException ex) {
@@ -610,6 +635,10 @@ public class View extends JPanel implements ActionListener {
 		if (score == 15) { alien_speed = 2; }
 		else if (score == 25) { alien_speed = 5; }
 		else if (score == 0) { alien_speed = 1; }
+	}
+	
+	public BlockingQueue<Message> getQueue() {
+		return this.queue;
 	}
 	
 	/**

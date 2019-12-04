@@ -1,7 +1,6 @@
 package edu.sjsu.cs151.spaceinvader.view;
 
 import java.awt.*;
-import java.util.*;
 import javax.swing.*;
 
 /**

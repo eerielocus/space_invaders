@@ -34,7 +34,6 @@ public class Controller {
 		valves.add(new NewGameValve(view, board));
 		valves.add(new ReturnToStartValve(view, board));
 		valves.add(new ViewUpdateValve(view, board));
-		System.out.println("Controller started.");
 	}
 	
 	/**

@@ -10,8 +10,6 @@ public class Board {
     private static final int ALIEN_WIDTH = 45;
     private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     private static final int CHANCE = 5;
-    private static final int PLAYER_WIDTH = 45;
-    private static final int PLAYER_HEIGHT = 45;
     private static final int ALIEN_INIT_X = 210;
     private static final int ALIEN_INIT_Y = 75;
     
@@ -58,15 +56,18 @@ public class Board {
 		createAliens();
 		createPlayer();
 	}
+	
 	/**
 	 * Next level if game was previously won.
 	 */
 	public void nextGame() {
 		if (this.level <= 100) { this.level += 50; }
 		this.score = 0;
+		this.lives = 3;
 		this.gameWon = false;
 		this.keyMap = new boolean[256];
 		createAliens();
+		createPlayer();
 	}
 	
 	/**
@@ -353,6 +354,7 @@ public class Board {
 	public boolean getChance() {
 		return this.chanceRoll;
 	}
+	
 	/**
 	 * Sets the key pressed, if within the standard keyboard, to true.
 	 * @param keyEvent key

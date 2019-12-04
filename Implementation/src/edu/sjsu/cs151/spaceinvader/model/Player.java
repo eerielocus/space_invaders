@@ -1,6 +1,4 @@
 package edu.sjsu.cs151.spaceinvader.model;
-
-import java.awt.event.KeyEvent;
 /**
  * Player class extends the Sprite class and contains the properties for
  * the player vehicle and methods to read key presses for movement and firing.

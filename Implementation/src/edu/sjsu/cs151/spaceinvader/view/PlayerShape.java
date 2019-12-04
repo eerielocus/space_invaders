@@ -2,13 +2,7 @@ package edu.sjsu.cs151.spaceinvader.view;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.Timer;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class PlayerShape implements MoveableShape {
 	private int x;
@@ -31,8 +25,6 @@ public class PlayerShape implements MoveableShape {
 	public void repaint(boolean flag) {
 
 	}
-
-	private int speed = 10;
 
 	public void draw(Graphics2D g2) {
 
