@@ -60,8 +60,8 @@ public class Sprite
 	/**
 	 * This method is to set whether the object was hit (dying).
 	 */
-	public void setHit() {
-		this.destroy = true;
+	public void setHit(boolean flag) {
+		this.destroy = flag;
 	}
 	/**
 	 * This method is to set the X-position of object.

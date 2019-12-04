@@ -194,15 +194,12 @@ public class Board {
 		boolean rightKey = this.isKeyPressed(KeyEvent.VK_RIGHT);
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
 		
-		if (leftKey && !rightKey) {
-			player.act(-1);
-		} else if (!leftKey && rightKey) {
-			player.act(1);
+		if (player.isVisible()) {
+			if (leftKey && !rightKey) { player.act(-1);	} 
+			else if (!leftKey && rightKey) { player.act(1);	}
 		}
 		
-		if (spaceKey && !shot.isVisible()) {
-			shot.setVisible(true);
-		}
+		if (spaceKey && !shot.isVisible()) { shot.setVisible(true); }
 	}
 	
 	/**
@@ -261,14 +258,16 @@ public class Board {
 	private void playerCollision() {
 		if (bomb.isVisible()) {
 			if (bomb.getX() >= player.getX() - 15 &&
-				bomb.getX() <= player.getX() + 10 &&
+				bomb.getX() <= player.getX() + 15 &&
 				bomb.getY() >= player.getY() &&
-				bomb.getY() <= player.getY() + 20) {
-				if (lives > 0) {
-					System.out.println("Hit. " + bomb.getX() + " " + player.getX());
+				bomb.getY() <= player.getY() + 40) {
+				if (lives > 1) {
 					bomb.dead();
+					player.dead();
+					player.setX(10);
 					lives--;
 				} else {
+					lives--;
 					player.dead();
 				}
 			}

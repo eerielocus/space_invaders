@@ -65,7 +65,7 @@ public class View extends JPanel implements ActionListener {
 	private boolean alien_dir = true;		// Alien fleet's direction of movement.
 	private boolean gameWon = false;
 	private boolean gameOver = false;
-	private int player_x = 520;				// Initial player position.
+	private int player_x = 10;				// Initial player position.
 	private int alien_speed = 1;			// Initial alien movement speed.
 	private int alien_bound_left = 10;		// Screen left border.
 	private int alien_bound_right = 530;	// Screen right border.
@@ -197,7 +197,6 @@ public class View extends JPanel implements ActionListener {
 		retGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					System.out.println("Return.");
 					queue.put(new ReturnToStartMessage());
 				} catch (InterruptedException exception) {
 					exception.printStackTrace();
@@ -288,14 +287,12 @@ public class View extends JPanel implements ActionListener {
 			player.draw(g, this); 
 			player.setX(player_x);
 		}
-	}
-	
-	/**
-	 * Set the player position with parameter.
-	 * @param x position
-	 */
-	public void setPlayerPosition(int x) {
-		player_x = x;
+		
+		if (player.getExploding()) {
+			player.draw(g, this);
+			player.setExploding(false);
+			setPlayerPosition(10);
+		}
 	}
 	
 	/**
@@ -305,7 +302,7 @@ public class View extends JPanel implements ActionListener {
 	private void drawShot(Graphics g) {
 		// Check if shot is still in flight.
 		// If not, reset position.
-		if (shotFired) {
+		if (shotFired && player.getVisible()) {
 			// If shot is with the player, synchronize its position with player.
 			if (shot.getY() == player.getY()) { 
 				shot.setX(player.getX() + 14);
@@ -316,8 +313,10 @@ public class View extends JPanel implements ActionListener {
 				shot.draw(g, this);
 				shot.setY(shot.getY() - 10);
 			} else {
-				shot.setY(player.getY());
-				shot.setX(player.getX() + 14);
+				shot.explode();
+				shot.draw(g, this);
+				shot.reset(shot_img);
+				shot.setExploding(false);
 				shotFired = false;
 			}
 		} else {
@@ -328,9 +327,9 @@ public class View extends JPanel implements ActionListener {
 	
 	private void drawBomb(Graphics g) {
 		if (bombDropped) {
-			if (bomb.getY() < 530) {
+			if (bomb.getY() < 520) {
 				bomb.draw(g, this);
-				bomb.setY(bomb.getY() + 5);
+				bomb.setY(bomb.getY() + 10);
 			} else {
 				bombDropped = false;
 			}
@@ -372,34 +371,36 @@ public class View extends JPanel implements ActionListener {
 				}
 			}
 			// Adjust the movement each frame. 
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 7; j++) {
-					// Use the edge variable to make sure the aliens never move off screen.
-					if(aliens[0][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
-					   aliens[0][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
-						if (alien_dir) {
-							aliens[i][j].setX(aliens[i][j].getX() - alien_speed);
-						}
-						else {
-							aliens[i][j].setX(aliens[i][j].getX() + alien_speed);
-						}
-					} else {
-						if (alien_dir) {
-							for (int k = 0; k < 4; k++) {
-								for (int m = 0; m < 7; m++) {
-									aliens[k][m].setY(aliens[k][m].getY() + 20);
-								}
+			if (player.getVisible()) {
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 7; j++) {
+						// Use the edge variable to make sure the aliens never move off screen.
+						if(aliens[0][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
+						   aliens[0][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
+							if (alien_dir) {
+								aliens[i][j].setX(aliens[i][j].getX() - alien_speed);
 							}
-							alien_dir = false;
-						}
-						else {
-							for (int k = 0; k < 4; k++) {
-								for (int m = 0; m < 7; m++) {
-									aliens[k][m].setY(aliens[k][m].getY() + 20);
-								}
+							else {
+								aliens[i][j].setX(aliens[i][j].getX() + alien_speed);
 							}
-							alien_dir = true;
-						}	
+						} else {
+							if (alien_dir) {
+								for (int k = 0; k < 4; k++) {
+									for (int m = 0; m < 7; m++) {
+										aliens[k][m].setY(aliens[k][m].getY() + 20);
+									}
+								}
+								alien_dir = false;
+							}
+							else {
+								for (int k = 0; k < 4; k++) {
+									for (int m = 0; m < 7; m++) {
+										aliens[k][m].setY(aliens[k][m].getY() + 20);
+									}
+								}
+								alien_dir = true;
+							}	
+						}
 					}
 				}
 			}
@@ -447,7 +448,7 @@ public class View extends JPanel implements ActionListener {
 	private void drawGameOver(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 50));
 		g.setColor(Color.white);
-		g.drawString("YOU LOSE!", 160, 200);
+		g.drawString("YOU LOSE!", 155, 200);
 	}
 	
 	/**
@@ -472,7 +473,7 @@ public class View extends JPanel implements ActionListener {
 	 * @param y
 	 */
 	public void setBombPosition(int x, int y) {
-		this.bomb.setX(x + 20);
+		this.bomb.setX(x + 14);
 		this.bomb.setY(y);
 	}
 	
@@ -507,8 +508,35 @@ public class View extends JPanel implements ActionListener {
 		return shot.getX();
 	}
 	
+	/**
+	 * Set the player position with parameter.
+	 * @param x position
+	 */
+	public void setPlayerPosition(int x) {
+		this.player_x = x;
+	}
+	
 	public void setPlayerVisible(boolean flag) {
 		this.player.setVisible(flag);
+	}
+	
+	public boolean getPlayerVisible() {
+		return this.player.getVisible();
+	}
+	
+	public void setPlayerExplode(boolean flag) {
+		this.player.setExploding(flag);
+		if (player.getExploding()) { 
+			player.explode();
+			player.setVisible(false);
+			try {
+			    Thread.sleep(2000);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+			player.setVisible(true);
+			player.reset(player_img);
+		}
 	}
 	
 	/**
@@ -615,10 +643,12 @@ public class View extends JPanel implements ActionListener {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				try {
-					queue.put(new KeyPressedMessage(Integer.toString(e.getKeyCode())));
-				} catch (InterruptedException exception) {
-					exception.printStackTrace();
+				if (player.getVisible()) {
+					try {
+						queue.put(new KeyPressedMessage(Integer.toString(e.getKeyCode())));
+					} catch (InterruptedException exception) {
+						exception.printStackTrace();
+					}
 				}
 			}
 

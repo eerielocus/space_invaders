@@ -55,6 +55,10 @@ public class MoveableImage {
 		g.drawImage(this.image, x, y, o);
 	}
 	
+	public void reset(Image image) {
+		this.image = image;
+	}
+	
 	public void explode() {
 		this.image = explosion;
 		this.exploding = true;

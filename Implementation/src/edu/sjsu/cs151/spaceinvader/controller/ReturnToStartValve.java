@@ -20,7 +20,6 @@ public class ReturnToStartValve implements Valve {
 			return ValveResponse.MISS;
 		}
 		board.newGame();
-		System.out.println("OUT.");
 		return ValveResponse.EXECUTED;
 	}
 }

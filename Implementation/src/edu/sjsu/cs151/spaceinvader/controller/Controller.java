@@ -55,14 +55,18 @@ public class Controller {
 				board.setChance(false);
 			}
 			// Update player position and points.
-			view.setPlayerPosition(board.getPlayer().getX());
+			if (board.getPlayer().isVisible()) { view.setPlayerPosition(board.getPlayer().getX()); }
 			view.setLives(lives);
 			view.setPoints(points);
 			// Check if player is visible, if not, set view's player to false.
-			if (!board.getPlayer().isVisible()) { view.setPlayerVisible(false);	}
+			if (!board.getPlayer().isVisible()) { 
+				view.setPlayerExplode(true);
+				board.getPlayer().setVisible(true);
+			}
 			// Check game over status.
-			if (gameOver || !board.getPlayer().isVisible()) {
+			if (gameOver || lives == 0) {
 				view.gameOver();
+				board.newGame();
 			}
 			// Check game won status, if yes: make new level.
 			if (gameWon) {
@@ -94,7 +98,6 @@ public class Controller {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 			for (Valve valve : valves) {
 				gameInfo();
 				response = valve.execute(message);

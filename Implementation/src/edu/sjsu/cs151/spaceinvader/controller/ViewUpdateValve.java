@@ -40,7 +40,6 @@ public class ViewUpdateValve implements Valve {
 				aliens[i][j].setY(alien_y[i][j]);
 			}
 		}
-		
 		// Check if there is collision with shot and alien.
 		alien = board.collision();
 		if (alien != null) {

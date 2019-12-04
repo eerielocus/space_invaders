@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends Sprite {
 	private final int START_Y = 520;
-	private final int START_X = 520;
+	private final int START_X = 10;
 	/**
 	 * Constructor method for Player.
 	 */
