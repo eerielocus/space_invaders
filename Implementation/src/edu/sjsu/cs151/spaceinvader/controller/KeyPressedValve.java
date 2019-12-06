@@ -27,6 +27,8 @@ public class KeyPressedValve implements Valve {
 			board.getShot().setX(view.getShot_x());
 			view.setShotFired(true);
 		}
+		
+		if (!view.getBombDropped()) { board.setBombDrop(true); }
 		return ValveResponse.EXECUTED;
 	}
 }

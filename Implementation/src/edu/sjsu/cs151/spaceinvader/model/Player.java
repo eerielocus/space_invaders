@@ -25,7 +25,7 @@ public class Player extends Sprite {
 	 * This method sets the movement of the player.
 	 */
 	public void act(int x) {
-		if (this.x + x > 5 && this.x + x <= 525) {
+		if (this.x + x > 5 && this.x + x <= 545) {
 			this.x += x;	
 		}
 	}

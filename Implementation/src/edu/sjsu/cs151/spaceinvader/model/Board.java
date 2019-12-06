@@ -7,7 +7,7 @@ import java.util.Random;
 public class Board {
     private static final int BOMB_HEIGHT = 40;
     private static final int ALIEN_HEIGHT = 40;
-    private static final int ALIEN_WIDTH = 45;
+    private static final int PLAYER_HEIGHT = 40;
     private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     private static final int CHANCE = 5;
     private static final int ALIEN_INIT_X = 210;
@@ -17,6 +17,7 @@ public class Board {
 	private boolean gameOver = false;
 	private boolean gameWon = false;	
 	private boolean chanceRoll = false;
+	private boolean bombDrop = false;
 	private int lives;
 	private int level;					// Current level modifier.
 	private int score;					// Current game score.
@@ -55,6 +56,7 @@ public class Board {
 		this.keyMap = new boolean[256];
 		createAliens();
 		createPlayer();
+		getEdgeAliens();
 	}
 	
 	/**
@@ -68,16 +70,17 @@ public class Board {
 		this.keyMap = new boolean[256];
 		createAliens();
 		createPlayer();
+		getEdgeAliens();
 	}
 	
 	/**
 	 * Board update method to send information to View.
 	 */
 	public void update() {
-		movePlayer();
-		getLowestAliens();
-		dropBomb();
-		gameStatus();
+		movePlayer();			// Update player position and shot trigger.
+		getLowestAliens();		// Update lowest positioned alien in fleet.
+		dropBomb();				// Update dropping of bomb.
+		gameStatus();			// Update score/lives status of game.
 	}
 	
 	/**
@@ -106,8 +109,9 @@ public class Board {
 	 * @return int[] lowest
 	 */
 	private void getLowestAliens() {
+		// Initiate array with -1 to allow for checks.
 		Arrays.fill(this.lowest, -1);
-		int row = 3;
+		int row = 3;	// Start from bottom.
 		while (row != -1) {
 			for (int i = 0; i < 7; i++) {
 				if (aliens[row][i].isVisible() && lowest[i] == -1) {
@@ -126,7 +130,7 @@ public class Board {
 	 */
 	public int[] getEdgeAliens() {
 		boolean edge = true;
-		int j = 0;
+		int j = 0;	// Column variable.
 		if (score != NUMBER_OF_ALIENS_TO_DESTROY) {
 			// Left edge of fleet.
 			while (edge) {
@@ -140,7 +144,7 @@ public class Board {
 				j++;
 			}
 			edge = true;
-			j = 6;
+			j = 6;	// Column variable starting from right.
 			// Right edge of fleet.
 			while (edge) {
 				for (int i = 0; i < 4; i++) {
@@ -153,7 +157,7 @@ public class Board {
 				j--;
 			}
 			edge = true;
-			j = 3;
+			j = 3;	// Row variable starting from bottom.
 			// Bottom edge of fleet.
 			while (edge) {
 				for (int i = 0; i < 7; i++) {
@@ -194,12 +198,12 @@ public class Board {
 		boolean leftKey = this.isKeyPressed(KeyEvent.VK_LEFT);
 		boolean rightKey = this.isKeyPressed(KeyEvent.VK_RIGHT);
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
-		
+		// If player is alive, move based on key pressed.
 		if (player.isVisible()) {
 			if (leftKey && !rightKey) { player.act(-1);	} 
 			else if (!leftKey && rightKey) { player.act(1);	}
 		}
-		
+		// If shot is not on screen, and space is pressed, fire the cannon!
 		if (spaceKey && !shot.isVisible()) { shot.setVisible(true); }
 	}
 	
@@ -208,13 +212,16 @@ public class Board {
 	 * and rolls a chance to drop.
 	 */
 	private void dropBomb() {
-		int drop = random.nextInt(30);
-		int ship = random.nextInt(6);
-		if (drop == CHANCE && !bomb.isVisible() && lowest[ship] != -1) {
-			bomb.setX(aliens[lowest[ship]][ship].getX());
-			bomb.setY(aliens[lowest[ship]][ship].getY() + BOMB_HEIGHT);
-			bomb.setVisible(true);
-			chanceRoll = true;
+		if (bombDrop) {
+			int drop = random.nextInt(30);	// Randomized chance for bomb drop.
+			int ship = random.nextInt(6);	// Randomized alien to drop bomb.
+			// Check the chance and if bomb is visible and the selected 'lowest' ship is not destroyed.
+			if (drop == CHANCE && !bomb.isVisible() && lowest[ship] != -1) {
+				bomb.setX(aliens[lowest[ship]][ship].getX());
+				bomb.setY(aliens[lowest[ship]][ship].getY() + BOMB_HEIGHT);
+				bomb.setVisible(true);
+				chanceRoll = true;
+			}
 		}
 	}
 	
@@ -236,8 +243,8 @@ public class Board {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					if (aliens[i][j].isVisible() && shot.isVisible()) {
-						if (shot.getX() >= aliens[i][j].getX() &&
-							shot.getX() <= aliens[i][j].getX() + ALIEN_WIDTH &&
+						if (shot.getX() >= aliens[i][j].getX() - 5 &&
+							shot.getX() <= aliens[i][j].getX() + 35 &&
 							shot.getY() >= aliens[i][j].getY() &&
 							shot.getY() <= aliens[i][j].getY() + ALIEN_HEIGHT) {
 								aliens[i][j].dead();
@@ -258,10 +265,10 @@ public class Board {
 	 */
 	private void playerCollision() {
 		if (bomb.isVisible()) {
-			if (bomb.getX() >= player.getX() - 15 &&
+			if (bomb.getX() >= player.getX() - 18 &&
 				bomb.getX() <= player.getX() + 15 &&
 				bomb.getY() >= player.getY() &&
-				bomb.getY() <= player.getY() + 40) {
+				bomb.getY() <= player.getY() + PLAYER_HEIGHT) {
 				if (lives > 1) {
 					bomb.dead();
 					player.dead();
@@ -337,6 +344,14 @@ public class Board {
 	 */
 	public Bomb getBomb() {
 		return this.bomb;
+	}
+	
+	/**
+	 * Set the flag for bomb dropping.
+	 * @param flag
+	 */
+	public void setBombDrop(boolean flag) {
+		this.bombDrop = flag;
 	}
 	
 	/**

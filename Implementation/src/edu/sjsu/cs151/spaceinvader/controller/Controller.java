@@ -10,15 +10,15 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 
 public class Controller {
 
-	private View view;
-	private Board board;
-	private BlockingQueue<Message> queue;
-	private ArrayList<Valve> valves = new ArrayList<>();
-	private Alien[][] aliens;
-	private boolean gameOver = false;
+	private View view;							// View class object.
+	private Board board;						// Board class object.
+	private BlockingQueue<Message> queue;		// Queue containing messages for processing.
+	private ArrayList<Valve> valves = new ArrayList<>();	// List of valves to process messages.
+	private Alien[][] aliens;					// 2D array of Alien objects.
+	private boolean gameOver = false;			// Flags to check game status.
 	private boolean gameWon = false;
-	private int points = 0;
-	private int lives = 0;
+	private int points = 0;						// Points for the game.
+	private int lives = 0;						// Lives for the game.
 	
 	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
@@ -27,6 +27,9 @@ public class Controller {
 		startUp();
 	}
 	
+	/**
+	 * Starts the view and passes queue object. Initiates and adds valves for processing.
+	 */
 	private void startUp() {
 		view.start(queue);
 		valves.add(new KeyPressedValve(view, board));
@@ -53,32 +56,34 @@ public class Controller {
 				view.setBombDropped(true);
 				board.setChance(false);
 			}
-			// Update player position and points.
+			// Update player position if it is alive.
 			if (board.getPlayer().isVisible()) { view.setPlayerPosition(board.getPlayer().getX()); }
-			view.setLives(lives);
-			view.setPoints(points);
+			view.setLives(lives);		// Set view's lives display.
+			view.setPoints(points);		// Set view's points display.
 			// Check if player is visible, if not, set view's player to false.
 			if (!board.getPlayer().isVisible()) { 
 				view.setPlayerExplode(true);
+				board.setBombDrop(false);
 				board.getPlayer().setVisible(true);
 			}
 			// Check game over status.
 			if (gameOver || lives == 0) {
 				view.gameOver();
-				board.newGame();
+				view.setAliensCreated(false);
 			}
 			// Check game won status, if yes: make new level.
 			if (gameWon) {
 				view.gameWon();
-				board.nextGame();
-				aliens = board.getAliens();
+				view.setAliensCreated(false);
+				board.nextGame();					// New game that keeps score, adjusts alien start Y.
+				aliens = board.getAliens();			// Recreate aliens for new game with new start position.
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 7; j++) {
 						view.createAliens(i, j, aliens[i][j].getX(), aliens[i][j].getY());
 					}
 				}
-				view.setSpeed(board.getScore());
-				view.setAliensCreated(true);
+				view.setSpeed(board.getScore());	// Reset alien speed.
+				view.setAliensCreated(true);		// Flag that aliens have been recreated.
 			}
 		}
 		// If its either game over or won, check to see if game is reset.

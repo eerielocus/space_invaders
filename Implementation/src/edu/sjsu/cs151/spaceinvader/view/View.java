@@ -11,7 +11,6 @@ import edu.sjsu.cs151.spaceinvader.message.KeyPressedMessage;
 import edu.sjsu.cs151.spaceinvader.message.KeyReleasedMessage;
 import edu.sjsu.cs151.spaceinvader.message.Message;
 import edu.sjsu.cs151.spaceinvader.message.NewGameMessage;
-import edu.sjsu.cs151.spaceinvader.message.ReturnToStartMessage;
 import edu.sjsu.cs151.spaceinvader.message.ViewUpdateMessage;
 
 
@@ -42,7 +41,7 @@ public class View extends JPanel implements ActionListener {
 	// Player sprite.
 	private ImageIcon tank = new ImageIcon(new ImageIcon(this.getClass().getResource("tank.gif")).getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
 	private Image player_img = tank.getImage();
-	private MoveableImage player = new MoveableImage(520, 520, player_img);
+	private MoveableImage player = new MoveableImage(10, 520, player_img);
 	
 	// Player cannon shot sprite.
 	private ImageIcon fire = new ImageIcon(new ImageIcon(this.getClass().getResource("shot.png")).getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
@@ -72,7 +71,7 @@ public class View extends JPanel implements ActionListener {
 	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
 	private String lives = "";				// Number of player lives.
 	private String points = "";				// Number of points.
-	private Timer timer = new Timer(20, this);
+	private Timer timer = new Timer(30, this);
 	
 	public View() {
 		startFrame = new JFrame();
@@ -196,11 +195,6 @@ public class View extends JPanel implements ActionListener {
 		retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		retGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					queue.put(new ReturnToStartMessage());
-				} catch (InterruptedException exception) {
-					exception.printStackTrace();
-				}
 				scoreFrame.setVisible(false);
 				startFrame.setVisible(true);
 			}	
@@ -325,9 +319,14 @@ public class View extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Draw the bomb from aliens.
+	 * @param g graphics.
+	 */
 	private void drawBomb(Graphics g) {
+		// Wait for flag.
 		if (bombDropped) {
-			if (bomb.getY() < 520) {
+			if (bomb.getY() < 520) {			// If it reaches this height, stop animating.
 				bomb.draw(g, this);
 				bomb.setY(bomb.getY() + 10);
 			} else {
@@ -355,26 +354,30 @@ public class View extends JPanel implements ActionListener {
 	private void drawAliens(Graphics g) {
 		// Check if aliens are created to avoid null pointer exception.
 		// Check if game is won or over.
-		if (this.aliensCreated && !this.gameWon && !this.gameOver) {
+		if (aliensCreated && !gameWon && !gameOver) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					// If alien is set to visible, draw the alien.
 					if (aliens[i][j].getVisible()) {
 						aliens[i][j].draw(g, this);
 					}
-					// If alien is set to explode (hit), draw exploding image.
-					if (aliens[i][j].getExploding()) {
+					// If alien is set to explode (hit) and still visible, draw exploding image.
+					if (aliens[i][j].getExploding() && aliens[i][j].getVisible()) {
 						aliens[i][j].draw(g, this);
 						aliens[i][j].setVisible(false);
+					}
+					// If alien is exploding and no longer visible.
+					if (aliens[i][j].getExploding()) {
 						aliens[i][j].setExploding(false);
 					}
 				}
 			}
-			// Adjust the movement each frame. 
-			if (player.getVisible()) {
+			// Adjust the movement each frame. Check if player is alive. Else stop movement.
+			if (aliensCreated && player.getVisible()) {
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 7; j++) {
-						// Use the edge variable to make sure the aliens never move off screen.
+						// Use the edge variable to make sure the aliens never move off screen
+						// and based on current direction, adjust direction.
 						if(aliens[0][alien_edge[0]].getX() - alien_speed > alien_bound_left && alien_dir ||
 						   aliens[0][alien_edge[1]].getX() + alien_speed < alien_bound_right && !alien_dir) {
 							if (alien_dir) {
@@ -551,16 +554,16 @@ public class View extends JPanel implements ActionListener {
 	public void setPlayerExplode(boolean flag) {
 		this.player.setExploding(flag);
 		if (player.getExploding()) { 
-			player.explode();
-			player.setVisible(false);
-			shotFired = false;
+			player.explode();			// Set player to explode, change image.
+			player.setVisible(false);	// To stop movements on screen.
+			shotFired = false;			// Remove any shots fired prior to player explode.
 			try {
-			    Thread.sleep(2000);
+			    Thread.sleep(2000);		// Pause game for 2 seconds.
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
-			player.setVisible(true);
-			player.reset(player_img);
+			player.setVisible(true);	// Resume movements.
+			player.reset(player_img);	// Reset player image.
 		}
 	}
 	
@@ -603,6 +606,7 @@ public class View extends JPanel implements ActionListener {
 	 */
 	public void gameOver() {
 		gameOver = true;
+		alien_dir = true;				// Reset alien direction.
 		try {
 		    Thread.sleep(3000);
 		} catch(InterruptedException ex) {
@@ -619,6 +623,7 @@ public class View extends JPanel implements ActionListener {
 	 */
 	public void gameWon() {
 		gameWon = true;
+		alien_dir = true;				// Reset alien direction for respawn.
 		try {
 		    Thread.sleep(5000);
 		} catch(InterruptedException ex) {
@@ -692,13 +697,3 @@ public class View extends JPanel implements ActionListener {
 		});
 	}
 }
-
-
-
-
-
-
-
-
-
- 
