@@ -5,6 +5,10 @@ import edu.sjsu.cs151.spaceinvader.message.NewGameMessage;
 import edu.sjsu.cs151.spaceinvader.model.*;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
+/**
+ * Valve to process New Game message, initates start over command and creates new aliens
+ * and resets speed and visibility.
+ */
 public class NewGameValve implements Valve {
 	private View view;
 	private Board board;
@@ -20,7 +24,7 @@ public class NewGameValve implements Valve {
 		if (message.getClass() != NewGameMessage.class) {
 			return ValveResponse.MISS;
 		}
-		board.newGame();
+		board.startOver();
 		aliens = board.getAliens();
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {

@@ -8,6 +8,10 @@ import edu.sjsu.cs151.spaceinvader.message.Message;
 import edu.sjsu.cs151.spaceinvader.model.*;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
+/**
+ * Controller class that handles communication between View and Model as well as handle
+ * the state of the game. 
+ */
 public class Controller {
 
 	private View view;							// View class object.
@@ -40,7 +44,10 @@ public class Controller {
 	}
 	
 	/**
-	 * Check game status for player position and game stats.
+	 * Check game status for player position and game statistics. Sets bomb position/flags.
+	 * Adjust speed of aliens based on updated score. Reset player visibility if already 
+	 * destroyed. Create new alien fleet upon game win at a lower position to increase
+	 * difficulty.
 	 */
 	private void gameInfo() {
 		// If aliens are on the screen and its not game over or game won.
@@ -74,8 +81,8 @@ public class Controller {
 			// Check game won status, if yes: make new level.
 			if (gameWon) {
 				view.gameWon();
-				view.setAliensCreated(false);
-				board.nextGame();					// New game that keeps score, adjusts alien start Y.
+				view.setAliensCreated(false);		// Set to false to pause alien movement for respawn.
+				board.nextLevel();;					// New game that keeps score, adjusts alien start Y.
 				aliens = board.getAliens();			// Recreate aliens for new game with new start position.
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 7; j++) {

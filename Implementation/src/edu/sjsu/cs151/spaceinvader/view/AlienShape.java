@@ -4,11 +4,11 @@ import java.awt.*;
 import java.awt.geom.*;
 
 /**
- * A car that can be moved around.
+ * An alien that can be moved around.
  */
 public class AlienShape implements MoveableShape {
 	/**
-	 * Constructs a car item.
+	 * Constructs an alien item.
 	 * 
 	 * @param x     the left of the bounding rectangle
 	 * @param y     the top of the bounding rectangle

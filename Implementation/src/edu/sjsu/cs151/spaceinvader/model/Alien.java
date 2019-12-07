@@ -1,6 +1,8 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
-
+/**
+ * Alien object that extends Sprite class.
+ */
 public class Alien extends Sprite {
     /**
 	 * Constructor method for Alien.
@@ -16,12 +18,5 @@ public class Alien extends Sprite {
     protected void initAlien(int x, int y) {
     	setX(x);	
     	setY(y);
-    }
-
-    /**
-	 * This method creates a new bomb for the Alien.
-	 */
-    protected Bomb getBomb() {
-    	return new Bomb();
     }
 }

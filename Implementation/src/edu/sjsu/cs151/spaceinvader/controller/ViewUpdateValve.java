@@ -5,6 +5,11 @@ import edu.sjsu.cs151.spaceinvader.message.ViewUpdateMessage;
 import edu.sjsu.cs151.spaceinvader.model.*;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
+/**
+ * Valve to process the View Update message sent by View during repaint. Updates alien
+ * and shot positions and checks for collision of aliens to shot.
+ *
+ */
 public class ViewUpdateValve implements Valve {
 	private View view;
 	private Board board;

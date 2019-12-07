@@ -5,6 +5,12 @@ import edu.sjsu.cs151.spaceinvader.message.Message;
 import edu.sjsu.cs151.spaceinvader.model.Board;
 import edu.sjsu.cs151.spaceinvader.view.View;
 
+/**
+ * Valve that processes the Key Pressed event message by using the Board's set key down
+ * method and setting the appropriate flags for shot and bomb.
+ * @author Mikeysan
+ *
+ */
 public class KeyPressedValve implements Valve {
 	private View view;
 	private Board board;

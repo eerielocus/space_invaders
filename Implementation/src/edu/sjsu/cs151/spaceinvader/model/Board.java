@@ -4,7 +4,11 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Board {
+/**
+ * Board (Model) stores all information about the current state of the game and handles
+ * collision detection and player movement.
+ */
+public class Board extends Game{
     private static final int BOMB_HEIGHT = 40;
     private static final int ALIEN_HEIGHT = 40;
     private static final int PLAYER_HEIGHT = 40;
@@ -14,11 +18,11 @@ public class Board {
     private static final int ALIEN_INIT_Y = 75;
     
 	private boolean keyMap[];			// Boolean map of keys pressed down.
-	private boolean gameOver = false;
-	private boolean gameWon = false;	
-	private boolean chanceRoll = false;
-	private boolean bombDrop = false;
-	private int lives;
+	private boolean gameOver = false;	// Game over flag.
+	private boolean gameWon = false;	// Game won flag.
+	private boolean chanceRoll = false;	// Alien bomb drop chance roll flag.
+	private boolean bombDrop = false;	// Alien bomb dropped flag.
+	private int lives;					// Total number of player lives.
 	private int level;					// Current level modifier.
 	private int score;					// Current game score.
 	private int total_score;			// Total score.
@@ -27,10 +31,16 @@ public class Board {
 	private Alien aliens[][];			// Alien fleet.
 	private Player player;				// Player.
 	private Shot shot;					// Player shot.
-	private Bomb bomb;
+	private Bomb bomb;					// Alien bomb.
 	private Random random = new Random();
 
-	public Board() {
+	public Board() { }
+	
+	/**
+	 * Start a new game, set all variables to proper settings.
+	 */
+	@Override
+	public void start() {
 		this.keyMap = new boolean[256];
 		this.score = 0;
 		this.level = 0;
@@ -40,12 +50,13 @@ public class Board {
 		this.bomb = new Bomb();
 		this.aliens = new Alien[4][7];
 		this.edges = new int[3];
-		this.lowest = new int[7];
+		this.lowest = new int[7];	
 	}
 	
 	/**
 	 * New game method that creates new alien/player and resets score/flags.
 	 */
+	@Override
 	public void newGame() {
 		this.level = 0;
 		this.score = 0;
@@ -62,6 +73,7 @@ public class Board {
 	/**
 	 * Next level if game was previously won.
 	 */
+	@Override
 	public void nextGame() {
 		if (this.level <= 100) { this.level += 50; }
 		this.score = 0;
@@ -98,7 +110,7 @@ public class Board {
 
 	/**
 	 * Get the fleet of aliens.
-	 * @return 2D array of aliens
+	 * @return array of aliens
 	 */
 	public Alien[][] getAliens() {
 		return this.aliens;
@@ -106,7 +118,7 @@ public class Board {
 	
 	/**
 	 * Find the lowest position alien per column.
-	 * @return int[] lowest
+	 * @return array containing lowest positioned alien's row number
 	 */
 	private void getLowestAliens() {
 		// Initiate array with -1 to allow for checks.
@@ -126,7 +138,7 @@ public class Board {
 	 * Get the left/right/bottom edges of the alien fleet to determine where the left,
 	 * right, and bottom most alien resides.
 	 * 
-	 * @return int[] contains edge row/column information
+	 * @return array containing edge row/column information
 	 */
 	public int[] getEdgeAliens() {
 		boolean edge = true;
@@ -183,7 +195,7 @@ public class Board {
 	
 	/**
 	 * Gets the player object.
-	 * @return player
+	 * @return player object
 	 */
 	public Player getPlayer() {
 		return player;
@@ -227,7 +239,7 @@ public class Board {
 	
 	/**
 	 * Collision package to be sent to view.
-	 * @return Alien object containing information for view display.
+	 * @return alien object containing information for view display.
 	 */
 	public Alien collision() {
 		playerCollision();
@@ -292,7 +304,7 @@ public class Board {
 	
 	/**
 	 * Get the flag for gameWon.
-	 * @return boolean gameWon
+	 * @return flag that indicates whether game is won or not
 	 */
 	public boolean getGameWon() {
 		return gameWon;
@@ -300,7 +312,7 @@ public class Board {
 	
 	/**
 	 * Get the flag for gameOver.
-	 * @return boolean gameOver
+	 * @return flag that indicates whether game is over or not
 	 */
 	public boolean getGameOver() {
 		return gameOver;
@@ -308,7 +320,7 @@ public class Board {
 	
 	/**
 	 * Get the game's score.
-	 * @return int score
+	 * @return total number of aliens destroyed
 	 */
 	public int getScore() {
 		return score;
@@ -316,7 +328,7 @@ public class Board {
 	
 	/**
 	 * Get the game's total points. Per alien kill = 10 points.
-	 * @return int score
+	 * @return total points accumulated in the game
 	 */
 	public int getPoints() {
 		return total_score * 10;
@@ -324,7 +336,7 @@ public class Board {
 	
 	/**
 	 * Get the game's total lives.
-	 * @return
+	 * @return number of player lives left
 	 */
 	public int getLives() {
 		return lives;
@@ -332,7 +344,7 @@ public class Board {
 	
 	/**
 	 * Get the shot object to access properties.
-	 * @return shot object
+	 * @return player shot object
 	 */
 	public Shot getShot() {
 		return this.shot;
@@ -340,7 +352,7 @@ public class Board {
 	
 	/**
 	 * Get the bomb object.
-	 * @return bomb object
+	 * @return alien bomb object
 	 */
 	public Bomb getBomb() {
 		return this.bomb;
@@ -348,7 +360,7 @@ public class Board {
 	
 	/**
 	 * Set the flag for bomb dropping.
-	 * @param flag
+	 * @param flag indicating if the bomb is dropped or not
 	 */
 	public void setBombDrop(boolean flag) {
 		this.bombDrop = flag;
@@ -356,7 +368,7 @@ public class Board {
 	
 	/**
 	 * Set the chance flag for rolling on random alien bombing.
-	 * @param flag
+	 * @param flag indicating if the random roll for alien attack is done or not
 	 */
 	public void setChance(boolean flag) {
 		this.chanceRoll = flag;
@@ -364,7 +376,7 @@ public class Board {
 	
 	/**
 	 * Get the chance flag for random alien bombing.
-	 * @return boolean chanceRoll
+	 * @return flag indicating if random roll has been rolled or not
 	 */
 	public boolean getChance() {
 		return this.chanceRoll;
@@ -372,7 +384,7 @@ public class Board {
 	
 	/**
 	 * Sets the key pressed, if within the standard keyboard, to true.
-	 * @param keyEvent key
+	 * @param key event pressed as an integer
 	 */
 	public void setKeyDown(int key) {
 		if(key > 255) { return; }
@@ -381,7 +393,7 @@ public class Board {
 
 	/**
 	 * Set the key released, meaning set the location in keyMap to false.
-	 * @param keyEvent key
+	 * @param key event pressed as an integer
 	 */
 	public void setKeyUp(int key) {
 		if(key > 255) { return; }
@@ -390,8 +402,8 @@ public class Board {
 	
 	/**
 	 * Check the keyMap to see if the key is still pressed down or not.
-	 * @param keyEvent key
-	 * @return boolean true/false
+	 * @param key event pressed as an integer
+	 * @return flag indicating if key is pressed or not
 	 */
 	public boolean isKeyPressed(int key) {
 		if (key > 255) { return false; }
