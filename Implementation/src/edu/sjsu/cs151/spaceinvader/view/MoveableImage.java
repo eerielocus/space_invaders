@@ -19,6 +19,12 @@ public class MoveableImage {
 	private int x = 0;
 	private int y = 0;
 	
+	/**
+	 * Constructor to create moveable image.
+	 * @param x position
+	 * @param y position
+	 * @param image to be displayed
+	 */
 	MoveableImage(int x, int y, Image image){
 		this.image = image;
 		this.x = x;

@@ -46,13 +46,17 @@ public class View extends JPanel implements ActionListener {
 	private Image player_img = tank.getImage();
 	private MoveableImage player = new MoveableImage(10, 520, player_img);
 	
+	private ImageIcon block = new ImageIcon(new ImageIcon(this.getClass().getResource("barrier.gif")).getImage().getScaledInstance(10, 10, Image.SCALE_DEFAULT));
+	private Image barrier_img = block.getImage();
+	private MoveableImage barrier[][][] = new MoveableImage[4][3][6];
+	
 	// Player cannon shot sprite.
-	private ImageIcon fire = new ImageIcon(new ImageIcon(this.getClass().getResource("shot.png")).getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
+	private ImageIcon fire = new ImageIcon(new ImageIcon(this.getClass().getResource("shot.png")).getImage().getScaledInstance(1, 40, Image.SCALE_DEFAULT));
 	private Image shot_img = fire.getImage();
 	private MoveableImage shot = new MoveableImage(300, 700, shot_img);
 	
 	// Alien bomb sprite.
-	private ImageIcon firebomb = new ImageIcon(new ImageIcon(this.getClass().getResource("bomb.png")).getImage().getScaledInstance(15, 40, Image.SCALE_DEFAULT));
+	private ImageIcon firebomb = new ImageIcon(new ImageIcon(this.getClass().getResource("bomb.png")).getImage().getScaledInstance(1, 40, Image.SCALE_DEFAULT));
 	private Image bomb_img = firebomb.getImage();
 	private MoveableImage bomb = new MoveableImage(300, 700, bomb_img);
 	
@@ -63,6 +67,7 @@ public class View extends JPanel implements ActionListener {
 	
 	private boolean bombDropped = false;	// Flag to check if bomb is on screen.
 	private boolean shotFired = false;		// Flag to check if shot is on screen.
+	private boolean barrierCreated = false;
 	private boolean aliensCreated = false;	// Flag to check if aliens are created (avoid null exception)
 	private boolean alien_dir = true;		// Alien fleet's direction of movement.
 	private boolean gameWon = false;		// Game won flag.
@@ -288,6 +293,7 @@ public class View extends JPanel implements ActionListener {
 		drawAliens(g);		
 		drawShot(g);
 		drawBomb(g);
+		drawBarrier(g);
 		if (gameWon) { drawGameWon(g); }
 		if (gameOver) { drawGameOver(g); }
 
@@ -326,7 +332,7 @@ public class View extends JPanel implements ActionListener {
 		if (shotFired && player.getVisible()) {
 			// If shot is with the player, synchronize its position with player.
 			if (shot.getY() == player.getY()) { 
-				shot.setX(player.getX() + 14);
+				shot.setX(player.getX() + 20);
 				}
 			// If shot is below the screen border, continue drawing until it isn't
 			// Else reset position and set shotFired to false.
@@ -341,7 +347,7 @@ public class View extends JPanel implements ActionListener {
 				shotFired = false;
 			}
 		} else {
-			shot.setX(player.getX() + 14);
+			shot.setX(player.getX() + 20);
 			shot.setY(player.getY()); 
 		}
 	}
@@ -358,6 +364,33 @@ public class View extends JPanel implements ActionListener {
 				bomb.setY(bomb.getY() + 10);
 			} else {
 				bombDropped = false;
+			}
+		}
+	}
+	
+	private void drawBarrier(Graphics g) {
+		int x = 40;
+		int y = 450;
+		if (!barrierCreated) {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 3; j++) {
+					for (int k = 0; k < 6; k++) {
+						barrier[i][j][k] = new MoveableImage(x + 10 * k, y + 10 * j, barrier_img);
+						barrier[i][j][k].setVisible(true);
+					}
+				}
+				x += 150;
+			}
+			barrierCreated = true;
+		}
+		
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 6; k++) {
+					if (barrier[i][j][k].getVisible()) {
+						barrier[i][j][k].draw(g, this);
+					}
+				}
 			}
 		}
 	}
@@ -515,7 +548,7 @@ public class View extends JPanel implements ActionListener {
 	 * @param y position
 	 */
 	public void setBombPosition(int x, int y) {
-		this.bomb.setX(x + 14);
+		this.bomb.setX(x);
 		this.bomb.setY(y);
 	}
 	
@@ -542,12 +575,8 @@ public class View extends JPanel implements ActionListener {
 		this.shot.setY(this.player.getY());
 	}
 	
-	/**
-	 * Get the x position of the shot.
-	 * @return x position
-	 */
-	public int getShot_x() {
-		return shot.getX();
+	public void setBarrierHit(int i, int j, int k) {
+		barrier[i][j][k].setVisible(false);
 	}
 	
 	/**

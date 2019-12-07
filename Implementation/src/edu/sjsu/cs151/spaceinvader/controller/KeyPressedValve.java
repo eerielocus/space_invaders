@@ -29,8 +29,7 @@ public class KeyPressedValve implements Valve {
 		int key = Integer.parseInt(message.getMessage());
 		board.setKeyDown(key);
 		// Check if its spacebar, if it is, fire the cannon!
-		if (key == 32) {
-			board.getShot().setX(view.getShot_x());
+		if (key == 32 && !view.getShotFired()) {
 			view.setShotFired(true);
 		}
 		
