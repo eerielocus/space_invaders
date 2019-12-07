@@ -31,6 +31,7 @@ public class NewGameValve implements Valve {
 				view.createAliens(i, j, aliens[i][j].getX(), aliens[i][j].getY());
 			}
 		}
+		view.setBarrierCreated(false);
 		view.setPlayerVisible(true);
 		view.setAliensCreated(true);
 		view.setSpeed(0);

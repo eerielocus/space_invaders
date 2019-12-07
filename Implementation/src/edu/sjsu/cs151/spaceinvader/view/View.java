@@ -16,6 +16,8 @@ import edu.sjsu.cs151.spaceinvader.message.ViewUpdateMessage;
 /**
  * View provides the user interface and graphics to be displayed for the game. Generates
  * events from user and stores as message objects to be sent to Controller.
+ * 
+ * @author Michael Kang and Guiller Dalit 
  */
 public class View extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -32,6 +34,11 @@ public class View extends JPanel implements ActionListener {
 	
 	private JLabel gameName;     	// Start screen game title.
 	private JLabel gameLogo;    	// Start screen alien logo.
+	private JLabel gameControls;	// Start screen basic player control instructions.
+	
+	private JMenuBar menu;			// Start screen menu bar.
+	private JMenu help;				// Start screen menu.
+	private JMenuItem instructions;	// Start screen menu item containing help instructions.
 	
 	private JButton startGame;		// Start button at start screen.
 	private JButton retGame;		// Return to start button at score screen.
@@ -46,6 +53,7 @@ public class View extends JPanel implements ActionListener {
 	private Image player_img = tank.getImage();
 	private MoveableImage player = new MoveableImage(10, 520, player_img);
 	
+	// Barrier sprite.
 	private ImageIcon block = new ImageIcon(new ImageIcon(this.getClass().getResource("barrier.gif")).getImage().getScaledInstance(10, 10, Image.SCALE_DEFAULT));
 	private Image barrier_img = block.getImage();
 	private MoveableImage barrier[][][] = new MoveableImage[4][3][6];
@@ -64,10 +72,13 @@ public class View extends JPanel implements ActionListener {
 	private MoveableShape logoAlien = new AlienShape(0, 0, 100);
 	private ShapeIcon iconAlien = new ShapeIcon(logoAlien, 400, 100);
 	private ImageIcon logo = new ImageIcon(this.getClass().getResource("title.gif"));
+
+	// Instructions on how to control player.
+	private ImageIcon controls = new ImageIcon(this.getClass().getResource("instructions.png"));
 	
 	private boolean bombDropped = false;	// Flag to check if bomb is on screen.
 	private boolean shotFired = false;		// Flag to check if shot is on screen.
-	private boolean barrierCreated = false;
+	private boolean barrierCreated = false;	// Flag to check if barrier is on screen.
 	private boolean aliensCreated = false;	// Flag to check if aliens are created (avoid null exception)
 	private boolean alien_dir = true;		// Alien fleet's direction of movement.
 	private boolean gameWon = false;		// Game won flag.
@@ -81,6 +92,9 @@ public class View extends JPanel implements ActionListener {
 	private String points = "";				// Number of points.
 	private Timer timer = new Timer(30, this);
 	
+	/**
+	 * Constructor initializing new JFrames and JPanels.
+	 */
 	public View() {
 		startFrame = new JFrame();
 		gameFrame =  new JFrame();
@@ -112,17 +126,34 @@ public class View extends JPanel implements ActionListener {
 	private void startWindow() {
 		startFrame.setSize(600, 600);
 		startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		startFrame.setResizable(false);
 		startFrame.setTitle("Space Invader");
-		
+		// Create welcome screen panel.
 		startContent = new JPanel();
 		startContent.setBackground(Color.black);
-		
+		// Menu items for instructions on how to play.
+		menu = new JMenuBar();
+		help = new JMenu("Help");
+		// Create menu item and add action to it.
+		instructions = new JMenuItem("How to Play");
+		instructions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Objective: Destroy all aliens before they reach barriers.\n\n"
+												  + "Barriers can be destroyed by aliens or player.\n"
+												  + "Aliens will begin to move faster the more are destroyed.\n"
+												  + "Upon winning, the game will restart and aliens spawn closer.\n");
+			}
+		});
+		// Add items to menu and frame.
+		help.add(instructions);
+		menu.add(help);
+		startFrame.setJMenuBar(menu);
+		// Logo, animation, controls, and start button implementation.
 		gameName = new JLabel(logo);
 		gameLogo = new JLabel(iconAlien);
+		gameControls = new JLabel(controls);
 		startGame = new JButton("Start Game");
-		
+		// Start button action.
 		startGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -134,17 +165,18 @@ public class View extends JPanel implements ActionListener {
 				gameFrame.setVisible(true);
 			}	
 		});
-		
+		// Align elements to center.
 		gameName.setAlignmentX(Component.CENTER_ALIGNMENT);
 		gameLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameControls.setAlignmentX(Component.CENTER_ALIGNMENT);
 		startGame.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
+		// Add elements to panel and frame.
 		startContent.setLayout(new BoxLayout(startContent, BoxLayout.Y_AXIS));
-		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
+		startContent.add(Box.createRigidArea(new Dimension(20, 20)));
 		startContent.add(gameName);
 		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
 		startContent.add(gameLogo);
-		startContent.add(Box.createRigidArea(new Dimension(50, 50)));
+		startContent.add(gameControls);
 		startContent.add(startGame);
 		startFrame.add(startContent);
 		startFrame.setVisible(true);
@@ -158,9 +190,10 @@ public class View extends JPanel implements ActionListener {
 			boolean direction = false;
 
 			public void actionPerformed(ActionEvent event) {
+				// Set limits for horizontal movement
 				if (x == 1) { direction = false; } 
 				else if (x == 250) { direction = true; }
-
+				// Set limits for vertical movement.
 				if (vert == 1) { 
 					y = 1; 
 					dir = 1;
@@ -168,10 +201,10 @@ public class View extends JPanel implements ActionListener {
 					y = -1; 
 					dir = -1;
 				}
-				
+				// Adjust height accordingly.
 				vert += dir;
 				logoAlien.repaint(direction);
-				
+				// Move based on direction set.
 				if (!direction) {
 					logoAlien.translate(1, y);
 					x += 1;
@@ -179,7 +212,6 @@ public class View extends JPanel implements ActionListener {
 					logoAlien.translate(-1, y);
 					x -= 1;
 				}
-				
 				gameLogo.repaint();
 			}
 		});
@@ -335,7 +367,7 @@ public class View extends JPanel implements ActionListener {
 				shot.setX(player.getX() + 20);
 				}
 			// If shot is below the screen border, continue drawing until it isn't
-			// Else reset position and set shotFired to false.
+			// Else reset position, initiate explosion, reset, and set shotFired to false.
 			if (shot.getY() > 25) {
 				shot.draw(g, this);
 				shot.setY(shot.getY() - 10);
@@ -368,9 +400,14 @@ public class View extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Draw the 4 barriers.
+	 * @param g graphics
+	 */
 	private void drawBarrier(Graphics g) {
-		int x = 40;
+		int x = 40;			// Initial x and y positions.
 		int y = 450;
+		// Check if barrier is created or not.
 		if (!barrierCreated) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 3; j++) {
@@ -379,11 +416,11 @@ public class View extends JPanel implements ActionListener {
 						barrier[i][j][k].setVisible(true);
 					}
 				}
-				x += 150;
+				x += 150;	// Adjust x position.
 			}
 			barrierCreated = true;
 		}
-		
+		// Draw created barriers if visible.
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 3; j++) {
 				for (int k = 0; k < 6; k++) {
@@ -495,7 +532,7 @@ public class View extends JPanel implements ActionListener {
 	private void drawGameLives(Graphics g) {
 		g.setFont(new Font("Serif", Font.BOLD, 20));
 		g.setColor(Color.white);
-		g.drawString("LIVES: " + lives, 460, 30);
+		g.drawString("LIVES: " + lives, 480, 30);
 	}
 	
 	/**
@@ -575,8 +612,22 @@ public class View extends JPanel implements ActionListener {
 		this.shot.setY(this.player.getY());
 	}
 	
+	/**
+	 * Set the visibility of barrier that is hit to false.
+	 * @param i position in array
+	 * @param j position in array
+	 * @param k position in array
+	 */
 	public void setBarrierHit(int i, int j, int k) {
 		barrier[i][j][k].setVisible(false);
+	}
+	
+	/**
+	 * Set/reset the barrier created flag for new game.
+	 * @param flag indicating whether barrier is created or not
+	 */
+	public void setBarrierCreated(boolean flag) {
+		this.barrierCreated = flag;
 	}
 	
 	/**

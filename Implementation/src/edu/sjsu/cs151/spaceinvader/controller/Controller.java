@@ -10,7 +10,9 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 
 /**
  * Controller class that handles communication between View and Model as well as handle
- * the state of the game. 
+ * the state of the game.
+ * 
+ * @author Michael Kang and Guiller Dalit 
  */
 public class Controller {
 
@@ -77,11 +79,13 @@ public class Controller {
 			if (gameOver || lives == 0) {
 				view.gameOver();
 				view.setAliensCreated(false);
+				view.setBarrierCreated(false);
 			}
 			// Check game won status, if yes: make new level.
 			if (gameWon) {
 				view.gameWon();
 				view.setAliensCreated(false);		// Set to false to pause alien movement for respawn.
+				view.setBarrierCreated(false);
 				board.nextLevel();;					// New game that keeps score, adjusts alien start Y.
 				aliens = board.getAliens();			// Recreate aliens for new game with new start position.
 				for (int i = 0; i < 4; i++) {
@@ -100,6 +104,10 @@ public class Controller {
 		}
 	}
 	
+	/**
+	 * Game's main loop to read and execute all communications between Model and View.
+	 * @throws Exception interrupted exception during try/catch
+	 */
 	public void mainLoop() throws Exception {
 		ValveResponse response = ValveResponse.EXECUTED;
 		Message message = null;

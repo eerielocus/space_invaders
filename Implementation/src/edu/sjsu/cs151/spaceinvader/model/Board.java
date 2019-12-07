@@ -6,9 +6,14 @@ import java.util.Random;
 
 /**
  * Board (Model) stores all information about the current state of the game and handles
- * collision detection and player movement.
+ * collision detection and player movement. Uses implementation of TEMPLATE design pattern
+ * which is GameTemplate that provides an abstract class that sets how the game model will
+ * be started. It also uses SINGLETON design pattern for a random number generator called
+ * RandomSingleton, which will provide the chance roll for alien attacks.
+ * 
+ * @author Michael Kang and Guiller Dalit 
  */
-public class Board extends Game{
+public class Board extends GameTemplate {
     private static final int BOMB_HEIGHT = 40;
     private static final int ALIEN_HEIGHT = 40;
     private static final int PLAYER_HEIGHT = 40;
@@ -34,7 +39,7 @@ public class Board extends Game{
 	private Player player;				// Player.
 	private Shot shot;					// Player shot.
 	private Bomb bomb;					// Alien bomb.
-	private Random random = new Random();
+	private RandomSingleton random;
 
 	public Board() { }
 	
@@ -54,6 +59,7 @@ public class Board extends Game{
 		this.aliens = new Alien[4][7];
 		this.edges = new int[3];
 		this.lowest = new int[7];	
+		this.random = RandomSingleton.getInstance();
 	}
 	
 	/**
@@ -190,6 +196,9 @@ public class Board extends Game{
 		return edges;
 	}
 	
+	/**
+	 * Create barriers and set visibility, position in array, and coordinates.
+	 */
 	private void createBarrier() {
 		int x = 40;
 		int y = BARRIER_INIT_Y;
@@ -249,7 +258,7 @@ public class Board extends Game{
 	private void dropBomb() {
 		if (bombDrop) {
 			int drop = random.nextInt(30);	// Randomized chance for bomb drop.
-			int ship = random.nextInt(6);	// Randomized alien to drop bomb.
+			int ship = random.nextInt(7);	// Randomized alien to drop bomb.
 			// Check the chance and if bomb is visible and the selected 'lowest' ship is not destroyed.
 			if (drop == CHANCE && !bomb.isVisible() && lowest[ship] != -1) {
 				bomb.setX(aliens[lowest[ship]][ship].getX() + 15);
