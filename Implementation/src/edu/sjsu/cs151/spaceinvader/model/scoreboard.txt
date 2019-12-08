@@ -1,5 +1,5 @@
-Toppy=170
-Mike=120
-Guiller=120
-Tester=80
-Oops=50
+Toppy=460
+Pop=110
+Catch=100
+Try=40
+New=40
