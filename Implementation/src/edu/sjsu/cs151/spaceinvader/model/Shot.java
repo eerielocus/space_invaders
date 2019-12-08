@@ -3,7 +3,6 @@ package edu.sjsu.cs151.spaceinvader.model;
 /**
  * Shot class extends the Sprite class and contains the methods and
  * properties to set, move and destroy the Alien object.
- *
  */
 public class Shot extends Sprite {
 	/**
@@ -14,6 +13,7 @@ public class Shot extends Sprite {
 	public Shot(int x, int y) {
 		initShot(x, y);
 	}
+	
 	/**
 	 * This method sets the correct image and position of the shot.
 	 * @param x position on x-axis

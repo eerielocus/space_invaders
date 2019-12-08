@@ -2,7 +2,6 @@ package edu.sjsu.cs151.spaceinvader.model;
 
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Board (Model) stores all information about the current state of the game and handles
@@ -16,7 +15,9 @@ import java.util.Random;
 public class Board extends GameTemplate {
     private static final int BOMB_HEIGHT = 40;
     private static final int ALIEN_HEIGHT = 40;
+    private static final int ALIEN_WIDTH = 45;
     private static final int PLAYER_HEIGHT = 40;
+    private static final int PLAYER_WIDTH = 40;
     private static final int NUMBER_OF_ALIENS_TO_DESTROY = 28;
     private static final int CHANCE = 5;
     private static final int ALIEN_INIT_X = 210;
@@ -41,6 +42,9 @@ public class Board extends GameTemplate {
 	private Bomb bomb;					// Alien bomb.
 	private RandomSingleton random;
 
+	/**
+	 * Constructor for Board (Model) of game.
+	 */
 	public Board() { }
 	
 	/**
@@ -253,7 +257,7 @@ public class Board extends GameTemplate {
 	
 	/**
 	 * Randomized alien bomb generator. Chooses alien selected from lowest position
-	 * and rolls a chance to drop.
+	 * and rolls a chance to drop. After successful roll, set chanceRoll flag to true.
 	 */
 	private void dropBomb() {
 		if (bombDrop) {
@@ -287,14 +291,12 @@ public class Board extends GameTemplate {
 	 */
 	private Barrier barrierCollisionShot() {
 		if (shot.isVisible()) {
-			int i = 0;	// To avoid unnecessary loop through all.
-			if (shot.getX() >= 190 && shot.getX() <= 250) {
-				i = 1;
-			} else if (shot.getX() >= 340 && shot.getX() <= 400) { 
-				i = 2;
-			} else if (shot.getX() >= 490 && shot.getX() <= 550) {
-				i = 3;
-			}
+			int i = 0;
+			// Check position of shot to determine which barrier to access.
+			if (shot.getX() >= 190 && shot.getX() <= 250) { i = 1; }
+			else if (shot.getX() >= 340 && shot.getX() <= 400) { i = 2; }
+			else if (shot.getX() >= 490 && shot.getX() <= 550) { i = 3; }
+			// Move from bottom row to top for player shot.
 			for (int j = 2; j >= 0; j--) {
 				for (int k = 0; k < 6; k++) {
 					if (barriers[i][j][k].isVisible()) {
@@ -320,14 +322,12 @@ public class Board extends GameTemplate {
 	private Barrier barrierCollisionBomb() {
 		if (bomb.isVisible()) {
 			int i = 0;
-			if (bomb.getX() >= 190 && bomb.getX() <= 250) {
-				i = 1;
-			} else if (bomb.getX() >= 340 && bomb.getX() <= 400) { 
-				i = 2;
-			} else if (bomb.getX() >= 490 && bomb.getX() <= 550) {
-				i = 3;
-			}
-			for (int j = 2; j >= 0; j--) {
+			// Check position of bomb to determine which barrier to access.
+			if (bomb.getX() >= 190 && bomb.getX() <= 250) { i = 1; }
+			else if (bomb.getX() >= 340 && bomb.getX() <= 400) { i = 2; } 
+			else if (bomb.getX() >= 490 && bomb.getX() <= 550) { i = 3;	}
+			// Move from top row to bottom for bomb.
+			for (int j = 0; j < 3; j++) {
 				for (int k = 0; k < 6; k++) {
 					if (barriers[i][j][k].isVisible()) {
 						if (bomb.getX() >= barriers[i][j][k].getX() &&
@@ -354,8 +354,8 @@ public class Board extends GameTemplate {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
 					if (aliens[i][j].isVisible() && shot.isVisible()) {
-						if (shot.getX() >= aliens[i][j].getX() &&
-							shot.getX() <= aliens[i][j].getX() + 50 &&
+						if (shot.getX() >= aliens[i][j].getX() + 5 &&
+							shot.getX() <= aliens[i][j].getX() + ALIEN_WIDTH &&
 							shot.getY() >= aliens[i][j].getY() &&
 							shot.getY() <= aliens[i][j].getY() + ALIEN_HEIGHT) {
 								aliens[i][j].dead();
@@ -377,7 +377,7 @@ public class Board extends GameTemplate {
 	private void playerCollision() {
 		if (bomb.isVisible()) {
 			if (bomb.getX() >= player.getX() &&
-				bomb.getX() <= player.getX() + 40 &&
+				bomb.getX() <= player.getX() + PLAYER_WIDTH &&
 				bomb.getY() >= player.getY() &&
 				bomb.getY() <= player.getY() + PLAYER_HEIGHT) {
 				if (lives > 1) {

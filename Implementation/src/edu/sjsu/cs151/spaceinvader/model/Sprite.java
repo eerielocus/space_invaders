@@ -3,13 +3,10 @@ package edu.sjsu.cs151.spaceinvader.model;
 /**
  * Sprite class contains the necessary variables and methods to get/set positions
  * of objects, set visibility, and get/set the image itself.
- *
  */
 public class Sprite {
 	protected int x;					// X position.
 	protected int y;					// Y position.
-	protected int i;					// I position in array.
-	protected int j;					// J position in array.
 	private boolean visible = false;	// Visible flag.
 	
 	/**
@@ -30,32 +27,6 @@ public class Sprite {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-    
-	/**
-	 * Set I J positions in array for object.
-	 * @param i position
-	 * @param j position
-	 */
-    public void setPositionIJ(int i, int j) {
-    	this.i = i;
-    	this.j = j;
-    }
-	
-    /**
-     * Get I position.
-     * @return i position
-     */
-    public int getPositionI() {
-    	return this.i;
-    }
-    
-    /**
-     * Get J position.
-     * @return j position
-     */
-    public int getPositionJ() {
-    	return this.j;
-    }
     
 	/**
 	 * This method is to set the object as dead.

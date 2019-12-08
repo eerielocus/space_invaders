@@ -3,7 +3,6 @@ package edu.sjsu.cs151.spaceinvader.model;
 /**
  * Bomb class extends the Sprite class and contains the methods and
  * properties to set, move and destroy the player object.
- *
  */
 public class Bomb extends Sprite {
 	/**

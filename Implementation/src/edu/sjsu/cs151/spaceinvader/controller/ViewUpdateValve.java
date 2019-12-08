@@ -53,18 +53,18 @@ public class ViewUpdateValve implements Valve {
 		// Check if barrier is hit by shot.
 		if (barrier[0] != null) {
 			view.setBarrierHit(barrier[0].getPositionI(), barrier[0].getPositionJ(), barrier[0].getPositionK());
-			view.setShotFired(false);
+			view.setShotFired(false);		// Despawn shot and reset its position.
 			view.resetShotPosition();
 		}
 		// Check if barrier is hit by bomb.
 		if (barrier[1] != null) {
 			view.setBarrierHit(barrier[1].getPositionI(), barrier[1].getPositionJ(), barrier[1].getPositionK());
-			view.setBombDropped(false);
+			view.setBombDropped(false);		// Despawn bomb.
 		}
 		// Check if there is collision with shot and alien.
 		if (alien[0] != null) {
 			view.setAlienExplode(alien[0].getPositionI(), alien[0].getPositionJ());
-			view.setShotFired(false);
+			view.setShotFired(false);		// Despawn shot, reset its position, and update speed if applicable.
 			view.resetShotPosition();
 			view.setSpeed(board.getScore());
 		}

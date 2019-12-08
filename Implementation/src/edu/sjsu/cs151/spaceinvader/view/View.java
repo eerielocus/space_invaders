@@ -141,7 +141,8 @@ public class View extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Objective: Destroy all aliens before they reach barriers.\n\n"
 												  + "Barriers can be destroyed by aliens or player.\n"
 												  + "Aliens will begin to move faster the more are destroyed.\n"
-												  + "Upon winning, the game will restart and aliens spawn closer.\n");
+												  + "Upon winning, the game will restart and aliens spawn closer.\n"
+												  + "To exit, simply close the window.");
 			}
 		});
 		// Add items to menu and frame.
@@ -746,6 +747,7 @@ public class View extends JPanel implements ActionListener {
 	public void setSpeed(int score) {
 		if (score == 15) { alien_speed = 2; }
 		else if (score == 25) { alien_speed = 5; }
+		else if (score == 27) { alien_speed = 8; }
 		else if (score == 0) { alien_speed = 1; }
 	}
 	

@@ -26,6 +26,12 @@ public class Controller {
 	private int points = 0;						// Points for the game.
 	private int lives = 0;						// Lives for the game.
 	
+	/**
+	 * Constructor takes View, Board and queue object and initiates start up.
+	 * @param view class object 
+	 * @param board class object
+	 * @param queue blocking queue of message objects
+	 */
 	public Controller(View view, Board board, BlockingQueue<Message> queue) {
 		this.view = view;
 		this.board = board;
@@ -54,38 +60,39 @@ public class Controller {
 	private void gameInfo() {
 		// If aliens are on the screen and its not game over or game won.
 		if (view.getAliensCreated() && !gameOver && !gameWon) {
-			board.update();
-			gameOver = board.getGameOver();
-			gameWon = board.getGameWon();
-			points = board.getPoints();
-			lives = board.getLives();
-			// Launch alien bombs.
+			board.update();							// Get update from Board.
+			gameOver = board.getGameOver();			// Get game over flag from Board.
+			gameWon = board.getGameWon();			// Get game won flag.
+			points = board.getPoints();				// Get update on points from Board.
+			lives = board.getLives();				// Get update on lives.
+			// Launch alien bombs based on whether bomb is currently visible, view has not
+			// drawn bomb yet, and if Board successfully rolled for bomb dropping (getChance).
 			if (board.getBomb().isVisible() && !view.getBombDropped() && board.getChance()) {
 				view.setBombPosition(board.getBomb().getX(), board.getBomb().getY());
-				view.setBombDropped(true);
-				board.setChance(false);
+				view.setBombDropped(true);			// Begin drawing bomb in view.
+				board.setChance(false);				// Allow for next drop bomb roll chance.
 			}
 			// Update player position if it is alive.
 			if (board.getPlayer().isVisible()) { view.setPlayerPosition(board.getPlayer().getX()); }
-			view.setLives(lives);		// Set view's lives display.
-			view.setPoints(points);		// Set view's points display.
-			// Check if player is visible, if not, set view's player to false.
+			view.setLives(lives);					// Set view's lives display.
+			view.setPoints(points);					// Set view's points display.
+			// Check if player is hit (not visible).
 			if (!board.getPlayer().isVisible()) { 
-				view.setPlayerExplode(true);
-				board.setBombDrop(false);
-				board.getPlayer().setVisible(true);
+				view.setPlayerExplode(true);		// Chance player image to explosion.
+				board.setBombDrop(false);			// Set Board's bomb drop check to false.
+				board.getPlayer().setVisible(true);	// Reset player visibility after death.
 			}
 			// Check game over status.
 			if (gameOver || lives == 0) {
-				view.gameOver();
-				view.setAliensCreated(false);
-				view.setBarrierCreated(false);
+				view.gameOver();					// Display game over in view.
+				view.setAliensCreated(false);		// Set to false to pause alien movements.
+				view.setBarrierCreated(false);		// Set to false to initiate barrier recreation.
 			}
 			// Check game won status, if yes: make new level.
 			if (gameWon) {
-				view.gameWon();
+				view.gameWon();						// Display game won in view.
 				view.setAliensCreated(false);		// Set to false to pause alien movement for respawn.
-				view.setBarrierCreated(false);
+				view.setBarrierCreated(false);		// Set to false to recreate barriers.
 				board.nextLevel();;					// New game that keeps score, adjusts alien start Y.
 				aliens = board.getAliens();			// Recreate aliens for new game with new start position.
 				for (int i = 0; i < 4; i++) {
