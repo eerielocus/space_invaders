@@ -1,14 +1,2 @@
-AAA
-20920
-AAB
-4400
-NIK
-1000
-BAD
-69
-ZZZ
-22
-BBB
-11
-DAD
-1
+Guiller=1200
+Alexa=120

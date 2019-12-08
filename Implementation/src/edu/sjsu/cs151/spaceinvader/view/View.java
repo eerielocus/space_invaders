@@ -1,8 +1,13 @@
 package edu.sjsu.cs151.spaceinvader.view;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
@@ -28,9 +33,13 @@ public class View extends JPanel implements ActionListener {
 	private JFrame gameFrame;   	// Game screen frame.
 	private JFrame scoreFrame;
 	
+	private JTextField username;
+	
 	private JPanel startContent;	// Start screen panel.
 	private JPanel gameContent;  	// Game screen panel.
 	private JPanel scoreContent; 	// Score screen panel.
+	private JPanel scoreBoard;		// score board panel
+	private JPanel usernamePanel;	// Enter username panel
 	
 	private JLabel gameName;     	// Start screen game title.
 	private JLabel gameLogo;    	// Start screen alien logo.
@@ -42,6 +51,7 @@ public class View extends JPanel implements ActionListener {
 	
 	private JButton startGame;		// Start button at start screen.
 	private JButton retGame;		// Return to start button at score screen.
+	private JButton submit; 		// Submit button to update score board
 	
 	// Alien sprite.
 	private ImageIcon enemy = new ImageIcon(new ImageIcon(this.getClass().getResource("alien.gif")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
@@ -90,6 +100,9 @@ public class View extends JPanel implements ActionListener {
 	private int[] alien_edge = {0, 6, 3};	// Alien fleet's left, right, bottom most row/column.
 	private String lives = "";				// Number of player lives.
 	private String points = "";				// Number of points.
+	private String userName = "";
+	private String replaceName = "";
+	private static final String NEWLINE = "\n";
 	private Timer timer = new Timer(30, this);
 	
 	/**
@@ -103,6 +116,9 @@ public class View extends JPanel implements ActionListener {
 		startContent =  new JPanel();
 		gameContent = new JPanel();
 		scoreContent = new JPanel();
+		scoreBoard = new JPanel();
+		
+		submit = new JButton("Submit");
 	}
 	
 	/**
@@ -239,74 +255,350 @@ public class View extends JPanel implements ActionListener {
 	 * Score window that contains the high scores taken from Board.
 	 */
 	public void scoreWindow() {
+	
 		scoreFrame.setSize(600, 600);
 		scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		scoreFrame.setBackground(Color.black);
 		scoreFrame.setVisible(false);
 		scoreFrame.setResizable(false);
 		scoreFrame.add(scoreContent);
+		addUsername();
+		scoreContent.setLayout(new BoxLayout(scoreContent, BoxLayout.Y_AXIS));
+		scoreContent.setBackground(Color.black);
+		scoreContent.add(Box.createRigidArea(new Dimension(15, 15)));
 
+	}
+	/**
+	 * Adding Username window for the score board
+	 */
+	private void addUsername() {
+	
+		usernamePanel = new JPanel();
+		username = new JTextField();
+		JLabel usernameTitle = new JLabel("Enter Username");
+		
+		usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.Y_AXIS));
+		usernamePanel.setBackground(Color.black);
+		usernamePanel.setMaximumSize(new Dimension(500,350));
+		usernamePanel.add(Box.createRigidArea(new Dimension(170, 190)));
+		
+		usernameTitle.setForeground(Color.white);
+		usernameTitle.setFont(new Font("Serif", Font.BOLD, 40));
+		usernameTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		usernamePanel.add(usernameTitle);
+		usernamePanel.add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		username.setAlignmentX(Component.CENTER_ALIGNMENT);
+		username.setFont(username.getFont().deriveFont(Font.BOLD, 80f));
+		username.setPreferredSize(new Dimension(150,20));
+		usernamePanel.add(username);
+		
+		usernamePanel.add(Box.createRigidArea(new Dimension(10, 10)));
+		submit.addActionListener(this);
+		submit.setAlignmentX(Component.CENTER_ALIGNMENT);
+		usernamePanel.add(submit);
+		
+		scoreContent.add(usernamePanel);
+		scoreContent.add(Box.createRigidArea(new Dimension(10, 10)));
+	
+	}
+	/**
+	 * Method to get the score information from the Model package and display into a 
+	 * grid format.
+	 */
+	private void drawScoreboard() {
+		
+		FileReader file;
+		BufferedReader buff;
+		
+		//reset scoreboard, remove all content for the new game
+		scoreBoard.removeAll();
+		//repaint scoreContent to remove previous components
+		scoreContent.revalidate();
+		scoreContent.repaint();
+		
+		scoreBoard.setLayout(new BoxLayout(scoreBoard, BoxLayout.Y_AXIS));
+		scoreBoard.setBackground(Color.black);
+		scoreBoard.setAlignmentX(Component.CENTER_ALIGNMENT);
+		scoreBoard.setMaximumSize(new Dimension(500,450));
+		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
+		
+		JLabel scoreTitle = new JLabel("HIGH SCORES");
+		scoreTitle.setForeground(Color.white);
+		scoreTitle.setFont(new Font("Serif", Font.BOLD, 42));
+		scoreTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		scoreBoard.add(scoreTitle);
+		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
+	
+		try {
+			file = new FileReader(new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt"));
+			buff = new BufferedReader(file);
+			String line;
+			while ((line = buff.readLine()) != null) {
+				String[] scores = line.split("=");
+				
+				if(scores[1] != null && scores[0] != null) {
+					String score = scores[1];
+					String name = scores[0];
+					JLabel playerScore = new JLabel(name + " " + score);
+					
+					playerScore.setAlignmentX(Component.CENTER_ALIGNMENT);
+					playerScore.setForeground(Color.white);
+					playerScore.setFont(new Font("Serif", Font.BOLD, 30));
+					
+					scoreBoard.add(playerScore);
+					scoreBoard.add(Box.createRigidArea(new Dimension(10, 10)));
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(IOException ex){
+			ex.printStackTrace();
+		}	
+		scoreContent.add(scoreBoard);
+		scoreBoard.revalidate();
+		scoreBoard.repaint();
+		
 		retGame = new JButton("Return to Start");
 		retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		scoreContent.add(Box.createRigidArea(new Dimension(15, 15)));
+		retGame.addActionListener(this);
+		
 		retGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				scoreFrame.setVisible(false);
 				startFrame.setVisible(true);
 			}	
 		});
-		
-		JLabel scoreTitle = new JLabel("HIGH SCORES");
-		scoreTitle.setForeground(Color.white);
-		scoreTitle.setFont(new Font("Serif", Font.BOLD, 32));
-		scoreTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		scoreContent.setLayout(new BoxLayout(scoreContent, BoxLayout.Y_AXIS));
-		scoreContent.setBackground(Color.black);
-		scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
-		scoreContent.add(scoreTitle);
-		drawScoreboard();
-		scoreContent.add(Box.createRigidArea(new Dimension(50, 50)));
-		scoreContent.add(retGame);
-		scoreContent.add(Box.createRigidArea(new Dimension(50, 30)));
+		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
+		scoreBoard.add(retGame);
 	}
-	
 	/**
-	 * Method to get the score information from the Model package and display into a 
-	 * grid format.
+	 * write username into the file scoreboard.txt in a specified format
+	 * @param username String
 	 */
-	private void drawScoreboard() {
-		File file = new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt");
-		JPanel scoreboard = new JPanel();
-		scoreboard.setLayout(new GridLayout(7, 2, 5, 5));
-		scoreboard.setBackground(Color.black);
+	private void storeNameToFile(String username){
+		
+		BufferedWriter writer = null;
 		try {
-			Scanner scanner = new Scanner(file);
-			while (scanner.hasNextLine()) {
-				String name = scanner.nextLine();
-				JLabel scoreName = new JLabel(name);
-				String score = scanner.nextLine();
-				JLabel scoreNum = new JLabel(score);
-				scoreName.setForeground(Color.white);
-				scoreNum.setForeground(Color.white);
-				scoreName.setFont(new Font("Serif", Font.BOLD, 16));
-				scoreNum.setFont(new Font("Serif", Font.BOLD, 16));
-				scoreName.setHorizontalAlignment(SwingConstants.RIGHT);
-				scoreboard.add(scoreName);
-				scoreboard.add(scoreNum);
+			//check if username is invalid
+			if (isInvalidName(username) == false) {
+				//if not write the name into the file
+				writer = new BufferedWriter(new FileWriter("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt", true));
+				writer.append(username+"="+this.points.strip()+NEWLINE);
+				writer.close();
 			}
-			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		scoreboard.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scoreContent.add(scoreboard);
 	}
+	/**
+	 * the method checks the validity of the parameter String username,
+	 * if the username is already in stored in the file. 
+	 * @param username String
+	 * @return a boolean invalid value
+	 */
+	private boolean isInvalidName(String username) {
+		
+		boolean invalid = false;
+		//get all the scores from the file
+		String[] array = getHighscores();
+		//iterate through the array
+		for(int index = 0; index < array.length; index++){ 
+			if (array[index] != null) {
+				String[] score = array[index].split("=");
+				//check if the current name is equal to the current element
+				if (score[0].equals(username)) {
+					invalid = true;
+					break;
+				}
+				else {
+					invalid = false;
+				} 
+			}
+		} 	
+		return invalid;
+	}
+	/**
+	 * Check if the final score of the player qualifies as a high score
+	 * @param finalScore int
+	 * @return a boolean value if the currentScore qualifies as a high score
+	 */
+	private boolean isHighscore(int finalScore) {
 	
+		boolean isHighScore = false;
+		String[] array = getHighscores();
+		int scoreToReplace = Integer.parseInt(points.strip());
+		int scoreCount = 0;
+		//iterate through the array that has the scores from the scoreboard.txt
+		for(int index = 0; index < array.length; index++){ 
+			if (array[index] != null) {
+				scoreCount++;
+				String[] score = array[index].split("=");
+				//check if the current score beat at least one of the highscores
+				if(Integer.parseInt(score[1].strip()) < scoreToReplace){ 
+					   replaceName = score[0];
+					   isHighScore = true;
+				} 
+			}
+		} 
+		if (scoreCount < 5) {
+			isHighScore = true;
+		}
+		return isHighScore;
+	}
+	/**
+	 * Read the scoreboard.txt and store the values into String array then return the array
+	 * @return an array of String
+	 */
+	private String[] getHighscores() {
+		
+		FileReader file;
+		BufferedReader buff;
+		String[] array = new String[5];;
+		//open file, read file, store content into an array
+		try {
+			file = new FileReader(new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt"));
+			buff = new BufferedReader(file);
+			String line;
+			int index = 0;
+			while ((line = buff.readLine()) != null) {
+				String[] scores = line.split("=");
+				if(scores[1] != null && scores[0] != null)
+					array[index]=line;
+				index++;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(IOException ex){
+			ex.printStackTrace();
+		}	
+		return array;
+	}
+	/**
+	 * Iterate through the array and count how many elements in it
+	 * @param an array of String
+	 * @return the count of elements in the array
+	 */
+	public int getArrayCount(String[] array) {
+		
+		int count = 0;
+		//count the element of the array
+		for(int index = 0; index < array.length; index++) {
+			if (array[index] != null)
+				count++;
+		}
+		return count;
+	}
+	/**
+	 * check if the name entered by the player is already in the scoreboard
+	 * @param currentName String
+	 * @return a boolean value that returns if needed replacing is need to the final score 
+	 */
+	public boolean replaceName(String currentName) {
+		
+		boolean replacing = false;
+		String[] array = getHighscores();
+		int count = getArrayCount(array);
+		//iterate through the array
+		if (isInvalidName(currentName) == false) {
+			if (count == 5 ) {
+				for(int index = 0; index < array.length; index++){ 
+					if (array[index] != null) {
+						count++;
+						String[] score = array[index].split("=");
+						//check if the name of the current element is equal to username
+						if(replaceName.equals(score[0])) {
+							replacing = true;
+							array[index]= currentName+"="+Integer.parseInt(points.strip());
+						}
+					}
+				} 
+			}
+			if (replacing == true) {
+				setHighscoresTofile(replacing, array);
+			}
+		}
+		return replacing;
+	}
+	/**
+	 * write the replace score into the file in the correct order
+	 * @param status boolean and array String[]
+	 */
+	public void setHighscoresTofile(boolean status, String[] array) {
+		
+		if (status == true) {
+			BufferedWriter writer = null;
+			try {
+				sortArray(array);
+				//store array content to the file
+				writer = new BufferedWriter(new FileWriter("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt", false));
+				for(int index = 0; index < array.length; index++){ 
+					if(array[index] != null) {
+						writer.append(array[index]+NEWLINE);
+					}
+				}
+				writer.close();	
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	/**
+	 * sort the array in descending order
+	 * @param status boolean and array String[]
+	 */
+	private void sortArray(String[] array) {
+		
+		int count = getArrayCount(array);
+		String temp = "";
+		for (int index = 0; index < count; index++) 
+	    {
+			String[] score = array[index].split("=");
+	            for (int j = index + 1; j < count; j++) { 
+	            	String[] score1 = array[j].split("=");
+	                if (Integer.parseInt(score[1].strip()) < Integer.parseInt(score1[1].strip())) 
+	                {
+	                    temp =  array[index];
+	                    array[index] = array[j];
+	                    array[j] = temp;
+	                }
+	            }
+	    }
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+		
+		//update scores when submit button is pressed
+		if (e.getSource() == submit) {
+			int currentscore = Integer.parseInt(points.strip());
+			if(isHighscore(currentscore) == true) {
+				userName = username.getText();
+				if(replaceName(userName) != true) {
+					storeNameToFile(username.getText());
+				}
+			}
+			usernamePanel.setVisible(false);
+			drawScoreboard();
+		}
+		//update scores when return button is pressed
+		if (e.getSource() == retGame) {
+			//reset scoreContent
+			scoreContent.removeAll();
+			scoreWindow();	
+			scoreContent.revalidate();
+			scoreContent.repaint();
+		}
 	}
-	
 
 	@Override
 	public void paintComponent(Graphics g) {
