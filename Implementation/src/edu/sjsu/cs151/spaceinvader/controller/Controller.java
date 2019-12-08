@@ -47,7 +47,6 @@ public class Controller {
 		valves.add(new KeyPressedValve(view, board));
 		valves.add(new KeyReleasedValve(view, board));
 		valves.add(new NewGameValve(view, board));
-		valves.add(new ReturnToStartValve(view, board));
 		valves.add(new ViewUpdateValve(view, board));
 	}
 	
@@ -79,7 +78,6 @@ public class Controller {
 			// Check if player is hit (not visible).
 			if (!board.getPlayer().isVisible()) { 
 				view.setPlayerExplode(true);		// Chance player image to explosion.
-				board.setBombDrop(false);			// Set Board's bomb drop check to false.
 				board.getPlayer().setVisible(true);	// Reset player visibility after death.
 			}
 			// Check game over status.

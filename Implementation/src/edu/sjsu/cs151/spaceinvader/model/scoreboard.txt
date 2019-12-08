@@ -1,2 +1,5 @@
-Guiller=1200
-Alexa=120
+Toppy=170
+Mike=120
+Guiller=120
+Tester=80
+Oops=50

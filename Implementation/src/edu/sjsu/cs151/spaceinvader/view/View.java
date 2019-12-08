@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.*;
 
@@ -33,13 +32,13 @@ public class View extends JPanel implements ActionListener {
 	private JFrame gameFrame;   	// Game screen frame.
 	private JFrame scoreFrame;
 	
-	private JTextField username;
-	
 	private JPanel startContent;	// Start screen panel.
 	private JPanel gameContent;  	// Game screen panel.
 	private JPanel scoreContent; 	// Score screen panel.
-	private JPanel scoreBoard;		// score board panel
+	private JPanel scoreBoard;		// Score board panel.
 	private JPanel usernamePanel;	// Enter username panel
+
+	private JTextField username;
 	
 	private JLabel gameName;     	// Start screen game title.
 	private JLabel gameLogo;    	// Start screen alien logo.
@@ -117,8 +116,6 @@ public class View extends JPanel implements ActionListener {
 		gameContent = new JPanel();
 		scoreContent = new JPanel();
 		scoreBoard = new JPanel();
-		
-		submit = new JButton("Submit");
 	}
 	
 	/**
@@ -255,138 +252,154 @@ public class View extends JPanel implements ActionListener {
 	 * Score window that contains the high scores taken from Board.
 	 */
 	public void scoreWindow() {
-	
 		scoreFrame.setSize(600, 600);
 		scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		scoreFrame.setBackground(Color.black);
 		scoreFrame.setVisible(false);
 		scoreFrame.setResizable(false);
 		scoreFrame.add(scoreContent);
-		addUsername();
+		// Check if game is over, then check score if its considered high.
+		// If it is, bring up addUsername. Else, go straight to score board.
+		if (gameOver) {
+			int currentscore = Integer.parseInt(points.trim());
+			if (isHighScore(currentscore) == true) { addUsername(); }
+			else { drawScoreboard(); }
+		}
 		scoreContent.setLayout(new BoxLayout(scoreContent, BoxLayout.Y_AXIS));
 		scoreContent.setBackground(Color.black);
 		scoreContent.add(Box.createRigidArea(new Dimension(15, 15)));
-
 	}
+	
 	/**
-	 * Adding Username window for the score board
+	 * Adding username window for the score board.
 	 */
 	private void addUsername() {
-	
 		usernamePanel = new JPanel();
 		username = new JTextField();
-		JLabel usernameTitle = new JLabel("Enter Username");
-		
+		submit = new JButton("Submit");
+		JLabel usernameTitle = new JLabel("Enter Player Name");
+
 		usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.Y_AXIS));
 		usernamePanel.setBackground(Color.black);
-		usernamePanel.setMaximumSize(new Dimension(500,350));
+		usernamePanel.setMaximumSize(new Dimension(500, 350));
 		usernamePanel.add(Box.createRigidArea(new Dimension(170, 190)));
-		
+
 		usernameTitle.setForeground(Color.white);
 		usernameTitle.setFont(new Font("Serif", Font.BOLD, 40));
 		usernameTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 		usernamePanel.add(usernameTitle);
 		usernamePanel.add(Box.createRigidArea(new Dimension(10, 10)));
-		
-		username.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 		username.setFont(username.getFont().deriveFont(Font.BOLD, 80f));
-		username.setPreferredSize(new Dimension(150,20));
+		username.setAlignmentX(Component.CENTER_ALIGNMENT);
+		username.setPreferredSize(new Dimension(150, 20));
 		usernamePanel.add(username);
-		
 		usernamePanel.add(Box.createRigidArea(new Dimension(10, 10)));
-		submit.addActionListener(this);
+
 		submit.setAlignmentX(Component.CENTER_ALIGNMENT);
-		usernamePanel.add(submit);
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int currentscore = Integer.parseInt(points.trim());
+				if (isHighScore(currentscore) == true) {
+					userName = username.getText();
+					if (replaceName(userName) != true) { storeNameToFile(username.getText()); }
+				}
+				usernamePanel.setVisible(false);
+				drawScoreboard();
+			}
+		});
 		
+		usernamePanel.add(submit);
+
 		scoreContent.add(usernamePanel);
 		scoreContent.add(Box.createRigidArea(new Dimension(10, 10)));
-	
+
 	}
+
 	/**
-	 * Method to get the score information from the Model package and display into a 
+	 * Method to get the score information from the Model package and display into a
 	 * grid format.
 	 */
 	private void drawScoreboard() {
-		
 		FileReader file;
 		BufferedReader buff;
-		
-		//reset scoreboard, remove all content for the new game
+		// Reset scoreBoard, remove all content for the new game.
 		scoreBoard.removeAll();
-		//repaint scoreContent to remove previous components
+		// Repaint scoreContent to remove previous components.
 		scoreContent.revalidate();
 		scoreContent.repaint();
-		
+
 		scoreBoard.setLayout(new BoxLayout(scoreBoard, BoxLayout.Y_AXIS));
 		scoreBoard.setBackground(Color.black);
 		scoreBoard.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scoreBoard.setMaximumSize(new Dimension(500,450));
+		scoreBoard.setMaximumSize(new Dimension(500, 450));
 		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
-		
+
 		JLabel scoreTitle = new JLabel("HIGH SCORES");
 		scoreTitle.setForeground(Color.white);
 		scoreTitle.setFont(new Font("Serif", Font.BOLD, 42));
 		scoreTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
+
 		scoreBoard.add(scoreTitle);
 		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
-	
+
 		try {
 			file = new FileReader(new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt"));
 			buff = new BufferedReader(file);
 			String line;
 			while ((line = buff.readLine()) != null) {
 				String[] scores = line.split("=");
-				
-				if(scores[1] != null && scores[0] != null) {
+
+				if (scores[1] != null && scores[0] != null) {
 					String score = scores[1];
 					String name = scores[0];
 					JLabel playerScore = new JLabel(name + " " + score);
-					
+
 					playerScore.setAlignmentX(Component.CENTER_ALIGNMENT);
 					playerScore.setForeground(Color.white);
 					playerScore.setFont(new Font("Serif", Font.BOLD, 30));
-					
+
 					scoreBoard.add(playerScore);
 					scoreBoard.add(Box.createRigidArea(new Dimension(10, 10)));
 				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch(IOException ex){
+		} catch (IOException ex) {
 			ex.printStackTrace();
-		}	
+		}
+
 		scoreContent.add(scoreBoard);
-		scoreBoard.revalidate();
-		scoreBoard.repaint();
+		scoreContent.add(Box.createRigidArea(new Dimension(15, 15)));
 		
 		retGame = new JButton("Return to Start");
 		retGame.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scoreContent.add(Box.createRigidArea(new Dimension(15, 15)));
-		retGame.addActionListener(this);
-		
 		retGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Reset scoreContent.
+				scoreContent.removeAll();
+				scoreWindow();
 				scoreFrame.setVisible(false);
 				startFrame.setVisible(true);
-			}	
+			}
 		});
+
 		scoreBoard.add(Box.createRigidArea(new Dimension(20, 20)));
 		scoreBoard.add(retGame);
 	}
+
 	/**
-	 * write username into the file scoreboard.txt in a specified format
-	 * @param username String
+	 * Write username into the file scoreboard.txt in a specified format.
+	 * @param username string containing player name
 	 */
-	private void storeNameToFile(String username){
-		
+	private void storeNameToFile(String username) {
 		BufferedWriter writer = null;
 		try {
-			//check if username is invalid
+			// Check if username is invalid.
 			if (isInvalidName(username) == false) {
-				//if not write the name into the file
+				// If not write the name into the file.
 				writer = new BufferedWriter(new FileWriter("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt", true));
-				writer.append(username+"="+this.points.strip()+NEWLINE);
+				writer.append(username + "=" + this.points.trim() + NEWLINE);
 				writer.close();
 			}
 		} catch (FileNotFoundException e) {
@@ -395,71 +408,69 @@ public class View extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+
 	/**
-	 * the method checks the validity of the parameter String username,
-	 * if the username is already in stored in the file. 
-	 * @param username String
-	 * @return a boolean invalid value
+	 * The method checks the validity of the parameter String username, If the
+	 * username is already in stored in the file.
+	 * @param username string containing player name
+	 * @return flag indicating if name is valid or not
 	 */
 	private boolean isInvalidName(String username) {
-		
 		boolean invalid = false;
-		//get all the scores from the file
-		String[] array = getHighscores();
-		//iterate through the array
-		for(int index = 0; index < array.length; index++){ 
+		// Get all the scores from the file.
+		String[] array = getHighScores();
+		// Iterate through the array.
+		for (int index = 0; index < array.length; index++) {
 			if (array[index] != null) {
 				String[] score = array[index].split("=");
-				//check if the current name is equal to the current element
+				// Check if the current name is equal to the current element.
 				if (score[0].equals(username)) {
 					invalid = true;
 					break;
-				}
-				else {
+				} else {
 					invalid = false;
-				} 
+				}
 			}
-		} 	
+		}
 		return invalid;
 	}
+
 	/**
-	 * Check if the final score of the player qualifies as a high score
-	 * @param finalScore int
-	 * @return a boolean value if the currentScore qualifies as a high score
+	 * Check if the final score of the player qualifies as a high score.
+	 * @param finalScore score at end of game
+	 * @return flag indicating if score is eligible for high score
 	 */
-	private boolean isHighscore(int finalScore) {
-	
+	private boolean isHighScore(int finalScore) {
 		boolean isHighScore = false;
-		String[] array = getHighscores();
-		int scoreToReplace = Integer.parseInt(points.strip());
+		String[] array = getHighScores();
+		int scoreToReplace = Integer.parseInt(points.trim());
 		int scoreCount = 0;
-		//iterate through the array that has the scores from the scoreboard.txt
-		for(int index = 0; index < array.length; index++){ 
+		// Iterate through the array that has the scores from the scoreboard.txt.
+		for (int index = 0; index < array.length; index++) {
 			if (array[index] != null) {
 				scoreCount++;
 				String[] score = array[index].split("=");
-				//check if the current score beat at least one of the highscores
-				if(Integer.parseInt(score[1].strip()) < scoreToReplace){ 
-					   replaceName = score[0];
-					   isHighScore = true;
-				} 
+				// Check if the current score beat at least one of the highscores.
+				if (Integer.parseInt(score[1].trim()) < scoreToReplace) {
+					replaceName = score[0];
+					isHighScore = true;
+				}
 			}
-		} 
-		if (scoreCount < 5) {
-			isHighScore = true;
 		}
+		if (scoreCount < 5) { isHighScore = true; }
 		return isHighScore;
 	}
+
 	/**
-	 * Read the scoreboard.txt and store the values into String array then return the array
-	 * @return an array of String
+	 * Read the scoreboard.txt and store the values into String array then return
+	 * the array.
+	 * @return string array of high scores
 	 */
-	private String[] getHighscores() {
-		
+	private String[] getHighScores() {
 		FileReader file;
 		BufferedReader buff;
-		String[] array = new String[5];;
-		//open file, read file, store content into an array
+		String[] array = new String[5];
+		// Open file, read file, store content into an array.
 		try {
 			file = new FileReader(new File("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt"));
 			buff = new BufferedReader(file);
@@ -467,138 +478,94 @@ public class View extends JPanel implements ActionListener {
 			int index = 0;
 			while ((line = buff.readLine()) != null) {
 				String[] scores = line.split("=");
-				if(scores[1] != null && scores[0] != null)
-					array[index]=line;
+				if (scores[1] != null && scores[0] != null) { array[index] = line; }
 				index++;
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch(IOException ex){
+		} catch (IOException ex) {
 			ex.printStackTrace();
-		}	
+		}
 		return array;
 	}
+
 	/**
-	 * Iterate through the array and count how many elements in it
-	 * @param an array of String
-	 * @return the count of elements in the array
-	 */
-	public int getArrayCount(String[] array) {
-		
-		int count = 0;
-		//count the element of the array
-		for(int index = 0; index < array.length; index++) {
-			if (array[index] != null)
-				count++;
-		}
-		return count;
-	}
-	/**
-	 * check if the name entered by the player is already in the scoreboard
-	 * @param currentName String
-	 * @return a boolean value that returns if needed replacing is need to the final score 
+	 * Check if the name entered by the player is already in the score board.
+	 * @param currentName string containing current player name
+	 * @return flag indicating if the name is being replaced
 	 */
 	public boolean replaceName(String currentName) {
-		
 		boolean replacing = false;
-		String[] array = getHighscores();
-		int count = getArrayCount(array);
-		//iterate through the array
+		String[] array = getHighScores();
+		// Iterate through the array.
 		if (isInvalidName(currentName) == false) {
-			if (count == 5 ) {
-				for(int index = 0; index < array.length; index++){ 
+			if (array.length == 5) {
+				for (int index = 0; index < array.length; index++) {
 					if (array[index] != null) {
-						count++;
 						String[] score = array[index].split("=");
-						//check if the name of the current element is equal to username
-						if(replaceName.equals(score[0])) {
+						// Check if the name of the current element is equal to username.
+						if (replaceName.equals(score[0])) {
 							replacing = true;
-							array[index]= currentName+"="+Integer.parseInt(points.strip());
+							array[index] = currentName + "=" + Integer.parseInt(points.trim());
 						}
 					}
-				} 
+				}
 			}
-			if (replacing == true) {
-				setHighscoresTofile(replacing, array);
-			}
+			if (replacing == true) { setHighScoresToFile(replacing, array);	}
 		}
 		return replacing;
 	}
+
 	/**
-	 * write the replace score into the file in the correct order
-	 * @param status boolean and array String[]
+	 * Write the replace score into the file in the correct order.
+	 * @param status flag indicating whether to set high score to file
+	 * @param array name and scores
 	 */
-	public void setHighscoresTofile(boolean status, String[] array) {
-		
+	public void setHighScoresToFile(boolean status, String[] array) {
 		if (status == true) {
 			BufferedWriter writer = null;
 			try {
 				sortArray(array);
-				//store array content to the file
+				// store array content to the file
 				writer = new BufferedWriter(new FileWriter("src/edu/sjsu/cs151/spaceinvader/model/scoreboard.txt", false));
-				for(int index = 0; index < array.length; index++){ 
-					if(array[index] != null) {
-						writer.append(array[index]+NEWLINE);
+				for (int index = 0; index < array.length; index++) {
+					if (array[index] != null) {
+						writer.append(array[index] + NEWLINE);
 					}
 				}
-				writer.close();	
+				writer.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 	}
+
 	/**
-	 * sort the array in descending order
-	 * @param status boolean and array String[]
+	 * Sort the array in descending order.
+	 * @param array containing names and scores
 	 */
 	private void sortArray(String[] array) {
-		
-		int count = getArrayCount(array);
 		String temp = "";
-		for (int index = 0; index < count; index++) 
-	    {
+		for (int index = 0; index < array.length; index++) {
 			String[] score = array[index].split("=");
-	            for (int j = index + 1; j < count; j++) { 
-	            	String[] score1 = array[j].split("=");
-	                if (Integer.parseInt(score[1].strip()) < Integer.parseInt(score1[1].strip())) 
-	                {
-	                    temp =  array[index];
-	                    array[index] = array[j];
-	                    array[j] = temp;
-	                }
-	            }
-	    }
+			for (int j = index + 1; j < array.length; j++) {
+				String[] score1 = array[j].split("=");
+				if (Integer.parseInt(score[1].trim()) < Integer.parseInt(score1[1].trim())) {
+					temp = array[index];
+					array[index] = array[j];
+					array[j] = temp;
+				}
+			}
+		}
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		
-		//update scores when submit button is pressed
-		if (e.getSource() == submit) {
-			int currentscore = Integer.parseInt(points.strip());
-			if(isHighscore(currentscore) == true) {
-				userName = username.getText();
-				if(replaceName(userName) != true) {
-					storeNameToFile(username.getText());
-				}
-			}
-			usernamePanel.setVisible(false);
-			drawScoreboard();
-		}
-		//update scores when return button is pressed
-		if (e.getSource() == retGame) {
-			//reset scoreContent
-			scoreContent.removeAll();
-			scoreWindow();	
-			scoreContent.revalidate();
-			scoreContent.repaint();
-		}
 	}
+	
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -658,7 +625,7 @@ public class View extends JPanel implements ActionListener {
 			// If shot is with the player, synchronize its position with player.
 			if (shot.getY() == player.getY()) { 
 				shot.setX(player.getX() + 20);
-				}
+			}
 			// If shot is below the screen border, continue drawing until it isn't
 			// Else reset position, initiate explosion, reset, and set shotFired to false.
 			if (shot.getY() > 25) {
@@ -1007,6 +974,7 @@ public class View extends JPanel implements ActionListener {
 	public void gameOver() {
 		gameOver = true;
 		alien_dir = true;				// Reset alien direction.
+		scoreWindow();
 		try {
 		    Thread.sleep(3000);
 		} catch(InterruptedException ex) {

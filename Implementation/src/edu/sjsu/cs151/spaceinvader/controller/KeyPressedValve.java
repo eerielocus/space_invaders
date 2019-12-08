@@ -32,8 +32,6 @@ public class KeyPressedValve implements Valve {
 		if (key == 32 && !view.getShotFired()) {
 			view.setShotFired(true);
 		}
-		
-		if (!view.getBombDropped()) { board.setBombDrop(true); }
 		return ValveResponse.EXECUTED;
 	}
 }

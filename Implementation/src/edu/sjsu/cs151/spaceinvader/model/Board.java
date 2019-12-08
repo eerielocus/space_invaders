@@ -28,7 +28,7 @@ public class Board extends GameTemplate {
 	private boolean gameOver = false;	// Game over flag.
 	private boolean gameWon = false;	// Game won flag.
 	private boolean chanceRoll = false;	// Alien bomb drop chance roll flag.
-	private boolean bombDrop = false;	// Alien bomb dropped flag.
+	private boolean bombDrop = true;	// Alien bomb dropped flag.
 	private int lives;					// Total number of player lives.
 	private int level;					// Current level modifier.
 	private int score;					// Current game score.

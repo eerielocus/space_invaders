@@ -1,6 +1,10 @@
 # space_invaders
 CS151: Project to recreate iconic game, Space Invaders.
 
+Username: eerielocus (Michael Kang)
+
+Username: gelier (Guiller Dalit)
+
 Space Invaders game implementation using MVC, Command, Singleton, and Template design patterns
 for CS151 in SJSU. Utilizes Blocking Queue of class Message to communicate between Model and
 View while controlling multi-thread activities. It uses the Valve system for processing 
@@ -15,8 +19,3 @@ Implements Template class for starting the game model:
 TEMPLATE design pattern an abstract class exposes defined ways/templates to execute its 
 methods. Subclasses can override the method implementation as per need but the invocation 
 is to be in the same way as defined by the abstract class. Behavior pattern.
-
-
-Username: eerielocus (Michael Kang)
-
-Username: gelier (Guiller Dalit)
