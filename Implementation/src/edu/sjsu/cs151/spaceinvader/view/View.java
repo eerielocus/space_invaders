@@ -514,7 +514,7 @@ public class View extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Sort the array in descending order.
+	 * Sort the array in descending order based on score.
 	 * @param array containing names and scores
 	 */
 	private void sortArray(String[] array) {

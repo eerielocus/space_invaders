@@ -2,4 +2,4 @@ Toppy=460
 Pop=110
 Catch=100
 New=80
-Try=40
+Try=30
