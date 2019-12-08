@@ -296,7 +296,8 @@ public class View extends JPanel implements ActionListener {
 		username.setPreferredSize(new Dimension(150, 20));
 		usernamePanel.add(username);
 		usernamePanel.add(Box.createRigidArea(new Dimension(10, 10)));
-
+		// Add action to submit to check name and score for replacement into score board.
+		// Redraw score board.
 		submit.setAlignmentX(Component.CENTER_ALIGNMENT);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -308,7 +309,6 @@ public class View extends JPanel implements ActionListener {
 		});
 		
 		usernamePanel.add(submit);
-
 		scoreContent.add(usernamePanel);
 		scoreContent.add(Box.createRigidArea(new Dimension(10, 10)));
 
