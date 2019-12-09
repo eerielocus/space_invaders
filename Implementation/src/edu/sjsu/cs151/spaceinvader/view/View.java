@@ -467,12 +467,11 @@ public class View extends JPanel implements ActionListener {
 	 * change score board.
 	 * @param name string containing current player name
 	 * @param score int containing current score
-	 * @return flag indicating if the name is being replaced
 	 */
 	public void replaceScore(String name, int score) {
 		// Check if name is the same or not.
 		// If it is not (false), then replace lowest score with new name and score since
-		// high score validity check was already done. (We know its a qualifying high score.
+		// high score validity check was already done. (We know its a qualifying high score.)
 		if (isInvalidName(name) == false) {
 			scoresheet[4] = name + "=" + score;
 		} else {
@@ -750,7 +749,7 @@ public class View extends JPanel implements ActionListener {
 	
 	/**
 	 * Set format for the string used to display points.
-	 * @param total points accumulated in game
+	 * @param points total accumulated in game
 	 */
 	public void setPoints(int points) {
 		this.points = String.format("%4d", points);
@@ -768,7 +767,7 @@ public class View extends JPanel implements ActionListener {
 	
 	/**
 	 * Set the number of lives to be displayed.
-	 * @param total lives left of player
+	 * @param lives total lives left of player
 	 */
 	public void setLives(int lives) {
 		this.lives = String.format("%4d", lives);
@@ -822,7 +821,7 @@ public class View extends JPanel implements ActionListener {
 	
 	/**
 	 * Set the shotFired flag.
-	 * @param boolean flag
+	 * @param flag indicating if shot is fired or not
 	 */
 	public void setShotFired(boolean flag) {
 		this.shotFired = flag;
@@ -932,7 +931,7 @@ public class View extends JPanel implements ActionListener {
 	
 	/**
 	 * Set the edges for the alien fleet.
-	 * @param array of alien row/column information
+	 * @param transfer array of alien row/column information
 	 */
 	public void setAlienEdge(int[] transfer) {
 		this.alien_edge = transfer;
@@ -973,7 +972,7 @@ public class View extends JPanel implements ActionListener {
 	
 	/**
 	 * Set the speed of the alien movement based on the current score.
-	 * @param total kill number
+	 * @param score total kill number
 	 */
 	public void setSpeed(int score) {
 		if (score == 15) { alien_speed = 2; }
@@ -986,8 +985,7 @@ public class View extends JPanel implements ActionListener {
 	 * Update method to be sent to the Board that shares alien and shot positions.
 	 * @param alien_x position
 	 * @param alien_y position
-	 * @param array to hold shot/bomb position
-	 * @return shot position [0], bomb position [1]
+	 * @param shotbomb array to hold shot/bomb position
 	 */
 	public void updateBoard(int[][] alien_x, int[][] alien_y, int[] shotbomb) {
 		for (int i = 0; i < 4; i++) {

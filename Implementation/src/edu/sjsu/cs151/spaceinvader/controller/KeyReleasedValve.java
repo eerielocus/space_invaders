@@ -11,6 +11,7 @@ import edu.sjsu.cs151.spaceinvader.view.View;
  */
 public class KeyReleasedValve implements Valve {
 	private Board board;
+	private KeyReleasedMessage sent;
 	
 	public KeyReleasedValve (View view, Board board) {
 		this.board = board;
@@ -21,7 +22,8 @@ public class KeyReleasedValve implements Valve {
 		if (message.getClass() != KeyReleasedMessage.class) {
 			return ValveResponse.MISS;
 		}
-		int key = Integer.parseInt(message.getMessage());
+		sent = (KeyReleasedMessage) message;
+		int key = Integer.parseInt(sent.getMessage());
 		board.setKeyUp(key);
 		board.update();
 		return ValveResponse.EXECUTED;

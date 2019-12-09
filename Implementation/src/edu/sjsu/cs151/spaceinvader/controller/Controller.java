@@ -91,7 +91,7 @@ public class Controller {
 				view.gameWon();						// Display game won in view.
 				view.setAliensCreated(false);		// Set to false to pause alien movement for respawn.
 				view.setBarrierCreated(false);		// Set to false to recreate barriers.
-				board.nextLevel();;					// New game that keeps score, adjusts alien start Y.
+				board.nextLevel();					// New game that keeps score, adjusts alien start Y.
 				aliens = board.getAliens();			// Recreate aliens for new game with new start position.
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 7; j++) {

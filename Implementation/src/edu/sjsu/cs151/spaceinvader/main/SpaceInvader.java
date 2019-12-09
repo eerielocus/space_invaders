@@ -10,7 +10,9 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 
 /**
  * Space Invaders game implementation using MVC, Command, Singleton, and Template design patterns
- * for CS151 in SJSU. Utilizes Blocking Queue of class Message to communicate between Model and
+ * for CS151 in SJSU. Compiled in JAVA 8.
+ * 
+ * Utilizes Blocking Queue of class Message to communicate between Model and
  * View while controlling multi-thread activities. It uses the Valve system for processing 
  * commands in Message object form to fulfill the COMMAND pattern.
  * 

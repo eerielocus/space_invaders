@@ -98,7 +98,7 @@ public class MoveableImage {
 	
 	/**
 	 * Reset image to former. (Used after explosion change)
-	 * @param image
+	 * @param image to be used for reset
 	 */
 	public void reset(Image image) {
 		this.image = image;

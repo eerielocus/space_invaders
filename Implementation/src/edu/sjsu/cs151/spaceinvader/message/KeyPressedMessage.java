@@ -8,11 +8,13 @@ public class KeyPressedMessage implements Message {
 	
 	/**
 	 * Constructor takes string with key pressed information.
-	 * @param key
+	 * @param key the key pressed from event
 	 */
 	public KeyPressedMessage(String key) { this.key = key; }
 	
-	@Override
+	/**
+	 * Get key pressed from Key Event
+	 * @return key pressed from event
+	 */
 	public String getMessage() { return key; }
-
 }

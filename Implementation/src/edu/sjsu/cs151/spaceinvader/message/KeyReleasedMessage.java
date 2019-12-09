@@ -8,11 +8,13 @@ public class KeyReleasedMessage implements Message {
 	
 	/**
 	 * Constructor that takes key released.
-	 * @param key
+	 * @param key the key pressed from event
 	 */
 	public KeyReleasedMessage(String key) { this.key = key;	}
 	
-	@Override
+	/**
+	 * Get the key sent by Key Event.
+	 * @return key event released
+	 */
 	public String getMessage() { return key; }
-
 }

@@ -16,6 +16,7 @@ public class Sprite {
 	
 	/**
 	 * This method is to return whether the object is visible or not. (destroyed or not)
+	 * @return visible the visibility of the Sprite
 	 */
 	public boolean isVisible() {
 		return visible;
@@ -23,6 +24,7 @@ public class Sprite {
 	
 	/**
 	 * This method is to set the visibility of object.
+	 * @param visible flag indicating whether object is visible or not
 	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;

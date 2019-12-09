@@ -398,7 +398,7 @@ public class Board extends GameTemplate {
 	 */
 	private void gameStatus() {
 		if (score == NUMBER_OF_ALIENS_TO_DESTROY) { gameWon = true; }
-		if (aliens[edges[2]][0].getY() >= 400) { gameOver = true; }
+		if (lives == 0 || aliens[edges[2]][0].getY() >= 400) { gameOver = true; }
 	}
 	
 	/**
