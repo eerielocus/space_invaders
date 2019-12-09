@@ -1,6 +1,10 @@
 # space_invaders
 CS151: Project to recreate iconic game, Space Invaders.
-Compiled in JAVA 8.
+
+Compiled in JAVA 8. (JDK 1.8)
+
+Instructions on how to play will appear in start screen. There will also be a HELP menu that
+will provide further instructions on what to expect in the game.
 
 Username: eerielocus (Michael Kang)
 
