@@ -12,7 +12,7 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 public class NewGameValve implements Valve {
 	private View view;
 	private Board board;
-	private Alien[][] aliens;
+	private Sprite[][] aliens;
 	
 	public NewGameValve (View view, Board board) {
 		this.view = view;

@@ -1,62 +1,29 @@
 package edu.sjsu.cs151.spaceinvader.model;
 
 /**
- * Barrier object that implements Sprite interface.
+ * Projectile class that implements Sprite interface to be used as either a player shot
+ * or alien bomb.
  */
-public class Barrier implements Sprite {
-	private int i = 0;
-	private int j = 0;
-	private int k = 0;
+public class Projectile implements Sprite {
 	private int x;						// X position.
 	private int y;						// Y position.
 	private boolean visible = false;	// Visible flag.
 	
-    /**
-     * Constructor take takes x y parameters.
-     * @param x position
-     * @param y position
-     */
-    public Barrier(int x, int y){
-        this.x = x;
-        this.y = y;
-    }
-    
-    /**
-     * Set position in array.
-     * @param i position
-     * @param j position
-     * @param k position
-     */
-	public void setPositionIJK(int i, int j, int k) {
-    	this.i = i;
-    	this.j = j;
-    	this.k = k;
-    }
-	
-    /**
-     * Get I position.
-     * @return i position
-     */
-    public int getPositionI() {
-    	return this.i;
-    }
-    
-    /**
-     * Get J position.
-     * @return j position
-     */
-    public int getPositionJ() {
-    	return this.j;
-    }
+	/**
+	 * Constructor method for Projectile.
+	 */
+	public Projectile() { }
 	
 	/**
-	 * Get the K position in array.
-	 * @return k position
+	 * Constructor that takes x y positions.
+	 * @param x position
+	 * @param y position
 	 */
-	public int getPositionK() {
-		return this.k;
+	public Projectile(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
-	
+
 	/**
 	 * This method is to return whether the object is visible or not. (destroyed or not)
 	 * @return visible the visibility of the Sprite
@@ -112,3 +79,4 @@ public class Barrier implements Sprite {
 		return this.y;
 	}
 }
+

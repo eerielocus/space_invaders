@@ -35,17 +35,20 @@ public class Board extends GameTemplate {
 	private int total_score;			// Total score.
 	private int[] edges; 				// Contains edges of alien fleet: int[0] = left, int[1] = right, int[2] = bottom
 	private int[] lowest;				// Lowest row of aliens for each column.
-	private Barrier barriers[][][];		// Barriers.
-	private Alien aliens[][];			// Alien fleet.
-	private Player player;				// Player.
-	private Shot shot;					// Player shot.
-	private Bomb bomb;					// Alien bomb.
-	private RandomSingleton random;
+	private Sprite barriers[][][];		// Barriers.
+	private Sprite aliens[][];			// Alien fleet.
+	private Sprite player;				// Player.
+	private Sprite shot;				// Player shot.
+	private Sprite bomb;				// Alien bomb.
+	private RandomSingleton random;		// Singleton random number generator.
+	private SpriteMaker spriteMaker;	// Facade Sprite maker.
 
 	/**
 	 * Constructor for Board (Model) of game.
 	 */
-	public Board() { }
+	public Board() { 
+		spriteMaker = new SpriteMaker();
+	}
 	
 	/**
 	 * Start a new game, set all variables to proper settings.
@@ -57,8 +60,8 @@ public class Board extends GameTemplate {
 		this.level = 0;
 		this.lives = 3;
 		this.total_score = 0;
-		this.shot = new Shot();
-		this.bomb = new Bomb();
+		this.shot = spriteMaker.makeProjectile();
+		this.bomb = spriteMaker.makeProjectile();
 		this.barriers = new Barrier[4][3][6];
 		this.aliens = new Alien[4][7];
 		this.edges = new int[3];
@@ -116,9 +119,9 @@ public class Board extends GameTemplate {
 	private void createAliens() {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
-				aliens[i][j] = new Alien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + level + 50 * i);
+				aliens[i][j] = spriteMaker.makeAlien(ALIEN_INIT_X + 50 * j, ALIEN_INIT_Y + level + 50 * i);
 				aliens[i][j].setVisible(true);
-				aliens[i][j].setPositionIJ(i, j);
+				((Alien) aliens[i][j]).setPositionIJ(i, j);
 			}
 		}
 	}
@@ -127,7 +130,7 @@ public class Board extends GameTemplate {
 	 * Get the fleet of aliens.
 	 * @return array of aliens
 	 */
-	public Alien[][] getAliens() {
+	public Sprite[][] getAliens() {
 		return this.aliens;
 	}
 	
@@ -209,9 +212,9 @@ public class Board extends GameTemplate {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 3; j++) {
 				for (int k = 0; k < 6; k++) {
-					barriers[i][j][k] = new Barrier(x + 10 * k, y + 10 * j);
+					barriers[i][j][k] = spriteMaker.makeBarrier(x + 10 * k, y + 10 * j);
 					barriers[i][j][k].setVisible(true);
-					barriers[i][j][k].setPositionIJK(i, j, k);
+					((Barrier) barriers[i][j][k]).setPositionIJK(i, j, k);
 				}
 			}
 			x += 150;
@@ -222,7 +225,7 @@ public class Board extends GameTemplate {
 	 * Creates player object.
 	 */
 	private void createPlayer() {
-		this.player = new Player();
+		this.player = spriteMaker.makePlayer();
 		this.player.setVisible(true);
 	}
 	
@@ -230,7 +233,7 @@ public class Board extends GameTemplate {
 	 * Gets the player object.
 	 * @return player object
 	 */
-	public Player getPlayer() {
+	public Sprite getPlayer() {
 		return player;
 	}
 	
@@ -245,8 +248,8 @@ public class Board extends GameTemplate {
 		boolean spaceKey = this.isKeyPressed(KeyEvent.VK_SPACE);
 		// If player is alive, move based on key pressed.
 		if (player.isVisible()) {
-			if (leftKey && !rightKey) { player.act(-1);	} 
-			else if (!leftKey && rightKey) { player.act(1);	}
+			if (leftKey && !rightKey) { ((Player) player).act(-1);	} 
+			else if (!leftKey && rightKey) { ((Player) player).act(1);	}
 		}
 		// If shot is not on screen, and space is pressed, fire the cannon!
 		if (spaceKey && !shot.isVisible()) { 
@@ -278,7 +281,7 @@ public class Board extends GameTemplate {
 	 * @param alien object to be used for update
 	 * @param barrier object that contains both shot and bomb collisions
 	 */
-	public void collision(Alien[] alien, Barrier[] barrier) {
+	public void collision(Sprite[] alien, Sprite[] barrier) {
 		playerCollision();
 		barrier[0] = barrierCollisionShot();
 		barrier[1] = barrierCollisionBomb();
@@ -289,7 +292,7 @@ public class Board extends GameTemplate {
 	 * Barrier to shot collision detection.
 	 * @return barrier object containing location or null
 	 */
-	private Barrier barrierCollisionShot() {
+	private Sprite barrierCollisionShot() {
 		if (shot.isVisible()) {
 			int i = 0;
 			// Check position of shot to determine which barrier to access.
@@ -319,7 +322,7 @@ public class Board extends GameTemplate {
 	 * Barrier to bomb collision detection.
 	 * @return barrier object containing location or null
 	 */
-	private Barrier barrierCollisionBomb() {
+	private Sprite barrierCollisionBomb() {
 		if (bomb.isVisible()) {
 			int i = 0;
 			// Check position of bomb to determine which barrier to access.
@@ -349,7 +352,7 @@ public class Board extends GameTemplate {
 	 * Checks whether the player shot hits an alien.
 	 * @return alien object that is hit
 	 */
-	private Alien alienCollision() {
+	private Sprite alienCollision() {
 		if (shot.isVisible()) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 7; j++) {
@@ -445,7 +448,7 @@ public class Board extends GameTemplate {
 	 * Get the shot object to access properties.
 	 * @return player shot object
 	 */
-	public Shot getShot() {
+	public Sprite getShot() {
 		return this.shot;
 	}
 	
@@ -453,7 +456,7 @@ public class Board extends GameTemplate {
 	 * Get the bomb object.
 	 * @return alien bomb object
 	 */
-	public Bomb getBomb() {
+	public Sprite getBomb() {
 		return this.bomb;
 	}
 	

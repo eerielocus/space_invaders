@@ -1,5 +1,5 @@
-Mike=810
-Winnar=530
-Toppy=460
-Test=340
-yolo swaglord=200
+Mike=310
+Tippy Top=130
+Winnar=100
+Toppy=60
+Test=40

@@ -12,9 +12,9 @@ import edu.sjsu.cs151.spaceinvader.view.View;
 public class ViewUpdateValve implements Valve {
 	private View view;
 	private Board board;
-	private Alien[] alien = new Alien[1];
-	private Alien[][] aliens;
-	private Barrier[] barrier = new Barrier[2];
+	private Sprite[] alien = new Sprite[1];
+	private Sprite[][] aliens;
+	private Sprite[] barrier = new Sprite[2];
 	private int[] shotbomb = new int[2];
 	private int[] edges = new int[3];
 	private int[][] alien_x = new int[4][7], alien_y = new int[4][7];
@@ -51,18 +51,18 @@ public class ViewUpdateValve implements Valve {
 		board.collision(alien, barrier);	// Check collision.
 		// Check if barrier is hit by shot.
 		if (barrier[0] != null) {
-			view.setBarrierHit(barrier[0].getPositionI(), barrier[0].getPositionJ(), barrier[0].getPositionK());
+			view.setBarrierHit(((Barrier) barrier[0]).getPositionI(), ((Barrier) barrier[0]).getPositionJ(), ((Barrier) barrier[0]).getPositionK());
 			view.setShotFired(false);		// Despawn shot and reset its position.
 			view.resetShotPosition();
 		}
 		// Check if barrier is hit by bomb.
 		if (barrier[1] != null) {
-			view.setBarrierHit(barrier[1].getPositionI(), barrier[1].getPositionJ(), barrier[1].getPositionK());
+			view.setBarrierHit(((Barrier) barrier[1]).getPositionI(), ((Barrier) barrier[1]).getPositionJ(), ((Barrier) barrier[1]).getPositionK());
 			view.setBombDropped(false);		// Despawn bomb.
 		}
 		// Check if there is collision with shot and alien.
 		if (alien[0] != null) {
-			view.setAlienExplode(alien[0].getPositionI(), alien[0].getPositionJ());
+			view.setAlienExplode(((Alien) alien[0]).getPositionI(), ((Alien) alien[0]).getPositionJ());
 			view.setShotFired(false);		// Despawn shot, reset its position, and update speed if applicable.
 			view.resetShotPosition();
 			view.setSpeed(board.getScore());

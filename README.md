@@ -10,10 +10,14 @@ Username: eerielocus (Michael Kang)
 
 Username: gelier (Guiller Dalit)
 
-Space Invaders game implementation using MVC, Command, Singleton, and Template design patterns
-for CS151 in SJSU. Utilizes Blocking Queue of class Message to communicate between Model and
-View while controlling multi-thread activities. It uses the Valve system for processing 
-commands in Message object form to fulfill the COMMAND pattern.
+Space Invaders game implementation using MVC, Command, Facade, Singleton, and Template design
+patterns for CS151 in SJSU. Utilizes Blocking Queue of class Message to communicate between 
+Model and View while controlling multi-thread activities. It uses the Valve system for 
+processing commands in Message object form to fulfill the COMMAND pattern.
+
+Implements Facade class, which hides the complexities of the system and provides an 
+interface to the client for ease of use. This class provides simplified methods that
+will delegate the appropriate call for objects.
  
 Implements Singleton class for random number generation for alien bomb attacks:
 SINGLETON design pattern involves a single class which is responsible in creating only one 

@@ -20,7 +20,7 @@ public class Controller {
 	private Board board;						// Board class object.
 	private BlockingQueue<Message> queue;		// Queue containing messages for processing.
 	private ArrayList<Valve> valves = new ArrayList<>();	// List of valves to process messages.
-	private Alien[][] aliens;					// 2D array of Alien objects.
+	private Sprite[][] aliens;					// 2D array of Alien objects.
 	private boolean gameOver = false;			// Flags to check game status.
 	private boolean gameWon = false;
 	private int points = 0;						// Points for the game.
